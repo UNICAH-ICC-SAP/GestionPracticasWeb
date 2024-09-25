@@ -1,0 +1,16 @@
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group {
+    width: 50% !important;
+    padding-bottom: 1rem;
+}
+
+.alert-color {
+    position: absolute !important;
+    margin: 20rem -62rem 0rem 0rem;
+    color: white !important;
+}
