@@ -167,14 +167,14 @@ class StorageError extends Error {
     public constructor(code: ErrCode, ...repl: string[]) {
         super();
         type K = keyof typeof ErrCode;
-        const key = Object.keys(ErrCode).reduce<string>((acc, k) => {
+        const key = Object.keys(ErrCode).reduce<string>((action, k) => {
             const val = ErrCode[k as K];
             if (val === code) return k;
-            return acc;
+            return action;
         }, "");
         const message = !repl.length
             ? ErrCode[key as K]
-            : repl.reduce((acc, rep) => acc.replace("/%/", rep), ErrCode[key as K]);
+            : repl.reduce((action, rep) => action.replace("/%/", rep), ErrCode[key as K]);
         this.message = NODE_ENV === "production" ? code : message;
     }
 }
