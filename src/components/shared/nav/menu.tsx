@@ -1,19 +1,32 @@
 import { Menu } from './types';
-import Docentes from '../../../pages/admin';
+import Docentes, { adminMenu } from '../../../pages/admin';
 import React from 'react';
+import CreacionDocente from '../../../pages/docentePage/crearDocente/creacionDocente';
+import DocenteMenu from '../../../pages/docentePage/docenteIndex';
+import CargasMenu from '../../../pages/cargasPage/cargasIndex';
 
 export const MenuItems: Array<Array<Menu>> = [
     [
         {
             'title': 'Ternas',
-            'pathTo': '/',
-            'component': <Docentes />
+            'pathTo': '/ternas',
+            'component': <Docentes />,
         },
         {
             'title': 'Docentes',
             'pathTo': '/docentes',
-            'component': <>Crear Ternas</>
+            'component': <DocenteMenu />
         },
+        {
+            'title': 'Pemsuns',
+            'pathTo': '/pemsuns',
+            'component': <>Todas las carrerar</>
+        },
+        {
+            'title': 'Cargas Academicas',
+            'pathTo': '/cargas',
+            'component': <CargasMenu />
+        }
     ]
     ,
     [
