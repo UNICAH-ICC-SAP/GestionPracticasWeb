@@ -144,6 +144,35 @@ async function deleteData(props: TypeUtilities) {
     }
 }
 
+async function signUp(props: TypeUtilities) {
+    try {
+        const { data } = props;
+        return await api.post(props.url, data)
+            .then(response => {
+                if (response['status'] === 401) {
+                    responseData.status = 401;
+                    return responseData
+                };
+                responseData.data = response.data;
+                responseData.status = response.status;
+                return responseData;
+            })
+            .catch(error => {
+                const response = error["response"];
+                if (response["status"] === 401 || response["status"] === 404) {
+                    responseData.error.code = parseInt(response["status"], 10);
+                    responseData.error.message = response["statusText"];
+                    return responseData;
+                }
+                responseData.error.code = 503;
+                responseData.error.message = error["statusText"];
+                return responseData;
+            });
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 async function LogIn(props: TypeUtilities) {
     if (config.headers) {
         config.headers['content-type'] = 'application/x-www-form-urlencoded'
@@ -231,5 +260,6 @@ export {
     LogIn,
     checkUser,
     getToken,
-    LogOut
+    LogOut,
+    signUp
 };
