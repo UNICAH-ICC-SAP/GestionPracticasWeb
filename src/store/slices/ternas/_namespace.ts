@@ -15,6 +15,8 @@ export declare namespace Type {
         ternaId: number;
         docenteId: string;
         coordina: string;
+
+
     }
     export type UserCreation = {
         userId: string;
@@ -26,7 +28,8 @@ export declare namespace Type {
 export declare namespace StoreUser {
     export type State = {
         ternaInfo: Type.TernaInfo;
-        ternasInfo: Array<Type.DetalleTernaInfo>;
+        detallesTernasInfo: Array<Type.DetalleTernaInfo>;
+        ternasInfo: Array<Type.TernaInfo>
         userToCreate: Type.UserCreation;
         error: TypeModal.ModalError;
         step1: boolean;
@@ -59,6 +62,7 @@ export const INIT: StoreUser.State = {
         },
         detalleTernas: []
     },
+    detallesTernasInfo: [],
     userToCreate: {
         userId: '',
         pass: '',

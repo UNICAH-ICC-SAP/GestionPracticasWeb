@@ -12,15 +12,30 @@ export default CreateFetchers(NAME, {
         const response = await getData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                detalleTernas: response?.data,
+                detalleTernasInfo: response?.data,
                 error: response?.error,
                 logged: false
             };
         }
         return {
-            detalleTernas: response?.data,
+            detalleTernasInfo: response?.data,
             error: response?.error,
             logged: true
         };
     },
+    async getTernasInfo(params: TypeUtilities) {
+        const response = await getData(params);
+        if (isError<TypeError.ModalError>(response?.error)) {
+            return {
+                ternasInfo: response?.data,
+                error: response?.error,
+                logged: false
+            };
+        }
+        return {
+            ternasInfo: response?.data,
+            error: response?.error,
+            logged: true
+        };
+    }
 });
