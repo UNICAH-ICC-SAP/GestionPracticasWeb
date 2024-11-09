@@ -4,6 +4,7 @@ import React from 'react';
 import CreacionDocente from '../../../pages/docentePage/crearDocente/creacionDocente';
 import DocenteMenu from '../../../pages/docentePage/docenteIndex';
 import CargasMenu from '../../../pages/cargasPage/cargasIndex';
+import DocentePerfil from "../../../pages/perfilDocente"
 
 export const MenuItems: Array<Array<Menu>> = [
     [
@@ -33,7 +34,7 @@ export const MenuItems: Array<Array<Menu>> = [
         {
             'title': 'Mis Ternas',
             'pathTo': '/',
-            'component': <>Mis Ternas</>
+            'component': < DocentePerfil/>
         },
     ],
     [

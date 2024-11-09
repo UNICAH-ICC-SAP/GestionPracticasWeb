@@ -16,8 +16,9 @@ Selector.getStep2 = CreateSelector(Selector, (state) => state.step2);
 Selector.getResume = CreateSelector(Selector, (state) => state.resumen);
 Selector.getAlumo = CreateSelector(Selector, (state) => state.ternaInfo.alumno);
 Selector.getDetalleTernas = CreateSelector(Selector, (state) => state.ternaInfo.detalleTernas);
-
+Selector.getDetalleTernasDocente = CreateSelector(Selector, (state) => state.detallesTernasInfo)
 Selector.getError = CreateSelector(Selector, (state) => state.error);
+
 /**Selector: fetching is loading */
 // Selector.fetching = CreateSelector(Selector, (state) => state.loading);
 

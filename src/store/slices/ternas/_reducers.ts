@@ -50,7 +50,13 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.getDetalleTernas.fulfilled, (state, { payload }) => ({
         ...state,
-        ternasInfo: JSON.parse(JSON.stringify(payload.detalleTernas)),
+        detallesTernasInfo: JSON.parse(JSON.stringify(payload.detalleTernasInfo)),
+        error: JSON.parse(JSON.stringify(payload.error)),
+        logged: JSON.parse(JSON.stringify(payload.logged))
+    }));
+    addCase(Fetcher.getTernasInfo.fulfilled, (state, { payload }) => ({
+        ...state,
+        ternasInfo: JSON.parse(JSON.stringify(payload.ternasInfo)),
         error: JSON.parse(JSON.stringify(payload.error)),
         logged: JSON.parse(JSON.stringify(payload.logged))
     }));
