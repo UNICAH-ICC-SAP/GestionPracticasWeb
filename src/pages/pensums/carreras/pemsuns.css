@@ -1,0 +1,122 @@
+.card-custom {
+  border: 2px solid #000000; /* Borde negro por defecto */
+  border-radius: 5px;
+  transition: border-color 0.3s, box-shadow 0.3s; /* Transición suave para el borde y la sombra */
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Sombra suave */
+}
+.error-message {
+  color: white;
+  background-color: red;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+.section-divider {
+  border: none;
+  border-top: 2px solid #000000; /* Color y grosor de la línea */
+  margin: 10px 0; /* Espaciado arriba y abajo de la línea */
+}
+.card-custom.selected {
+  border-color: #0000ff; /* Borde azul cuando está seleccionada */
+}
+.card-custom:hover {
+  transform: scale(1.05);
+  /* Si deseas que la sombra también cambie al hacer hover, puedes ajustar aquí */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada al hacer hover */
+}
+.card-custom.selected {
+  border-color: #0000ff !important; /* Borde azul cuando está seleccionada */
+}
+.card-custom:hover {
+  transform: scale(1.05);
+}
+.card-header-custom {
+  height: 5px;
+}
+
+.card-title-custom {
+  font-weight: bold;
+}
+
+.card-text-custom {
+  margin-bottom: 0.5rem;
+}
+.spinner-container {
+  margin-top: 6rem;
+}
+.modal-custom {
+  max-width: 600px;
+}
+
+.alert-custom {
+  margin-top: 1rem;
+}
+
+.headerBanner {
+  background-color: #084d96; /* Color de fondo del banner */
+  color: #fff; /* Color del texto */
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.page-container {
+  background-color: #dab2b2; /* Cambia este color al que prefieras */
+  background-image: url('../../../public/Image/fondocuadro.jpg');
+  
+  min-height: 100vh; /* Asegura que el fondo cubra toda la altura de la página */
+  padding: 20px; /* Añade algo de espacio alrededor del contenido */
+
+}
+
+
+/* Estilo para las etiquetas de los formularios */
+.form-label-custom {
+  font-weight: bold; /* Negrita */
+  color: black; /* Color de texto (azul) */
+  margin-bottom: 0.5rem; /* Espaciado debajo de la etiqueta */
+  font-size: 1.5rem; /* Tamaño de fuente más grande */
+}
+
+/* Estilo para los campos de entrada */
+.input-custom {
+  border: 1px solid #ced4da; /* Borde estándar de Bootstrap */
+  border-radius: 0.25rem; /* Bordes redondeados */
+  padding: 0.5rem; /* Espaciado interno */
+  font-size: 1rem; /* Tamaño de fuente */
+}
+
+/* Estilo para el grupo de formularios */
+.form-group-custom {
+  margin-bottom: 1rem; /* Espaciado inferior entre grupos */
+}
+
+.add-class-card {
+  background-color: #f8f9fa;
+  border: 2px dashed #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-class-card:hover {
+  background-color: #e9ecef;
+}
+
+.modal-header {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
