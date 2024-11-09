@@ -19,62 +19,64 @@ export type PropsPagination = {
 
 export function Tables(props: Props<PropsTable, typeof DEF>) {
     const { headers, data, paginated, children, firstColumnIndex } = props;
-    const hasIndexColumn = firstColumnIndex > 0 ? true : false;
+    const hasIndexColumn = firstColumnIndex > 0;
     const propsObj = Object.keys(data[0]);
     const objectProps = propsObj.slice(firstColumnIndex, propsObj.length);
-    console.log(objectProps)
     const [init, setInit] = useState<number>(0);
     const [end, setEnd] = useState<number>(10);
-    const [dataSliced, setDataSliced] = useState<object[]>();
-    const prev = () => {
-        let inicio = 0;
-        let fin = 10;
-        inicio = (init === 0) ? 0 : init - 10;
-        fin = (end === 10) ? 10 : end - 10
-        setInit(inicio);
-        setEnd(fin);
-    }
-    const next = () => {
-        let inicio = 0;
-        let fin = 10;
-        fin = (end === data.length) ? end : end + 10
-        inicio = (init === fin - 10) ? fin - 10 : init + 10;
-        setInit(inicio);
-        setEnd(fin);
-    }
+    const [dataSliced, setDataSliced] = useState<object[]>(data); 
+
     useEffect(() => {
-        const slicedData = data.slice(init, end)
-        setDataSliced(slicedData)
-    }, [init, end, data])
-    console.log(hasIndexColumn, firstColumnIndex)
-    return <Fragment>
-        <Table striped hover bordered>
-            <thead>
-                <tr>
-                    {headers && headers.map((item, index) => {
-                        return <th key={index}>{item}</th>
-                    })
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                {dataSliced && dataSliced.map((item, index) => {
-                    console.log(item)
-                    return <tr key={index}>
-                        {objectProps && objectProps.map((itemProp, index) => {
-                            return <td key={index} scope="row">
-                                {item[itemProp]}
-                            </td>
-                        })
-                        }
-                        {children && children}
+        if (paginated) {
+            const slicedData = data.slice(init, end);
+            setDataSliced(slicedData);
+        } else {
+            setDataSliced(data); 
+        }
+    }, [init, end, data, paginated]);
+
+    const prev = () => {
+        if (init > 0) {
+            setInit(init - 10);
+            setEnd(end - 10);
+        }
+    };
+
+    const next = () => {
+        if (end < data.length) {
+            setInit(init + 10);
+            setEnd(end + 10);
+        }
+    };
+
+    return (
+        <Fragment>
+            <Table striped hover bordered>
+                <thead>
+                    <tr>
+                        {headers && headers.map((item, index) => (
+                            <th key={index}>{item}</th>
+                        ))}
                     </tr>
-                })}
-            </tbody>
-        </Table>
-        {paginated && <PaginationBlock onClickNext={next} onClickPrev={prev} />}
-    </Fragment>
+                </thead>
+                <tbody>
+                    {dataSliced && dataSliced.map((item, index) => (
+                        <tr key={index}>
+                            {objectProps.map((itemProp, index) => (
+                                <td key={index} scope="row">
+                                    {item[itemProp]}
+                                </td>
+                            ))}
+                            {children && children}
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+            {paginated && <PaginationBlock onClickNext={next} onClickPrev={prev} />}
+        </Fragment>
+    );
 }
+
 
 
 
