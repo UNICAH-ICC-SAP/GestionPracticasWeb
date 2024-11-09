@@ -1,0 +1,21 @@
+.fondo {
+    background-image: url('../home/img1.jpg');
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 40px); 
+    height: 490px;
+    margin: 21px 10px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 20px; 
+    box-sizing: border-box;
+  }
+  
+  /* Cambia el color de los iconos a blanco */
+  .text-white-custom { 
+    color: white !important;
+  }
+
+  
+  

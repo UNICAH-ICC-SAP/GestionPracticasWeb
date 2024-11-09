@@ -5,9 +5,16 @@ import CreacionDocente from '../../../pages/docentePage/crearDocente/creacionDoc
 import DocenteMenu from '../../../pages/docentePage/docenteIndex';
 import CargasMenu from '../../../pages/cargasPage/cargasIndex';
 import DocentePerfil from "../../../pages/perfilDocente"
+import { Home } from '../../../pages/home/home';
+
 
 export const MenuItems: Array<Array<Menu>> = [
     [
+        {
+            'title': 'Home',
+            'pathTo': '/home',
+            'component': <Home />,
+        },
         {
             'title': 'Ternas',
             'pathTo': '/ternas',
