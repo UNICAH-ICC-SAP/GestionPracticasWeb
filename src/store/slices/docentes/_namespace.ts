@@ -14,6 +14,16 @@ export declare namespace Type {
     }
 }
 
+export declare namespace Type {
+    export type DocentesInfo = {
+        docenteId: string;
+        email: string;
+        nombre: string;
+        facultadId: string;
+        telefono: string;
+    }
+}
+
 export declare namespace StoreUser {
     export type State = {
         docente: Type.DocenteInfo;
