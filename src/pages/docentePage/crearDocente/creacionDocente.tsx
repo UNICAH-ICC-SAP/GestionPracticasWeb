@@ -115,8 +115,8 @@ export default function CrearDocente() {
                 });
                 clearForm(); 
     
-                console.log("Docente y usuario guardados exitosamente:", state);
-                //alert("Docente y usuario guardados exitosamente.");
+                
+                
             } catch (error) {
                 Swal.fire({
                     icon: "error",
@@ -124,8 +124,8 @@ export default function CrearDocente() {
                     text: "Hubo un error al guardar el docente o usuario.",
 
                 });
-                console.error("Error guardando el docente", error);
-                //alert("Hubo un error al guardar el docente o usuario.");
+                
+                
             }
         } else {
             console.log("No hay datos de docente para guardar.");
