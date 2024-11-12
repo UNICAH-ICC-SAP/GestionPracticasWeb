@@ -9,6 +9,7 @@ export declare namespace Type {
         ternaId: number;
         alumno: TypeAlumno.AlumnoInfo;
         detalleTernas: Array<DetalleTernaInfo>;
+        idEstadoTerna: string
     }
     export type DetalleTernaInfo = {
         detalleTernaId: number;
@@ -53,6 +54,7 @@ export const Action = CreateActions<{
 export const INIT: StoreUser.State = {
     ternaInfo: {
         ternaId: 0,
+        idEstadoTerna: '',
         alumno: {
             alumnoId: '',
             nombre: '',
@@ -62,6 +64,7 @@ export const INIT: StoreUser.State = {
         },
         detalleTernas: []
     },
+    
     detallesTernasInfo: [],
     userToCreate: {
         userId: '',
