@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Breadcrumb, Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Menu } from "../../components/shared/nav/types";
 import Ternas from "./terna"
+import EstadoTerna from './estadoTerna'
 
 
 const adminMenu: Array<Menu> = [
@@ -15,7 +16,7 @@ const adminMenu: Array<Menu> = [
         paneId: 'ActualizarTerna',
         title: 'Actualizar ternas',
         pathTo: '/doente/actualizar',
-        component: <>Actualizar estado</>
+        component: <EstadoTerna/>
     },
     {
        paneId: 'CargasAsignadas',
