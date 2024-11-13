@@ -1,13 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ButtonHome } from './config';
 import { Link } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './home.css';
 
 export const Home: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <>
       <div className="fondo">

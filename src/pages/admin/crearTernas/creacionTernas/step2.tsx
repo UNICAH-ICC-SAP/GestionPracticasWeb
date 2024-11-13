@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { InputGroup, InputGroupText, Input, ButtonGroup, Label, Alert, Toast, ToastBody, ToastHeader } from "reactstrap";
+import { InputGroup, InputGroupText, Input, ButtonGroup, Label, Alert } from "reactstrap";
 import { TypeUtilities } from "../../../../utilities/TypeUtilities";
 import { useDispatch, useSelector } from "../../../../store";
 import { Type as TernaType } from '../../../../store/slices/ternas/_namespace'
-import { INIT as InitState } from '../../../../store/slices/ternas';
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from "../../../../store/slices/docentes";
 import { ButtonPrimary, ButtonSecondary } from "../../../../components/shared/buttons";
 import { Tables } from "../../../../components/commons/tables/tables";

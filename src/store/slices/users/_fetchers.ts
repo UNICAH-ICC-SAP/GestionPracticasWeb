@@ -25,7 +25,7 @@ export default CreateFetchers(NAME, {
             logged: true
         };
     },
-    async checkUserLogged(params: string) {
+    async checkUserLogged() {
         const response = await checkUser();
         if (isError<TypeError.ErrorSchema>(response?.error)) {
             console.log(response?.error)
@@ -57,7 +57,7 @@ export default CreateFetchers(NAME, {
             logged: true
         };
     },
-    async validateSession(params: TypeUtilities) {
+    async validateSession() {
         const hasToken = getToken();
         if (!hasToken) { return { user: {}, error: {}, logged: false } }
         return { user: {}, error: {}, logged: true }

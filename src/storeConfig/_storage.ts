@@ -1,6 +1,8 @@
 import type * as Toolkit from "@reduxjs/toolkit";
 import type { Dispatch, MiddlewareAPI, AnyAction } from "redux";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as dotenv from 'dotenv'
+/* eslint-enable @typescript-eslint/no-unused-vars */
 import { NAME, SEP, ACTION } from "./_namespace";
 
 const { NODE_ENV } = import.meta.env;
@@ -89,7 +91,9 @@ export function Storage(root: string, slices: SliceCfg[]): StorageState {
         try {
             const serializedState = JSON.stringify(sliceState);
             await driver.set(storeKey, serializedState);
+            /* eslint-disable @typescript-eslint/no-unused-vars */
         } catch (e) {
+            /* eslint-enable @typescript-eslint/no-unused-vars */
             throw new StorageError(ErrCode.E03, sliceKey);
         }
         return _action;

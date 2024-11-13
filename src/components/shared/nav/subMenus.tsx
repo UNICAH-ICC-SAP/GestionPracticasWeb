@@ -2,7 +2,6 @@ import React from "react";
 import Docentes from "../../../pages/admin/docentes";
 import CrearTernas from "../../../pages/admin/crearTernas";
 import CreacionDocente from "../../../pages/docentePage/crearDocente/creacionDocente";
-import MostrarDocente from "../../../pages/docentePage/mostrarDocente/mostrarDocente";
 import { Menu } from "./types";
 import MostrarDocentes from "../../../pages/admin/docentes/MostrarDocentes";
 import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
@@ -60,7 +59,7 @@ export const docenteMenu: Array<Menu> = [
     paneId: "MostrarDocente",
     title: "Mostrar Docentes",
     pathTo: "/docentes/viewAllDocente",
-    component: <MostrarDocentes/>,
+    component: <MostrarDocentes />,
   },
 ];
 

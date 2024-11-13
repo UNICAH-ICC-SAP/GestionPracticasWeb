@@ -58,7 +58,7 @@ export default function Resumen() {
                 </CardSubtitle>
                 <CardText>
                     {docentesInfo.length > 0 && docentesInfo.map(docente => {
-                        return <div className="text-start mb-2">{docente.docenteId} - {docente.nombre} - {docente.telefono}</div>
+                        return <div key={docente.docenteId} className="text-start mb-2">{docente.docenteId} - {docente.nombre} - {docente.telefono}</div>
                     })}
                 </CardText>
                 <Button>

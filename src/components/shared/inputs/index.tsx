@@ -11,7 +11,7 @@ const CustomInput = styled(Input)`
 
 interface Props extends InputProps {
     mask: 'phone' | 'currency' | 'DNI';
-    inputMaskChange: any;
+    inputMaskChange: (text: React.ChangeEvent<HTMLInputElement>) => void;
     length?: number;
 }
 enum TypeInput {

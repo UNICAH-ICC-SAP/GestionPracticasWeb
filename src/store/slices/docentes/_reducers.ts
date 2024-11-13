@@ -1,7 +1,6 @@
 import { CreateReducer } from "../../../storeConfig";
 import { INIT, Action } from "./_namespace";
 import Fetcher from "./_fetchers";
-import { json } from "stream/consumers";
 
 export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Action.cleanStore, (state) => ({ ...state, ...INIT }));
