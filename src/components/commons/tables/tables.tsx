@@ -1,8 +1,6 @@
-import { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pagination, PaginationItem, PaginationLink, Table } from "reactstrap"
 import { DEF, Props } from '../../../Api/typesProps';
-import React from 'react';
-
 
 export type PropsTable = {
     headers: string[];
@@ -19,19 +17,18 @@ export type PropsPagination = {
 
 export function Tables(props: Props<PropsTable, typeof DEF>) {
     const { headers, data, paginated, children, firstColumnIndex } = props;
-    const hasIndexColumn = firstColumnIndex > 0;
     const propsObj = Object.keys(data[0]);
     const objectProps = propsObj.slice(firstColumnIndex, propsObj.length);
     const [init, setInit] = useState<number>(0);
     const [end, setEnd] = useState<number>(10);
-    const [dataSliced, setDataSliced] = useState<object[]>(data); 
+    const [dataSliced, setDataSliced] = useState<object[]>(data);
 
     useEffect(() => {
         if (paginated) {
             const slicedData = data.slice(init, end);
             setDataSliced(slicedData);
         } else {
-            setDataSliced(data); 
+            setDataSliced(data);
         }
     }, [init, end, data, paginated]);
 
@@ -50,7 +47,7 @@ export function Tables(props: Props<PropsTable, typeof DEF>) {
     };
 
     return (
-        <Fragment>
+        <React.Fragment>
             <Table striped hover bordered>
                 <thead>
                     <tr>
@@ -73,7 +70,7 @@ export function Tables(props: Props<PropsTable, typeof DEF>) {
                 </tbody>
             </Table>
             {paginated && <PaginationBlock onClickNext={next} onClickPrev={prev} />}
-        </Fragment>
+        </React.Fragment>
     );
 }
 

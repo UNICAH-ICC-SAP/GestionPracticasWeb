@@ -1,5 +1,4 @@
 // TODO: Review this file to temove the two rules below.
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { AsyncThunk, ActionCreator } from "@reduxjs/toolkit";
@@ -22,7 +21,7 @@ type ThunkAPI<State> = {
     getState: () => State;
     dispatch: <A = unknown>(action: ActionCreator<A>) => void;
     requestId: string;
-    rejectWithValue: Function;
+    rejectWithValue: () => object;
 };
 
 export default function CreateFetchers<
@@ -30,7 +29,9 @@ export default function CreateFetchers<
         [K in keyof T]: (arg: any, thunkAPI: ThunkAPI<any>) => ReturnType<T[K]>;
     },
 >(name: string, proto: T) {
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const conf = {};
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     type Fetchers = {
         // Iterate all keys to construct a response with corresponding typings.
         [K in keyof T]: AsyncThunk<Unwrap<ReturnType<T[K]>>, Arg<T[K]>, typeof conf>;

@@ -44,7 +44,6 @@ export function CreateStore<S>({ Storage, Reducer }: CreateStoreArgs<S>) {
         let nextState = state;
 
         // handle internal storage operations
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
         nextState = StorageReducer<S>({ store: Store, self: Storage, state: nextState, action })!;
 
         return nextState;

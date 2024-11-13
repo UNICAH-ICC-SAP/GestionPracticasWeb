@@ -1,11 +1,10 @@
 import React from "react";
 import { InputGroup, InputGroupText, Input } from "reactstrap";
-import { INIT as InitState } from '../../../store/slices/ternas';
 import { Type as DocentesType } from '../../../store/slices/docentes/_namespace';
 import { ButtonSecondary } from "../../../components/shared/buttons";
 import MaskedInput from "../../../components/shared/inputs";
 import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "../../../store/slices/facultades";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes} from "../../../store/slices/docentes";
+import { Fetcher as FetcherDocentes } from "../../../store/slices/docentes";
 import { useDispatch, useSelector } from "../../../store";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { maskDNI, maskPhone } from "../../../components/shared/inputs/utils/index";
@@ -26,7 +25,6 @@ enum PlaceHolder {
 }
 
 export default function CrearDocente() {
-    const formState = useSelector(SelectorDocentes.getDocentes);
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
     const [state, setState] = React.useState<DocentesType.DocentesInfo>({
         docenteId: '',
@@ -39,12 +37,12 @@ export default function CrearDocente() {
 
     const inputFunction = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.currentTarget;
-    
+
         setState({
             ...state,
             [name]: name === 'nombre' ? value.toUpperCase() : value
         });
-    
+
         if (name === FormItems.email) {
             const emailWithDomain = value + '@unicah.edu';
             validate(emailWithDomain);
@@ -65,7 +63,7 @@ export default function CrearDocente() {
         });
         setIsValidItem({ email: false });
     };
-    
+
     const selectedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setState({
             ...state,
@@ -102,7 +100,7 @@ export default function CrearDocente() {
             const utils = {
                 url: '/docente/getDocentes'
             };
-    
+
             try {
                 await dispatch(FetcherDocentes.insertUserDocente(paramsUser));
 
@@ -113,19 +111,19 @@ export default function CrearDocente() {
                     text: "Docente guardado exitosamente, se acaba de enviar un correo con las credenciales de acceso",
                     icon: "success",
                 });
-                clearForm(); 
-    
-                
-                
+                clearForm();
+
+
+
             } catch (error) {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: "Hubo un error al guardar el docente o usuario.",
+                    text: `Hubo un error al guardar el docente o usuario.\n Error: ${error}`,
 
                 });
-                
-                
+
+
             }
         } else {
             console.log("No hay datos de docente para guardar.");
@@ -135,8 +133,8 @@ export default function CrearDocente() {
     const validateForm = () => {
         return state.docenteId !== '' && state.nombre !== '' && isValidItem.email && state.email !== '' && state.facultadId !== '' && state.telefono !== '';
     };
-    
-    
+
+
 
     return (
         <div className="form-group">

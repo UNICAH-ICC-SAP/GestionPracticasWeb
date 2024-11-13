@@ -20,17 +20,13 @@ export default function ModificarDocentes() {
     const dispatch = useDispatch();
     const [detalle, setDetalle] = useState<Array<DocenteDetail>>([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedDocente, setSelectedDocente] = useState<DocenteDetail | null >(null);
+    const [selectedDocente, setSelectedDocente] = useState<DocenteDetail | null>(null);
     const [modalDelete, setModalDelete] = useState(false);
     const [confirmText, setConfirmText] = useState("");
 
     const utils = {
         url: '/docente/getDocentes'
     };
-
-    const deleteDocente = {
-        url: '/docente/updateStatus/'
-    }
 
     useEffect(() => {
         dispatch(FetcherDocentes.getDocentes(utils));
@@ -47,7 +43,7 @@ export default function ModificarDocentes() {
                 telefono: docente.telefono,
                 facultad: docente.facultad.nombreFacultad
             }));
-    
+
             setDetalle(docentesMapped);
         }
     }, [docentes]);
@@ -70,13 +66,13 @@ export default function ModificarDocentes() {
         if (selectedDocente) {
             const params = {
                 url: `/docente/update?docenteId=${selectedDocente.docenteId}`,
-                data: selectedDocente, 
+                data: selectedDocente,
             };
 
             dispatch(FetcherDocentes.updateDocente(params))
                 .then(() => {
                     dispatch(FetcherDocentes.getDocentes(utils));
-                    toggleModal(); 
+                    toggleModal();
                     Swal.fire({
                         title: "¡Éxito!",
                         text: "El docente se ha actualizado exitosamente.",
@@ -141,14 +137,14 @@ export default function ModificarDocentes() {
     return (
         <Container>
             {detalle.length > 0 ? (
-                <Tables 
+                <Tables
                     data={detalle.map(docente => ({
                         ...docente,
-                        actions: renderActions(docente) 
-                    }))} 
-                    headers={['Docente ID', 'Nombre', 'Email', 'Teléfono', 'Facultad', 'Acciones']} 
-                    firstColumnIndex={0} 
-                    paginated={false} 
+                        actions: renderActions(docente)
+                    }))}
+                    headers={['Docente ID', 'Nombre', 'Email', 'Teléfono', 'Facultad', 'Acciones']}
+                    firstColumnIndex={0}
+                    paginated={false}
                 />
             ) : (
                 <NotFound />
@@ -161,32 +157,32 @@ export default function ModificarDocentes() {
                         <>
                             <div className="mb-3">
                                 <Label for="nombre" className="text-left">Nombre Docente</Label>
-                                <Input 
+                                <Input
                                     id="nombre"
-                                    type="text" 
-                                    value={selectedDocente.nombre} 
-                                    onChange={(e) => setSelectedDocente({ ...selectedDocente, nombre: e.target.value })} 
-                                    placeholder="Nombre" 
+                                    type="text"
+                                    value={selectedDocente.nombre}
+                                    onChange={(e) => setSelectedDocente({ ...selectedDocente, nombre: e.target.value })}
+                                    placeholder="Nombre"
                                 />
                             </div>
                             <div className="mb-3">
                                 <Label for="email" className="text-left">Email</Label>
-                                <Input 
+                                <Input
                                     id="email"
-                                    type="email" 
-                                    value={selectedDocente.email} 
-                                    onChange={(e) => setSelectedDocente({ ...selectedDocente, email: e.target.value })} 
-                                    placeholder="Email" 
+                                    type="email"
+                                    value={selectedDocente.email}
+                                    onChange={(e) => setSelectedDocente({ ...selectedDocente, email: e.target.value })}
+                                    placeholder="Email"
                                 />
                             </div>
                             <div className="mb-3">
                                 <Label for="telefono" className="text-left">Teléfono</Label>
-                                <Input 
+                                <Input
                                     id="telefono"
-                                    type="text" 
-                                    value={selectedDocente.telefono} 
-                                    onChange={(e) => setSelectedDocente({ ...selectedDocente, telefono: e.target.value })} 
-                                    placeholder="Teléfono" 
+                                    type="text"
+                                    value={selectedDocente.telefono}
+                                    onChange={(e) => setSelectedDocente({ ...selectedDocente, telefono: e.target.value })}
+                                    placeholder="Teléfono"
                                 />
                             </div>
                         </>
@@ -202,11 +198,11 @@ export default function ModificarDocentes() {
                 <ModalHeader toggle={toggleDeleteModal}>Confirmar Eliminación</ModalHeader>
                 <ModalBody>
                     <p>Para confirmar la eliminación, escribe el nombre completo: <strong>{selectedDocente?.nombre}</strong></p>
-                    <Input 
-                        type="text" 
-                        value={confirmText} 
-                        onChange={(e) => setConfirmText(e.target.value)} 
-                        placeholder="Escribe el nombre del docente aquí" 
+                    <Input
+                        type="text"
+                        value={confirmText}
+                        onChange={(e) => setConfirmText(e.target.value)}
+                        placeholder="Escribe el nombre del docente aquí"
                     />
                 </ModalBody>
                 <ModalFooter className="d-flex justify-content-center">
