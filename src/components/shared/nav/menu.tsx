@@ -4,6 +4,7 @@ import React from 'react';
 import DocenteMenu from '../../../pages/docentePage/docenteIndex';
 import CargasMenu from '../../../pages/cargasPage/cargasIndex';
 import DocentePerfil from "../../../pages/perfilDocente"
+import Pensums from '../../../pages/pensums/';
 import { Home } from '../../../pages/home/home';
 
 
@@ -27,7 +28,7 @@ export const MenuItems: Array<Array<Menu>> = [
         {
             'title': 'Pemsuns',
             'pathTo': '/pemsuns',
-            'component': <>Todas las carrerar</>
+            'component': <Pensums/>
         },
         {
             'title': 'Cargas Academicas',
