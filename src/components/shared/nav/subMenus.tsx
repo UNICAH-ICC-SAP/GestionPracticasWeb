@@ -5,6 +5,9 @@ import CreacionDocente from "../../../pages/docentePage/crearDocente/creacionDoc
 import { Menu } from "./types";
 import MostrarDocentes from "../../../pages/admin/docentes/MostrarDocentes";
 import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
+import Carreras from "../../../pages/pensums/mostrarPensums/carreras";
+import Laboratorios from "../../../pages/pensums/mostrarPensums/laboratorios";
+import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramaticas";
 
 export const adminMenu: Array<Menu> = [
   {
@@ -63,55 +66,25 @@ export const docenteMenu: Array<Menu> = [
   },
 ];
 
-export const carreras: Array<Menu> = [
+export const pensumMenu: Array<Menu> = [
   {
-    paneId: "SISTEMAS",
-    title: "SISTEMAS",
-    pathTo: "/universidad/sistemas",
-    component: <>Contenido de Sistemas</>,
+    paneId: "Carreras",
+    title: "Carreras",
+    pathTo: "/pensum/carreras",
+    component: <Carreras/>,
   },
   {
-    paneId: "CIVIL",
-    title: "CIVIL",
-    pathTo: "/universidad/civil",
-    component: <>Contenido de Civil</>,
+    paneId: "Laboratorios",
+    title: "Laboratorios",
+    pathTo: "/pensum/laboratorios",
+    component: <Laboratorios/>,
   },
   {
-    paneId: "MEDICINA",
-    title: "MEDICINA",
-    pathTo: "/universidad/medicina",
-    component: <>Contenido de Medicina</>,
-  },
-  {
-    paneId: "PSICOLOGIA",
-    title: "PSICOLOGIA",
-    pathTo: "/universidad/psicologia",
-    component: <>Contenido de Psicología</>,
-  },
-  {
-    paneId: "MERCADOTECNIA",
-    title: "MERCADOTECNIA",
-    pathTo: "/universidad/mercadotecnia",
-    component: <>Contenido de Mercadotecnia</>,
-  },
-  {
-    paneId: "GESTION",
-    title: "GESTION",
-    pathTo: "/universidad/gestion",
-    component: <>Contenido de Gestión</>,
-  },
-  {
-    paneId: "INDUSTRIAL",
-    title: "INDUSTRIAL",
-    pathTo: "/universidad/industrial",
-    component: <>Contenido de Industrial</>,
-  },
-  {
-    paneId: "DERECHO",
-    title: "DERECHO",
-    pathTo: "/universidad/derecho",
-    component: <>Contenido de Derecho</>,
-  },
+    paneId: "Coprogramaticas",
+    title: "Coprogramáticas",
+    pathTo: "/pensum/coprogramaticas",
+    component: <Coprogramaticas/>,
+  }
 ];
 
-export default { adminMenu, cargasMenu, docenteMenu, carreras };
+export default { adminMenu, cargasMenu, docenteMenu, pensumMenu };
