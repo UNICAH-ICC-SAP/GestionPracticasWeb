@@ -6,6 +6,7 @@ import CargasMenu from '../../../pages/cargasPage/cargasIndex';
 import DocentePerfil from "../../../pages/perfilDocente"
 import Pensums from '../../../pages/pensums/';
 import { Home } from '../../../pages/home/home';
+import ModificarAlumnos from '../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno';
 
 
 export const MenuItems: Array<Array<Menu>> = [
@@ -34,7 +35,11 @@ export const MenuItems: Array<Array<Menu>> = [
             'title': 'Cargas Academicas',
             'pathTo': '/cargas',
             'component': <CargasMenu />
-        }
+        },
+        {
+            'title': 'Alumnos',
+            'pathTo': '/ModificarAlumnos',
+            'component': <ModificarAlumnos/>}
     ]
     ,
     [

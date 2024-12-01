@@ -209,7 +209,9 @@ export default function ModificarDocentes() {
                     <Button color="danger" onClick={handleConfirmDelete} disabled={confirmText !== selectedDocente?.nombre}>
                         Eliminar
                     </Button>
-                    <Button color="secondary" onClick={toggleDeleteModal}>Cancelar</Button>
+                    <Button color="secondary" onClick={toggleDeleteModal}>
+                        Cancelar
+                    </Button>
                 </ModalFooter>
             </Modal>
         </Container>

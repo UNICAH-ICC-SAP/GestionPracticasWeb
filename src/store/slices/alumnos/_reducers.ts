@@ -1,23 +1,29 @@
 import { CreateReducer } from "../../../storeConfig";
 import { INIT, Action } from "./_namespace";
 import Fetcher from "./_fetchers";
+import { add } from "lodash";
 
 export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Action.cleanStore, (state) => ({
         ...state,
         ...INIT,
     }));
-    addCase(Action.cleanFacultad, (state) => ({
+    addCase(Action.cleanAlumno, (state) => ({
         ...state,
-        facultad: INIT.facultad,
-    }));
-    addCase(Fetcher.getFacultadesBy.fulfilled, (state, { payload }) => ({
+        facultad: INIT.alumno,
+    }));   
+    addCase(Fetcher.getAlumnos.fulfilled, (state, { payload }) => ({
         ...state,
-        facultades: JSON.parse(JSON.stringify(payload.facultades)),
-        error: payload.error
-    }));
-    addCase(Fetcher.getFacultades.fulfilled, (state, { payload }) => ({
+        alumnos: JSON.parse(JSON.stringify(payload.alumnos))
+    }))
+    addCase(Fetcher.updatealumno.fulfilled, (state, { payload }) => ({
         ...state,
-        facultades: JSON.parse(JSON.stringify(payload.facultades))
+        alumnosActualizado: JSON.parse(JSON.stringify(payload.alumnos)),
+        error: JSON.parse(JSON.stringify(payload.error))
+    }))
+    addCase(Fetcher.deletealumno.fulfilled, (state, { payload }) => ({
+        ...state,
+        alumnosEliminado: JSON.parse(JSON.stringify(payload.alumnos)),
+        error: JSON.parse(JSON.stringify(payload.error))
     }))
 });

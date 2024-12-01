@@ -1,6 +1,7 @@
 import { CreateActions } from "../../../storeConfig";
+import { Type as TypeModal } from '../../../Api/namespaces/modalError';
 
-export const NAME = "Facultades";
+export const NAME = "Alumnos";
 
 export declare namespace Type {
     export type AlumnoInfo = {
@@ -12,26 +13,32 @@ export declare namespace Type {
     }
 }
 
-export declare namespace StoreFacultad {
+export declare namespace StoreAlumnos {
     export type State = {
-        facultad: Type.AlumnoInfo;
-        facultades: Array<Type.AlumnoInfo>;
+        alumno: Type.AlumnoInfo;
+        alumnos: Array<Type.AlumnoInfo>;
+        error: TypeModal.ModalError;
+        
     };
 }
 
 export const Action = CreateActions<{
-    cleanFacultad: void;
+    cleanAlumno: void;
     cleanStore: void;
-    setFacultad: object;
-}>(NAME, ["cleanFacultad", "cleanStore", "setFacultad"]);
+    setAlumno: object;
+}>(NAME, ["cleanAlumno", "cleanStore", "setAlumno"]);
 
-export const INIT: StoreFacultad.State = {
-    facultad: {
+export const INIT: StoreAlumnos.State = {
+    alumno: {
         alumnoId: "",
         nombre: "",
         facultadId: "",
         email: "",
         telefono: "",
     },
-    facultades: []
+    alumnos: [],
+    error: {
+        code: 0,
+        message: ""
+    },
 };

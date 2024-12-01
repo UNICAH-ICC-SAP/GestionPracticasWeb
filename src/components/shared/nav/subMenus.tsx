@@ -8,25 +8,32 @@ import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
 import Carreras from "../../../pages/pensums/mostrarPensums/carreras";
 import Laboratorios from "../../../pages/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramaticas";
+import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno";
 
 export const adminMenu: Array<Menu> = [
   {
     paneId: "DocenteTernas",
-    title: "Ternas por Docente",
+    title: "Ver Ternas",
     pathTo: "/ternas/verTernasDocentes",
     component: <Docentes />,
   },
   {
     paneId: "AlumnoTernas",
-    title: "Ternas por Alumno",
-    pathTo: "/ternas/verTernasAlumnos",
-    component: <>Ternas por Alumno</>,
+    title: "Modificar Alumnos",
+    pathTo: "/ternas/modificarTernas",
+    component: <ModificarDocentes/>,
   },
   {
     paneId: "CrearTernas",
     title: "Crear Ternas",
     pathTo: "/ternas/crearTernas",
     component: <CrearTernas />,
+  },
+  {
+    paneId: "ModificarAlumnos",
+    title: "Modificar Alumnos",
+    pathTo: "/Alumnos/modificarAlumnos",
+    component: <ModificarAlumnos/>,
   },
 ];
 
