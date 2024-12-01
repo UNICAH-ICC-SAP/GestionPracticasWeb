@@ -5,11 +5,10 @@ import { NAME } from "./_namespace";
 import { getData, updateData } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
-import { update } from 'lodash';
 
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
-    
+
     async getAlumnos(params: TypeUtilities) {
         const response = await getData(params);
         console.log(response, params);

@@ -1,7 +1,6 @@
 import { CreateReducer } from "../../../storeConfig";
 import { INIT, Action } from "./_namespace";
 import Fetcher from "./_fetchers";
-import { add } from "lodash";
 
 export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Action.cleanStore, (state) => ({
@@ -11,7 +10,7 @@ export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Action.cleanAlumno, (state) => ({
         ...state,
         facultad: INIT.alumno,
-    }));   
+    }));
     addCase(Fetcher.getAlumnos.fulfilled, (state, { payload }) => ({
         ...state,
         alumnos: JSON.parse(JSON.stringify(payload.alumnos))
