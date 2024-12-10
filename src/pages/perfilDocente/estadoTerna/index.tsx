@@ -7,8 +7,6 @@ import { isEmpty } from "lodash";
 import { Selector as UserSelector } from '../../../store/slices/users';
 import { Tables } from "../../../components/commons/tables/tables";
 
-
-
 type AlumnoInfo = {
     ternaId: number;
     alumnoNombre: string;
@@ -17,7 +15,6 @@ type AlumnoInfo = {
     telefono: string;
     estado: string;
 };
-
 const estados = {
     1: "Inactiva",
     2: "En curso",
@@ -27,11 +24,9 @@ const estados = {
 export default function Docentes() {
     const dispatch = useDispatch();
     const [alumnos, setAlumnos] = useState<AlumnoInfo[]>([]);
-
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const Userdata = useSelector(UserSelector.getUser);
     const ternas = useSelector(SelectorTernas.ternasInfo);
-
 
     useEffect(() => {
         const utils: TypeUtilities = { url: `/detalleTernas/getDetalleTernas` };
@@ -46,8 +41,6 @@ export default function Docentes() {
             dispatch(FetcherTernas.getTernasInfo(utils));
         }
     }, [dispatch, ternasDetalle]);
-
-    
 
     useEffect(() => {
         const alumnosMapped: AlumnoInfo[] = [];
@@ -68,8 +61,6 @@ export default function Docentes() {
             setAlumnos(alumnosMapped);
         }
     }, [ternas]);
-
-
     const detalleCoordinador = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) => 
             terna.ternaId === alumno.ternaId && 
@@ -77,7 +68,6 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) => 
             terna.ternaId === alumno.ternaId && 
@@ -85,39 +75,28 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-
+    const DetalleTerna = (titulo: string, detalle: AlumnoInfo[]) => (
+        <>
+            <h4>{titulo}</h4>
+            {!isEmpty(detalle) ? (
+                <Tables
+                    data={detalle.map((alumno) => ({
+                        ...alumno,
+                        
+                    }))}
+                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Teléfono', 'Estado']}
+                    firstColumnIndex={0}
+                    paginated={false}
+                />
+            ) : (
+                <p>No tienes ternas donde seas {titulo.toLowerCase()}.</p>
+            )}
+        </>
+    );
     return (
         <Container>
-            <h4>Coordinador de Terna</h4>
-            {!isEmpty(detalleCoordinador) ? (
-                <Tables
-                    data={detalleCoordinador.map((alumno) => ({
-                        ...alumno
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Estado']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas coordinador.</p>
-            )}
-
-            <h4>Miembro de Terna</h4>
-            {!isEmpty(detalleMiembro) ? (
-                <Tables
-                    data={detalleMiembro.map((alumno) => ({
-                        ...alumno,
-                    
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Estado']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas miembro.</p>
-            )}
-
-           
+            {DetalleTerna("Coordinador de Terna", detalleCoordinador)}
+            {DetalleTerna("Miembro de Terna", detalleMiembro)}
         </Container>
     );
 }

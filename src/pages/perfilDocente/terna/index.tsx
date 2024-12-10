@@ -12,12 +12,11 @@ type TernaDetail = {
     detalleTernaId?: number;
     ternaId: number;
     docenteId: string;
-
     docenteNombre: string;
     docenteTelefono?: string;
     docenteEmail?: string;
+    coordina: string
 };
-
 type AlumnoInfo = {
     ternaId: number;
     alumnoNombre: string;
@@ -33,12 +32,10 @@ export default function Docentes() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedTernaDocentes, setSelectedTernaDocentes] = useState<TernaDetail[]>([]);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
-
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const Userdata = useSelector(UserSelector.getUser);
     const docentes = useSelector(DocenteSelector.getDocentes);
     const ternas = useSelector(SelectorTernas.ternasInfo);
-
     const toggleModal = () => setModalOpen(!modalOpen);
 
     useEffect(() => {
@@ -65,11 +62,11 @@ export default function Docentes() {
                 if (docentesData) {
                     const ternaDetail: TernaDetail = {
                         ternaId: terna.ternaId,
+                        coordina: terna.coordina ? "Coordinador": "Miembro",
                         docenteId: docentesData.docenteId,
                         docenteNombre: docentesData.nombre,
                         docenteTelefono: docentesData.telefono,
-                        docenteEmail: docentesData.email,
-                       
+                        docenteEmail: docentesData.email, 
                     };
                     if (!DetallesDocentes[terna.ternaId]) {
                         DetallesDocentes[terna.ternaId] = [];
@@ -99,14 +96,12 @@ export default function Docentes() {
             setAlumnos(alumnosMapped);
         }
     }, [ternas]);
-
     const VerDetalleTerna = (ternaId: number) => {
         const ternaDocentes = detalles[ternaId] || [];
         setSelectedTernaDocentes(ternaDocentes);
         setSelectedTernaId(ternaId);
         toggleModal();
     };
-
     const detalleCoordinador = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) => 
             terna.ternaId === alumno.ternaId && 
@@ -114,7 +109,6 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) => 
             terna.ternaId === alumno.ternaId && 
@@ -122,65 +116,46 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-
+    const DetalleTerna = (titulo: string, detalle: AlumnoInfo[]) => (
+        <>
+            <h4>{titulo}</h4>
+            {!isEmpty(detalle) ? (
+                <Tables
+                    data={detalle.map((alumno) => ({
+                        ...alumno,
+                        acciones: (
+                            <Button
+                                color="primary"
+                                onClick={() => VerDetalleTerna(alumno.ternaId)}>
+                                Ver más
+                            </Button>
+                        ),
+                    }))}
+                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad','Email', 'Teléfono',  'Acciones']}
+                    firstColumnIndex={0}
+                    paginated={false}
+                />
+            ) : (
+                <p>No tienes ternas donde seas {titulo.toLowerCase()}.</p>
+            )}
+        </>
+    )
     return (
         <Container>
-            <h4>Coordinador de Terna</h4>
-            {!isEmpty(detalleCoordinador) ? (
-                <Tables
-                    data={detalleCoordinador.map((alumno) => ({
-                        ...alumno,
-                        acciones: (
-                            <Button
-                                color="primary"
-                                onClick={() => VerDetalleTerna(alumno.ternaId)}
-                            >
-                                Ver más
-                            </Button>
-                        ),
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas coordinador.</p>
-            )}
-
-            <h4>Miembro de Terna</h4>
-            {!isEmpty(detalleMiembro) ? (
-                <Tables
-                    data={detalleMiembro.map((alumno) => ({
-                        ...alumno,
-                        acciones: (
-                            <Button
-                                color="primary"
-                                onClick={() => VerDetalleTerna(alumno.ternaId)}
-                            >
-                                Ver más
-                            </Button>
-                        ),
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas miembro.</p>
-            )}
-
-            <Modal isOpen={modalOpen} toggle={toggleModal} style={{ maxWidth: '35%', width: '35%' }}>
+            {DetalleTerna("Coordinador de Terna", detalleCoordinador)}
+            {DetalleTerna("Miembro de Terna", detalleMiembro)}
+            <Modal isOpen={modalOpen} toggle={toggleModal} style={{ maxWidth: '35%'}}>
                 <ModalHeader toggle={toggleModal}>
                     {`Docentes en la terna ${selectedTernaId}`}
                 </ModalHeader>
-                <ModalBody style={{fontSize: '15px'}}>
+                <ModalBody style={{ fontSize: '15px' }}>
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
                             <div key={docente.docenteId}>
                                 <p><strong>Nombre:</strong> {docente.docenteNombre}</p>
                                 <p><strong>Teléfono:</strong> {docente.docenteTelefono}</p>
                                 <p><strong>Email:</strong> {docente.docenteEmail}</p>
-                               
+                                <p><strong>Coordina:</strong> {docente.coordina}</p>
                                 <hr />
                             </div>
                         ))
