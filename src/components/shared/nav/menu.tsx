@@ -6,6 +6,7 @@ import CargasMenu from '../../../pages/cargasPage/cargasIndex';
 import DocentePerfil from "../../../pages/perfilDocente"
 import Pensums from '../../../pages/pensums/';
 import { Home } from '../../../pages/home/home';
+import Alumno from '../../../pages/alumnospage/alumno';
 
 
 export const MenuItems: Array<Array<Menu>> = [
@@ -48,7 +49,7 @@ export const MenuItems: Array<Array<Menu>> = [
         {
             'title': 'Terna',
             'pathTo': '/',
-            'component': <>docnetes </>
+            'component': <Alumno/>
         },
         {
             'title': 'Documentacion',
