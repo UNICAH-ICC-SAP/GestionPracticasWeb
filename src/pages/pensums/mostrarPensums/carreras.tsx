@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../../../store";
 import { Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
-import { Container, Card, CardTitle, Row, Col, Button, CardHeader, CardFooter, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner } from "reactstrap";
+import { Selector as SelectorDocentes } from '../../../store/slices/docentes';
+import { Container, Card, Row, Col, Button, CardHeader, CardFooter, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import NotFound from "../../../components/shared/notFound";
@@ -18,7 +19,7 @@ type ClaseDetail = {
 
 type ClasesPorBloque = Record<number, ClaseDetail[]>;
 
-type ModalType = 'create' | 'edit' | 'status';
+type ModalType = 'create' | 'edit' | 'status' | 'section';
 
 type ModalState = {
     isOpen: boolean;
@@ -30,6 +31,16 @@ type ModalState = {
 type ClaseForm = Omit<ClaseDetail, 'estado'> & {
     facultadId: string;
     id_bloque: number;
+};
+
+type SectionForm = {
+    docenteId: string;
+    hora_inicio: string;
+    hora_final: string;
+    dia_inicio: number;
+    dia_final: number;
+    horario_especial: boolean;
+    id_clase: string;
 };
 
 const facultades: { id: string; nombre: string }[] = [
@@ -52,6 +63,16 @@ const INITIAL_FORM_STATE: ClaseForm = {
     id_bloque: 1
 };
 
+const INITIAL_SECTION_FORM: SectionForm = {
+    docenteId: '',
+    hora_inicio: '',
+    hora_final: '',
+    dia_inicio: 1,
+    dia_final: 1,
+    horario_especial: false,
+    id_clase: ''
+};
+
 const INITIAL_MODAL_STATE: ModalState = {
     isOpen: false,
     type: null
@@ -65,10 +86,16 @@ export default function Carreras() {
     const [facultadSeleccionada, setFacultadSeleccionada] = useState<string>('IG04001');
     const [modal, setModal] = useState<ModalState>(INITIAL_MODAL_STATE);
     const [formData, setFormData] = useState<ClaseForm>(INITIAL_FORM_STATE);
+    const [sectionForm, setSectionForm] = useState<SectionForm>(INITIAL_SECTION_FORM);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const clases = useSelector(SelectorPensum.getClases);
     const carreras = useSelector(SelectorPensum.getCarreras);
+    const docentes = useSelector(SelectorDocentes.getDocentes);
+
+    const docentesFiltrados = docentes?.filter(docente => 
+        docente.facultadId === facultadSeleccionada
+    );
 
     const loadData = async (facultadId: string) => {
         setIsLoading(true);
@@ -126,15 +153,32 @@ export default function Carreras() {
         setModal({ isOpen: true, type, currentClase: clase, currentBloque: bloque });
     };
 
+    const handleOpenSectionModal = (clase: ClaseDetail) => {
+        setSectionForm({
+            ...INITIAL_SECTION_FORM,
+            id_clase: clase.id_clase
+        });
+        setModal({ isOpen: true, type: 'section', currentClase: clase });
+    };
+
     const handleCloseModal = () => {
         setModal(INITIAL_MODAL_STATE);
         setFormData(INITIAL_FORM_STATE);
+        setSectionForm(INITIAL_SECTION_FORM);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         const parsedValue = ['creditos', 'id_bloque'].includes(name) ? parseInt(value) : value;
         setFormData(prev => ({ ...prev, [name]: parsedValue }));
+    };
+
+    const handleSectionInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        setSectionForm(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -161,6 +205,19 @@ export default function Carreras() {
                 await loadData(facultadSeleccionada);
                 handleCloseModal();
             }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSectionSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            //en espera
+            await loadData(facultadSeleccionada);
+            handleCloseModal();
         } finally {
             setIsLoading(false);
         }
@@ -247,20 +304,16 @@ export default function Carreras() {
                         </FormGroup>
                     </Col>
                     <Col md={6}>
-                        <FormGroup>
-                            <Label for="docenteId">Buscar Docente</Label>
-                            <Input
-                                id="docenteId"
-                                name="docente"
-                                placeholder="cargon"
-                                type="text"
-                            >
-                            </Input>
-                        </FormGroup>
+                        <Button
+                            color={"primary"}
+                            onClick={() => handleOpenModal('create')}
+                        >
+                            AGREGAR CLASE
+                        </Button>
                     </Col>
                 </Row>
             </Form>
-            
+
             {isLoading ? (
                 <div className="text-center my-5">
                     <Spinner color="primary">
@@ -285,7 +338,12 @@ export default function Carreras() {
                                             </CardHeader>
                                             <CardFooter>
                                                 <ButtonGroup>
-                                                    <Button color="primary" onClick={() => {/*Implementar creación*/ }}><FontAwesomeIcon icon={faPlus} /> </Button>
+                                                    <Button 
+                                                        color="primary" 
+                                                        onClick={() => handleOpenSectionModal(clase)}
+                                                    >
+                                                        <FontAwesomeIcon icon={faPlus} />
+                                                    </Button>
                                                     <Button
                                                         color={"success"}
                                                         onClick={() => handleOpenModal('edit', parseInt(bloque), clase)}
@@ -304,21 +362,6 @@ export default function Carreras() {
                                         </Card>
                                     </Col>
                                 ))}
-                                <Col md={3} className={"mb-3"}>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle tag={"h5"}> AGREGAR CLASE </CardTitle>
-                                        </CardHeader>
-                                        <CardFooter>
-                                            <Button
-                                                color={"primary"}
-                                                onClick={() => handleOpenModal('create', parseInt(bloque))}
-                                            >
-                                                <FontAwesomeIcon icon={faPlus} />
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                </Col>
                             </Row>
                         </Card>
                     ))
@@ -329,8 +372,9 @@ export default function Carreras() {
                     {modal.type === 'create' && 'Crear Nueva Clase'}
                     {modal.type === 'edit' && 'Editar Clase'}
                     {modal.type === 'status' && 'Cambiar Estado de Clase'}
+                    {modal.type === 'section' && `Agregar Sección - ${modal.currentClase?.nombre_clase}`}
                 </ModalHeader>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={modal.type === 'section' ? handleSectionSubmit : handleSubmit}>
                     <ModalBody>
                         {modal.type === 'status' ? (
                             <div className="text-center">
@@ -339,6 +383,97 @@ export default function Carreras() {
                                 <p className="mb-0">Código: {modal.currentClase?.id_clase}</p>
                                 <p className="mb-0">Créditos: {modal.currentClase?.creditos}</p>
                             </div>
+                        ) : modal.type === 'section' ? (
+                            <>
+                                <FormGroup>
+                                    <Label for="docenteId">Docente</Label>
+                                    <Input
+                                        id="docenteId"
+                                        name="docenteId"
+                                        type="select"
+                                        value={sectionForm.docenteId}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    >
+                                        <option value="">Seleccione un docente</option>
+                                        {docentesFiltrados?.map(docente => (
+                                            <option key={docente.docenteId} value={docente.docenteId}>
+                                                {docente.nombre}
+                                            </option>
+                                        ))}
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="dia_inicio">Día Inicio</Label>
+                                    <Input
+                                        id="dia_inicio"
+                                        name="dia_inicio"
+                                        type="select"
+                                        value={sectionForm.dia_inicio}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    >
+                                        <option value="1">Lunes</option>
+                                        <option value="2">Martes</option>
+                                        <option value="3">Miércoles</option>
+                                        <option value="4">Jueves</option>
+                                        <option value="5">Viernes</option>
+                                        <option value="6">Sábado</option>
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="dia_final">Día Final</Label>
+                                    <Input
+                                        id="dia_final"
+                                        name="dia_final"
+                                        type="select"
+                                        value={sectionForm.dia_final}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    >
+                                        <option value="1">Lunes</option>
+                                        <option value="2">Martes</option>
+                                        <option value="3">Miércoles</option>
+                                        <option value="4">Jueves</option>
+                                        <option value="5">Viernes</option>
+                                        <option value="6">Sábado</option>
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="hora_inicio">Hora Inicio</Label>
+                                    <Input
+                                        id="hora_inicio"
+                                        name="hora_inicio"
+                                        type="time"
+                                        value={sectionForm.hora_inicio}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup check className="mb-3">
+                                    <Label check>
+                                        <Input
+                                            type="checkbox"
+                                            name="horario_especial"
+                                            checked={sectionForm.horario_especial}
+                                            onChange={handleSectionInputChange}
+                                        />{' '}
+                                        Horario Especial
+                                    </Label>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="hora_final">Hora Final</Label>
+                                    <Input
+                                        id="hora_final"
+                                        name="hora_final"
+                                        type="time"
+                                        value={sectionForm.hora_final}
+                                        onChange={handleSectionInputChange}
+                                        disabled={!sectionForm.horario_especial}
+                                        required={sectionForm.horario_especial}
+                                    />
+                                </FormGroup>
+                            </>
                         ) : (
                             <>
                                 <FormGroup>
@@ -397,6 +532,7 @@ export default function Carreras() {
                             {modal.type === 'create' && 'Crear'}
                             {modal.type === 'edit' && 'Guardar'}
                             {modal.type === 'status' && (modal.currentClase?.estado ? 'Desactivar' : 'Activar')}
+                            {modal.type === 'section' && 'Guardar'}
                         </Button>
                     </ModalFooter>
                 </Form>
