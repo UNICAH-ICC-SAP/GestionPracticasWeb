@@ -44,8 +44,7 @@ export default CreateReducer(INIT, ({ addCase }) => {
         ...state,
         userToCreate: {
             ...payload,
-            userId: payload.userId,
-            pass: Math.random().toString(36).slice(-8)
+            passwordResetRequired: 1
         }
     }));
     addCase(Fetcher.getDetalleTernas.fulfilled, (state, { payload }) => ({
@@ -59,5 +58,13 @@ export default CreateReducer(INIT, ({ addCase }) => {
         ternasInfo: JSON.parse(JSON.stringify(payload.ternasInfo)),
         error: JSON.parse(JSON.stringify(payload.error)),
         logged: JSON.parse(JSON.stringify(payload.logged))
+    }));
+    addCase(Fetcher.saveDetalleTernas.fulfilled, (state, { payload }) => ({
+        ...state,
+        saveDetalleTernas: payload
+    }));
+    addCase(Fetcher.saveTernas.fulfilled, (state, { payload }) => ({
+        ...state,
+        currentTernaId:payload.ternaInfo
     }));
 });

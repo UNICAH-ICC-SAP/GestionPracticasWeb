@@ -1,37 +1,45 @@
+import { Type as TypeModal } from './../../../Api/namespaces/modalError';
 import { CreateActions } from "../../../storeConfig";
 
-export const NAME = "Facultades";
+
+export const NAME = "Alumnos"; 
 
 export declare namespace Type {
     export type AlumnoInfo = {
         alumnoId: string;
         nombre: string;
-        facultadId: string;
+        facultadId: string;  
         email: string;
         telefono: string;
     }
 }
 
-export declare namespace StoreFacultad {
+export declare namespace StoreAlumnos {
     export type State = {
-        facultad: Type.AlumnoInfo;
-        facultades: Array<Type.AlumnoInfo>;
+        alumno: Type.AlumnoInfo;  
+        alumnos: Array<Type.AlumnoInfo>; 
+        error:  TypeModal.ModalError;
     };
 }
 
 export const Action = CreateActions<{
-    cleanFacultad: void;
+    cleanAlumno: void;  
     cleanStore: void;
-    setFacultad: object;
-}>(NAME, ["cleanFacultad", "cleanStore", "setFacultad"]);
+    setAlumno: object; 
+}>(NAME, ["cleanAlumno", "cleanStore","setAlumno"]);
 
-export const INIT: StoreFacultad.State = {
-    facultad: {
+
+export const INIT: StoreAlumnos.State = {
+    alumno: {
         alumnoId: "",
         nombre: "",
-        facultadId: "",
+        facultadId: "",  
         email: "",
         telefono: "",
     },
-    facultades: []
+    alumnos: []  ,
+    error: {
+        code: 0,
+        message: ""
+    },
 };

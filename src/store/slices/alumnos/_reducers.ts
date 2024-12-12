@@ -3,21 +3,27 @@ import { INIT, Action } from "./_namespace";
 import Fetcher from "./_fetchers";
 
 export default CreateReducer(INIT, ({ addCase }) => {
+   
     addCase(Action.cleanStore, (state) => ({
         ...state,
         ...INIT,
     }));
-    addCase(Action.cleanFacultad, (state) => ({
+    addCase(Action.cleanAlumno, (state) => ({
         ...state,
-        facultad: INIT.facultad,
+        alumno: INIT.alumno,
     }));
-    addCase(Fetcher.getFacultadesBy.fulfilled, (state, { payload }) => ({
+    addCase(Fetcher.getAlumnos.fulfilled, (state, { payload }) => ({
         ...state,
-        facultades: JSON.parse(JSON.stringify(payload.facultades)),
-        error: payload.error
+        alumnos: JSON.parse(JSON.stringify(payload.alumnos)), 
     }));
-    addCase(Fetcher.getFacultades.fulfilled, (state, { payload }) => ({
+    addCase(Fetcher.saveDataAlumno.fulfilled, (state, { payload}) => ({
         ...state,
-        facultades: JSON.parse(JSON.stringify(payload.facultades))
-    }))
+        saveDataAlumno: JSON.parse(JSON.stringify(payload))
+    }));
+    addCase(Fetcher.updatealumno.fulfilled, (state, { payload }) => ({
+        ...state,
+        alumnosActualizado: JSON.parse(JSON.stringify(payload.alumnos)),
+        error: JSON.parse(JSON.stringify(payload.error))
+    }));
+
 });

@@ -32,4 +32,8 @@ export default CreateReducer(INIT, ({ addCase }) => {
         ...state,
         userInfo: JSON.parse(JSON.stringify(payload.user))
     }));
+    addCase(Fetcher.signUp.fulfilled, (state, {payload}) => ({
+        ...state,
+        userD: JSON.parse(JSON.stringify(payload))
+    }));
 });

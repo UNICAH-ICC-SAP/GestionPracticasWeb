@@ -11,6 +11,12 @@ import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramatic
 
 export const adminMenu: Array<Menu> = [
   {
+    paneId: "CrearTernas",
+    title: "Crear Ternas",
+    pathTo: "/ternas/crearTernas",
+    component: <CrearTernas />,
+  },
+  {
     paneId: "DocenteTernas",
     title: "Ternas por Docente",
     pathTo: "/ternas/verTernasDocentes",
@@ -21,12 +27,6 @@ export const adminMenu: Array<Menu> = [
     title: "Ternas por Alumno",
     pathTo: "/ternas/verTernasAlumnos",
     component: <>Ternas por Alumno</>,
-  },
-  {
-    paneId: "CrearTernas",
-    title: "Crear Ternas",
-    pathTo: "/ternas/crearTernas",
-    component: <CrearTernas />,
   },
 ];
 
