@@ -6,18 +6,17 @@ import { useDispatch, useSelector } from "../../../store";
 import { isEmpty } from "lodash";
 import { Selector as UserSelector } from '../../../store/slices/users';
 import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '../../../store/slices/docentes';
+import NotFound from "../../../components/shared/notFound";
 import { Tables } from "../../../components/commons/tables/tables";
-
 type TernaDetail = {
     detalleTernaId?: number;
     ternaId: number;
     docenteId: string;
-
     docenteNombre: string;
-    docenteTelefono?: string;
-    docenteEmail?: string;
+    docenteTelefono: string;
+    docenteEmail: string;
+    coordina: string
 };
-
 type AlumnoInfo = {
     ternaId: number;
     alumnoNombre: string;
@@ -33,12 +32,10 @@ export default function Docentes() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedTernaDocentes, setSelectedTernaDocentes] = useState<TernaDetail[]>([]);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
-
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const Userdata = useSelector(UserSelector.getUser);
     const docentes = useSelector(DocenteSelector.getDocentes);
     const ternas = useSelector(SelectorTernas.ternasInfo);
-
     const toggleModal = () => setModalOpen(!modalOpen);
 
     useEffect(() => {
@@ -65,11 +62,11 @@ export default function Docentes() {
                 if (docentesData) {
                     const ternaDetail: TernaDetail = {
                         ternaId: terna.ternaId,
+                        coordina: terna.coordina ? "Coordinador": "Miembro",
                         docenteId: docentesData.docenteId,
                         docenteNombre: docentesData.nombre,
                         docenteTelefono: docentesData.telefono,
-                        docenteEmail: docentesData.email,
-                       
+                        docenteEmail: docentesData.email, 
                     };
                     if (!DetallesDocentes[terna.ternaId]) {
                         DetallesDocentes[terna.ternaId] = [];
@@ -99,14 +96,12 @@ export default function Docentes() {
             setAlumnos(alumnosMapped);
         }
     }, [ternas]);
-
     const VerDetalleTerna = (ternaId: number) => {
         const ternaDocentes = detalles[ternaId] || [];
         setSelectedTernaDocentes(ternaDocentes);
         setSelectedTernaId(ternaId);
         toggleModal();
     };
-
     const detalleCoordinador = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) => 
             terna.ternaId === alumno.ternaId && 
@@ -114,7 +109,6 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) => 
             terna.ternaId === alumno.ternaId && 
@@ -122,70 +116,52 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-
     return (
         <Container>
-            <h4>Coordinador de Terna</h4>
-            {!isEmpty(detalleCoordinador) ? (
-                <Tables
-                    data={detalleCoordinador.map((alumno) => ({
-                        ...alumno,
-                        acciones: (
-                            <Button
-                                color="primary"
-                                onClick={() => VerDetalleTerna(alumno.ternaId)}
-                            >
-                                Ver más
-                            </Button>
-                        ),
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas coordinador.</p>
-            )}
-
-            <h4>Miembro de Terna</h4>
-            {!isEmpty(detalleMiembro) ? (
-                <Tables
-                    data={detalleMiembro.map((alumno) => ({
-                        ...alumno,
-                        acciones: (
-                            <Button
-                                color="primary"
-                                onClick={() => VerDetalleTerna(alumno.ternaId)}
-                            >
-                                Ver más
-                            </Button>
-                        ),
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas miembro.</p>
-            )}
-
-            <Modal isOpen={modalOpen} toggle={toggleModal} style={{ maxWidth: '35%', width: '35%' }}>
+            {[
+                { title: 'Coordinador de terna', data: detalleCoordinador },
+                { title: 'Miembro de terna', data: detalleMiembro },
+            ].map(({ title, data }, index) => (
+                <Container key={index}>
+                    <h4>{title}</h4>
+                    {!isEmpty(data) ? (
+                        <Tables
+                            data={data.map((alumno) => ({
+                                ...alumno,
+                                acciones: (
+                                    <Button
+                                        color="primary"
+                                        onClick={() => VerDetalleTerna(alumno.ternaId)}>
+                                         Ver más
+                                    </Button>
+                                ),
+                            }))}
+                            headers={['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
+                            firstColumnIndex={0}
+                            paginated={false}
+                        />
+                    ) : (
+                        <NotFound />
+                    )}
+                </Container>
+            ))}
+            <Modal isOpen={modalOpen} toggle={toggleModal} className="modal-size">
                 <ModalHeader toggle={toggleModal}>
                     {`Docentes en la terna ${selectedTernaId}`}
                 </ModalHeader>
-                <ModalBody style={{fontSize: '15px'}}>
+                <ModalBody className="modal-font-size">
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
                             <div key={docente.docenteId}>
                                 <p><strong>Nombre:</strong> {docente.docenteNombre}</p>
                                 <p><strong>Teléfono:</strong> {docente.docenteTelefono}</p>
                                 <p><strong>Email:</strong> {docente.docenteEmail}</p>
-                               
+                                <p><strong>Coordina:</strong> {docente.coordina}</p>
                                 <hr />
                             </div>
                         ))
                     ) : (
-                        <p>No se encontraron docentes para esta terna.</p>
+                        <NotFound />
                     )}
                 </ModalBody>
             </Modal>
