@@ -61,33 +61,22 @@ export default function ModificarAlumnos() {
         toggleDeleteModal();
     }
 
-    const handleUpdateAlumno = () => {
+    const handleUpdateAlumno = async () => {
         if (selectedAlumno) {
-            const params = {
-                url: `/alumno/update?alumnoId=${selectedAlumno.alumnoid}`,
-                data: selectedAlumno,
-            };
-    
-            dispatch(FetcherAlumno.updatealumno(params))
-                .then(() => {
-                    dispatch(FetcherAlumno.getAlumnos(utils));
-                    toggleModal();
-                    Swal.fire({
-                        title: "¡Éxito!",
-                        text: "El alumno se ha actualizado exitosamente.",
-                        icon: "success",
-                    });
-                })
-                .catch(error => {
-                    console.error("Error actualizando alumno:", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Hubo un error al actualizar el alumno.",
-                    });
-                });
+          const params = {
+            url: `/alumno/update?alumnoId=${selectedAlumno.alumnoid}`,
+            data: selectedAlumno,
+          };
+          try {
+            await dispatch(FetcherAlumno.updatealumno(params));
+            await dispatch(FetcherAlumno.getAlumnos(utils));
+            toggleModal();
+            Swal.fire("¡Éxito!", "El alumno se ha actualizado exitosamente.", "success");
+          } catch (error) {
+            Swal.fire("Oops...", "Hubo un error al actualizar el alumno.", "error");
+          }
         }
-    };
+      };
 
     const renderActions = (alumno: AlumnoDetails) => (
         <ButtonGroup>
@@ -101,35 +90,21 @@ export default function ModificarAlumnos() {
     );
 
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = async () => {
         if (confirmText === selectedAlumno?.nombre) {
-            const params = {
-                url: `/alumno/updateStatus?alumnoId=${selectedAlumno.alumnoid}`,
-            };
-    
-            dispatch(FetcherAlumno.updatealumno(params))
-                .then(() => {
-                    dispatch(FetcherAlumno.getAlumnos(utils));
-                    toggleDeleteModal();
-                    Swal.fire({
-                        title: "¡Éxito!",
-                        text: "El alumno se ha eliminado exitosamente.",
-                        icon: "success",
-                    });
-                })
-                .catch(error => {
-                    console.error("Error eliminando alumno:", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Hubo un error al eliminar el alumno.",
-                    });
-                    console.error("Error eliminando alumno:", error);
-                });
+          const params = { url: `/alumno/updateStatus?alumnoId=${selectedAlumno.alumnoid}` };
+          try {
+            await dispatch(FetcherAlumno.updatealumno(params));
+            await dispatch(FetcherAlumno.getAlumnos(utils));
+            toggleDeleteModal();
+            Swal.fire("¡Éxito!", "El alumno se ha eliminado exitosamente.", "success");
+          } catch (error) {
+            Swal.fire("Oops...", "Hubo un error al eliminar el alumno.", "error");
+          }
         } else {
-            alert("El nombre ingresado no coincide. Por favor, verifica y escribe el nombre del alumno para confirmar.");
+          alert("El nombre ingresado no coincide.");
         }
-    };
+      };
 
     const isSaveDisabled = () => {
         return !(selectedAlumno?.nombre && selectedAlumno?.email && selectedAlumno?.telefono);
