@@ -8,7 +8,7 @@ import UnderConstruction  from "../../components/shared/construction";
 
 const adminMenu: Array<Menu> = [
     {
-        paneId: 'Mi terna',
+        paneId: 'miTerna',
         title: 'Ternas del Alumno',
         pathTo: '/alumnospage/mostrar_alumnos',
         component: <MostrarAlumnos/>
