@@ -47,7 +47,7 @@ export const MenuItems: Array<Array<Menu>> = [
     ],
     [
         {
-            'title': 'Terna',
+            'title': 'Alumno',
             'pathTo': '/',
             'component': <Alumno/>
         },
