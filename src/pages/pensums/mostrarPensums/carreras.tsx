@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../../../store";
 import { Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
-import { Selector as SelectorDocentes } from '../../../store/slices/docentes';
-import { Container, Card, Row, Col, Button, CardHeader, CardFooter, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner } from "reactstrap";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
+import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
+import { Container, Card, Row, Col, Button, CardHeader, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import NotFound from "../../../components/shared/notFound";
@@ -17,15 +18,29 @@ type ClaseDetail = {
     bloque?: number;
 };
 
+type SeccionDetail = {
+    id_detalle: number;
+    seccion: string;
+    docenteId: string;
+    id_ccb: number;
+    id_periodo: string;
+    hora_inicio: string;
+    dia_inicio: number;
+    dia_final: number;
+    hora_final: string;
+    horario_especial?: boolean;
+}
+
 type ClasesPorBloque = Record<number, ClaseDetail[]>;
 
-type ModalType = 'create' | 'edit' | 'status' | 'section';
+type ModalType = 'create' | 'edit' | 'status' | 'createSeccion' | 'editSeccion' | 'deleteSeccion';
 
 type ModalState = {
     isOpen: boolean;
     type: ModalType | null;
     currentClase?: ClaseDetail;
     currentBloque?: number;
+    nestedModal?: 'statusSeccion';
 };
 
 type ClaseForm = Omit<ClaseDetail, 'estado'> & {
@@ -35,12 +50,13 @@ type ClaseForm = Omit<ClaseDetail, 'estado'> & {
 
 type SectionForm = {
     docenteId: string;
+    id_clase: string;
     hora_inicio: string;
     hora_final: string;
     dia_inicio: number;
     dia_final: number;
-    horario_especial: boolean;
-    id_clase: string;
+    horario_especial?: boolean;
+    seccion?: string;
 };
 
 const facultades: { id: string; nombre: string }[] = [
@@ -65,17 +81,22 @@ const INITIAL_FORM_STATE: ClaseForm = {
 
 const INITIAL_SECTION_FORM: SectionForm = {
     docenteId: '',
+    id_clase: '',
     hora_inicio: '',
     hora_final: '',
     dia_inicio: 1,
     dia_final: 1,
     horario_especial: false,
-    id_clase: ''
 };
 
 const INITIAL_MODAL_STATE: ModalState = {
     isOpen: false,
     type: null
+};
+
+const getDayName = (day: number): string => {
+    const days = ['', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
+    return days[day] || '';
 };
 
 export default function Carreras() {
@@ -92,17 +113,16 @@ export default function Carreras() {
     const clases = useSelector(SelectorPensum.getClases);
     const carreras = useSelector(SelectorPensum.getCarreras);
     const docentes = useSelector(SelectorDocentes.getDocentes);
-
-    const docentesFiltrados = docentes?.filter(docente => 
-        docente.facultadId === facultadSeleccionada
-    );
+    const secciones = useSelector(SelectorSecciones.getSecciones);
 
     const loadData = async (facultadId: string) => {
         setIsLoading(true);
         try {
             await Promise.all([
                 dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" })),
-                dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadId}` }))
+                dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadId}` })),
+                dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" })),
+                dispatch(FetcherSecciones.getSecciones({ url: "/secciones/getSections?id_periodo=I-2028" }))
             ]);
         } finally {
             setIsLoading(false);
@@ -153,12 +173,28 @@ export default function Carreras() {
         setModal({ isOpen: true, type, currentClase: clase, currentBloque: bloque });
     };
 
-    const handleOpenSectionModal = (clase: ClaseDetail) => {
-        setSectionForm({
-            ...INITIAL_SECTION_FORM,
-            id_clase: clase.id_clase
-        });
-        setModal({ isOpen: true, type: 'section', currentClase: clase });
+    const handleOpenSectionModal = (type: ModalType, clase: ClaseDetail, seccion?: SeccionDetail) => {
+        const newSectionForm = type === 'createSeccion'
+            ? {
+                ...INITIAL_SECTION_FORM,
+                id_clase: clase.id_clase,
+                horario_especial: false
+            }
+            : type === 'editSeccion' && seccion
+                ? {
+                    docenteId: seccion.docenteId,
+                    id_clase: clase.id_clase,
+                    seccion: seccion.seccion,
+                    hora_inicio: seccion.hora_inicio,
+                    hora_final: seccion.hora_final,
+                    dia_inicio: seccion.dia_inicio,
+                    dia_final: seccion.dia_final,
+                    horario_especial: seccion.horario_especial ?? false
+                }
+                : INITIAL_SECTION_FORM;
+
+        setSectionForm(newSectionForm);
+        setModal({ isOpen: true, type, currentClase: clase });
     };
 
     const handleCloseModal = () => {
@@ -213,11 +249,38 @@ export default function Carreras() {
     const handleSectionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-
         try {
-            //en espera
-            await loadData(facultadSeleccionada);
-            handleCloseModal();
+            const actions = {
+                createSeccion: () => dispatch(FetcherSecciones.insertSeccion({
+                    url: '/secciones/insertSection',
+                    data: {
+                        ...sectionForm,
+                        id_clase: modal.currentClase?.id_clase,
+                        horario_especial: sectionForm.horario_especial ? 1 : 0
+                    }
+                })),
+                editSeccion: () => dispatch(FetcherSecciones.updateSeccion({
+                    url: `/secciones/updateSection?id_detalle=${sectionForm.seccion}`,
+                    data: {
+                        ...sectionForm,
+                        id_clase: modal.currentClase?.id_clase,
+                        horario_especial: sectionForm.horario_especial ? 1 : 0
+                    }
+                })),
+                deleteSeccion: () => dispatch(FetcherSecciones.deleteSection({
+                    url: "/secciones/deleteSeccion",
+                    data: {
+                        id_clase: modal.currentClase?.id_clase,
+                        seccion: sectionForm.seccion
+                    }
+                }))
+            };
+
+            if (modal.type && actions[modal.type]) {
+                await actions[modal.type]();
+                await loadData(facultadSeleccionada);
+                handleCloseModal();
+            }
         } finally {
             setIsLoading(false);
         }
@@ -256,7 +319,7 @@ export default function Carreras() {
     return (
         <Container>
             <h4 className="mb-3">
-                {facultades.find(f => f.id === facultadSeleccionada)?.nombre || 'Plan de Estudios'}
+                {facultades.find(f => f.id === facultadSeleccionada)?.nombre}
             </h4>
             <Form>
                 <Row>
@@ -334,13 +397,11 @@ export default function Carreras() {
                                             <CardHeader>
                                                 <h6 className={"text-muted mb-0"}> {clase.id_clase} </h6>
                                                 <h5 className={"mb-0"}>{clase.nombre_clase}</h5>
-                                                <h6 className={"text-muted mb-0"}> Créditos: {clase.creditos} </h6>
-                                            </CardHeader>
-                                            <CardFooter>
+                                                <h6 className={"text-muted"}> Créditos: {clase.creditos} </h6>
                                                 <ButtonGroup>
-                                                    <Button 
-                                                        color="primary" 
-                                                        onClick={() => handleOpenSectionModal(clase)}
+                                                    <Button
+                                                        color="primary"
+                                                        onClick={() => handleOpenSectionModal('createSeccion', clase)}
                                                     >
                                                         <FontAwesomeIcon icon={faPlus} />
                                                     </Button>
@@ -353,12 +414,49 @@ export default function Carreras() {
                                                     <Button
                                                         color={clase.estado ? "warning" : "info"}
                                                         onClick={() => handleOpenModal('status', parseInt(bloque), clase)}
-                                                        title={clase.estado ? "Desactivar" : "Activar"}
                                                     >
                                                         <FontAwesomeIcon icon={clase.estado ? faBan : faCheck} />
                                                     </Button>
                                                 </ButtonGroup>
-                                            </CardFooter>
+                                            </CardHeader>
+                                            <CardBody>
+                                                {secciones
+                                                    ?.filter(seccion => {
+                                                        const carrera = carreras.find(c => c.id_clase === clase.id_clase);
+                                                        return carrera && seccion.id_ccb === carrera.id_ccb;
+                                                    })
+                                                    .map((seccion, index, array) => (
+                                                        <div key={seccion.id_detalle}>
+                                                            <a
+                                                                href="#"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    handleOpenSectionModal('editSeccion', clase, seccion);
+                                                                }}
+                                                                className="text-decoration-none text-inherit"
+                                                            >
+                                                                <Row className="mx-0">
+                                                                    <Col>
+                                                                        <p className="fw-bold mb-1">
+                                                                            Sección {seccion.seccion}
+                                                                        </p>
+                                                                        <p className="text-muted small mb-1">
+                                                                            Días: {getDayName(seccion.dia_inicio)}
+                                                                            {seccion.dia_inicio !== seccion.dia_final && ` - ${getDayName(seccion.dia_final)}`}
+                                                                        </p>
+                                                                        <p className="text-muted small mb-1">
+                                                                            Hora: {seccion.hora_inicio} - {seccion.hora_final}
+                                                                        </p>
+                                                                        <p className="text-muted small mb-0">
+                                                                            Profesor: {docentes?.find(d => d.docenteId === seccion.docenteId)?.nombre || 'No asignado'}
+                                                                        </p>
+                                                                    </Col>
+                                                                </Row>
+                                                            </a>
+                                                            {index < array.length - 1 && <hr className="opacity-10 my-2" />}
+                                                        </div>
+                                                    ))}
+                                            </CardBody>
                                         </Card>
                                     </Col>
                                 ))}
@@ -367,14 +465,14 @@ export default function Carreras() {
                     ))
                 )
             )}
-            <Modal isOpen={modal.isOpen} toggle={handleCloseModal}>
+
+            <Modal isOpen={modal.isOpen && ['create', 'edit', 'status'].includes(modal.type || '')} toggle={handleCloseModal}>
                 <ModalHeader toggle={handleCloseModal}>
                     {modal.type === 'create' && 'Crear Nueva Clase'}
                     {modal.type === 'edit' && 'Editar Clase'}
                     {modal.type === 'status' && 'Cambiar Estado de Clase'}
-                    {modal.type === 'section' && `Agregar Sección - ${modal.currentClase?.nombre_clase}`}
                 </ModalHeader>
-                <Form onSubmit={modal.type === 'section' ? handleSectionSubmit : handleSubmit}>
+                <Form onSubmit={handleSubmit}>
                     <ModalBody>
                         {modal.type === 'status' ? (
                             <div className="text-center">
@@ -383,97 +481,6 @@ export default function Carreras() {
                                 <p className="mb-0">Código: {modal.currentClase?.id_clase}</p>
                                 <p className="mb-0">Créditos: {modal.currentClase?.creditos}</p>
                             </div>
-                        ) : modal.type === 'section' ? (
-                            <>
-                                <FormGroup>
-                                    <Label for="docenteId">Docente</Label>
-                                    <Input
-                                        id="docenteId"
-                                        name="docenteId"
-                                        type="select"
-                                        value={sectionForm.docenteId}
-                                        onChange={handleSectionInputChange}
-                                        required
-                                    >
-                                        <option value="">Seleccione un docente</option>
-                                        {docentesFiltrados?.map(docente => (
-                                            <option key={docente.docenteId} value={docente.docenteId}>
-                                                {docente.nombre}
-                                            </option>
-                                        ))}
-                                    </Input>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="dia_inicio">Día Inicio</Label>
-                                    <Input
-                                        id="dia_inicio"
-                                        name="dia_inicio"
-                                        type="select"
-                                        value={sectionForm.dia_inicio}
-                                        onChange={handleSectionInputChange}
-                                        required
-                                    >
-                                        <option value="1">Lunes</option>
-                                        <option value="2">Martes</option>
-                                        <option value="3">Miércoles</option>
-                                        <option value="4">Jueves</option>
-                                        <option value="5">Viernes</option>
-                                        <option value="6">Sábado</option>
-                                    </Input>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="dia_final">Día Final</Label>
-                                    <Input
-                                        id="dia_final"
-                                        name="dia_final"
-                                        type="select"
-                                        value={sectionForm.dia_final}
-                                        onChange={handleSectionInputChange}
-                                        required
-                                    >
-                                        <option value="1">Lunes</option>
-                                        <option value="2">Martes</option>
-                                        <option value="3">Miércoles</option>
-                                        <option value="4">Jueves</option>
-                                        <option value="5">Viernes</option>
-                                        <option value="6">Sábado</option>
-                                    </Input>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="hora_inicio">Hora Inicio</Label>
-                                    <Input
-                                        id="hora_inicio"
-                                        name="hora_inicio"
-                                        type="time"
-                                        value={sectionForm.hora_inicio}
-                                        onChange={handleSectionInputChange}
-                                        required
-                                    />
-                                </FormGroup>
-                                <FormGroup check className="mb-3">
-                                    <Label check>
-                                        <Input
-                                            type="checkbox"
-                                            name="horario_especial"
-                                            checked={sectionForm.horario_especial}
-                                            onChange={handleSectionInputChange}
-                                        />{' '}
-                                        Horario Especial
-                                    </Label>
-                                </FormGroup>
-                                <FormGroup>
-                                    <Label for="hora_final">Hora Final</Label>
-                                    <Input
-                                        id="hora_final"
-                                        name="hora_final"
-                                        type="time"
-                                        value={sectionForm.hora_final}
-                                        onChange={handleSectionInputChange}
-                                        disabled={!sectionForm.horario_especial}
-                                        required={sectionForm.horario_especial}
-                                    />
-                                </FormGroup>
-                            </>
                         ) : (
                             <>
                                 <FormGroup>
@@ -532,10 +539,166 @@ export default function Carreras() {
                             {modal.type === 'create' && 'Crear'}
                             {modal.type === 'edit' && 'Guardar'}
                             {modal.type === 'status' && (modal.currentClase?.estado ? 'Desactivar' : 'Activar')}
-                            {modal.type === 'section' && 'Guardar'}
                         </Button>
                     </ModalFooter>
                 </Form>
+            </Modal>
+
+            <Modal isOpen={modal.isOpen && ['createSeccion', 'editSeccion', 'deleteSeccion'].includes(modal.type || '')} toggle={handleCloseModal}>
+                <ModalHeader toggle={handleCloseModal}>
+                    {modal.type === 'createSeccion' && `Agregar Sección - ${modal.currentClase?.nombre_clase}`}
+                    {modal.type === 'editSeccion' && `Editar Sección - ${modal.currentClase?.nombre_clase}`}
+                    {modal.type === 'deleteSeccion' && `Eliminar Sección - ${modal.currentClase?.nombre_clase}`}
+                </ModalHeader>
+                <Form onSubmit={handleSectionSubmit}>
+                    <ModalBody>
+                        {modal.type === 'deleteSeccion' ? (
+                            <div className="text-center">
+                                <h5>¿Está seguro que desea eliminar esta sección?</h5>
+                                <p className="mb-0">Sección: {sectionForm.seccion}</p>
+                                <p className="mb-0">Clase: {modal.currentClase?.nombre_clase}</p>
+                                <p className="mb-0">Código: {modal.currentClase?.id_clase}</p>
+                            </div>
+                        ) : (
+                            <>
+                                <FormGroup>
+                                    <Label for="docenteId">Docente</Label>
+                                    <Input
+                                        id="docenteId"
+                                        name="docenteId"
+                                        type="select"
+                                        value={sectionForm.docenteId}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    >
+                                        <option value="">Seleccione un docente</option>
+                                        {docentes?.map(docente => (
+                                            <option key={docente.docenteId} value={docente.docenteId}>
+                                                {docente.nombre}
+                                            </option>
+                                        ))}
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="seccion">Sección</Label>
+                                    <Input
+                                        id="seccion"
+                                        name="seccion"
+                                        type="text"
+                                        value={sectionForm.seccion}
+                                        onChange={handleSectionInputChange}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="dia_inicio">Día Inicio</Label>
+                                    <Input
+                                        id="dia_inicio"
+                                        name="dia_inicio"
+                                        type="select"
+                                        value={sectionForm.dia_inicio}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    >
+                                        <option value="1">Lunes</option>
+                                        <option value="2">Martes</option>
+                                        <option value="3">Miércoles</option>
+                                        <option value="4">Jueves</option>
+                                        <option value="5">Viernes</option>
+                                        <option value="6">Sábado</option>
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="dia_final">Día Final</Label>
+                                    <Input
+                                        id="dia_final"
+                                        name="dia_final"
+                                        type="select"
+                                        value={sectionForm.dia_final}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    >
+                                        <option value="1">Lunes</option>
+                                        <option value="2">Martes</option>
+                                        <option value="3">Miércoles</option>
+                                        <option value="4">Jueves</option>
+                                        <option value="5">Viernes</option>
+                                        <option value="6">Sábado</option>
+                                    </Input>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="hora_inicio">Hora Inicio</Label>
+                                    <Input
+                                        id="hora_inicio"
+                                        name="hora_inicio"
+                                        type="time"
+                                        value={sectionForm.hora_inicio}
+                                        onChange={handleSectionInputChange}
+                                        required
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label for="hora_final">Hora Final</Label>
+                                    <Input
+                                        id="hora_final"
+                                        name="hora_final"
+                                        type="time"
+                                        value={sectionForm.hora_final}
+                                        onChange={handleSectionInputChange}
+                                        disabled={!sectionForm.horario_especial}
+                                        required={sectionForm.horario_especial}
+                                    />
+                                </FormGroup>
+                                <FormGroup check className="mb-3">
+                                    <Label check>
+                                        <Input
+                                            type="checkbox"
+                                            name="horario_especial"
+                                            checked={sectionForm.horario_especial}
+                                            onChange={handleSectionInputChange}
+                                        />{' '}
+                                        Horario Especial
+                                    </Label>
+                                </FormGroup>
+                            </>
+                        )}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={handleCloseModal}>
+                            Cancelar
+                        </Button>
+                        <Button color="primary" type="submit">
+                            {modal.type === 'createSeccion' ? 'Crear' : modal.type === 'editSeccion' ? 'Guardar' : 'Eliminar'}
+                        </Button>
+                        {modal.type === 'editSeccion' && (
+                            <Button color="warning" onClick={() => {
+                                setModal(prev => ({ 
+                                    ...prev, 
+                                    type: 'deleteSeccion'
+                                }));
+                            }}>
+                                Eliminar
+                            </Button>
+                        )}
+                    </ModalFooter>
+                </Form>
+            </Modal>
+
+            {/* Modal anidado para cambiar estado de sección */}
+            <Modal isOpen={modal.nestedModal === 'statusSeccion'} toggle={() => setModal(prev => ({ ...prev, nestedModal: undefined }))}>
+                <ModalHeader toggle={() => setModal(prev => ({ ...prev, nestedModal: undefined }))}>
+                    Eliminar Sección
+                </ModalHeader>
+                <ModalBody>
+                    ¿Está seguro que desea eliminar esta sección?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={handleSectionSubmit}>
+                        Eliminar
+                    </Button>
+                    <Button color="secondary" onClick={() => setModal(prev => ({ ...prev, nestedModal: undefined }))}>
+                        Cancelar
+                    </Button>
+                </ModalFooter>
             </Modal>
         </Container>
     );

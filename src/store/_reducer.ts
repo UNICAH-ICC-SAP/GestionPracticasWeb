@@ -11,6 +11,7 @@ import { NAME as NAME_DOCENTES, Reducer as ReducerDocentes } from "./slices/doce
 import { NAME as NAME_TERNAS, Reducer as ReducerTernas } from "./slices/ternas";
 import { NAME as NAME_FACULTAD, Reducer as ReducerFacultad } from "./slices/facultades"
 import { NAME as NAME_PENSUM, Reducer as ReducerPensum } from "./slices/pensums";
+import { NAME as NAME_SECCIONES, Reducer as ReducerSecciones } from "./slices/secciones";
 // import { NAME as NAME_FACULTAD, Reducer as ReducerFacultad } from "./slices/facultades";
 
 export default CombineReducers({
@@ -25,5 +26,6 @@ export default CombineReducers({
     [NAME_FACULTAD]: ReducerFacultad,
     [NAME_DOCENTES]: ReducerDocentes,
     [NAME_TERNAS]: ReducerTernas,
-    [NAME_PENSUM]: ReducerPensum
+    [NAME_PENSUM]: ReducerPensum,
+    [NAME_SECCIONES]: ReducerSecciones
 });
