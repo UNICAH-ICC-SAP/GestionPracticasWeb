@@ -14,3 +14,35 @@
     margin: 20rem -62rem 0rem 0rem;
     color: white !important;
 }
+
+.container-centered {
+    display: flex;
+    justify-content: center;
+}
+
+.card-centered {
+    width: 50%;
+}
+
+.card-subtitle {
+    display: flex;
+    width: 75%;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.text-start {
+    text-align: left;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    color: #6c757d;
+}
