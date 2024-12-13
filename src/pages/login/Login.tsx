@@ -26,7 +26,6 @@ function Login() {
     const [showWelcomeModal, setShowWelcomeModal] = React.useState(false);
     const [showPasswordResetModal, setShowPasswordResetModal] = React.useState(false);
     const [formPasswordReset, setFormPasswordReset] = React.useState<FormPasswordReset>({ newPass: '' });
-    const [passwordResetRequired, setPasswordResetRequired] = React.useState<boolean>(false);
 
     const [isLoginPasswordVisible, setIsLoginPasswordVisible] = React.useState(false);
     const [isResetPasswordVisible, setIsResetPasswordVisible] = React.useState(false);
@@ -45,55 +44,43 @@ function Login() {
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+    
         const utilities: TypeUtilities = { url: '/user/login', data: formLogin };
+    
+        dispatch(FetcherLogin.login(utilities))
+    .then((response) => {
+        const responsePayload = response?.payload;
 
-        try {
-            const response = await dispatch(FetcherLogin.login(utilities));
-            const responsePayload = response.payload;
-
-            if (responsePayload && responsePayload.passwordResetRequired) {
-                setPasswordResetRequired(true);
-                setShowWelcomeModal(true);
-            } else {
-                setPasswordResetRequired(false);
-            }
-        } catch (error) {
-            console.log("Error al hacer login:", error);
+        if (responsePayload && responsePayload.passwordResetRequired) {
+            setShowWelcomeModal(true);
         }
-    };
+    });
 
-    const handlePasswordResetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    };
+    
+
+    const handlePasswordResetSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         
         const utilities: TypeUtilities = { 
             url: `/user/resetPassword?userId=${formLogin.userId}`, 
             data: { newPassword: formPasswordReset.newPass }, 
         };
+    
+        dispatch(Fetcher.updateData(utilities))
+    .then(() => {
+        setShowPasswordResetModal(false);
+        Swal.fire({
+            title: "¡Éxito!",
+            text: "Contraseña actualizada con éxito.",
+            icon: "success",
+        });
+    });
 
-        try {
-            const response = await dispatch(Fetcher.updateData(utilities));
-
-            if (response.payload.success) {
-                setShowPasswordResetModal(false);
-                Swal.fire({
-                    title: "¡Éxito!",
-                    text: "Contraseña actualizada con éxito.",
-                    icon: "success",
-                });
-            } 
-            console.log(passwordResetRequired);
-        } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "No se pudo completar la actualización.",
-            });
-            console.log("Error: ", error);
-        }
     };
+    
 
     const handleWelcomeModalNext = () => {
         setShowWelcomeModal(false);
