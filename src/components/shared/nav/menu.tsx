@@ -40,7 +40,7 @@ export const MenuItems: Array<Array<Menu>> = [
     ,
     [
         {
-            'title': 'Mis Ternas',
+            'title': 'misTernas',
             'pathTo': '/',
             'component': < DocentePerfil />
         },

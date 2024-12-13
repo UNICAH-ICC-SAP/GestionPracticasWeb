@@ -8,13 +8,9 @@ import { Selector as UserSelector } from "../../store/slices/users";
 import { Selector as DocenteSelector, Fetcher as FetcherDocente } from "../../store/slices/docentes";
 import { Tables } from "../../components/commons/tables/tables";
 import NotFound from '../../components/shared/notFound'
+import {  Type } from '../../store/slices/ternas/_namespace';
 
-type TernaDetail = {
-    docenteNombre: string;
-    telefono: string
-    email: string
-    coordina: string;
-};
+type TernaDetail =  Type.DetalleTernaInfo;
 
 export default function DocentesAsignados() {
     const dispatch = useDispatch();
