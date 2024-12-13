@@ -34,7 +34,8 @@ export const MenuItems: Array<Array<Menu>> = [
             'title': 'Cargas Academicas',
             'pathTo': '/cargas',
             'component': <CargasMenu />
-        }
+        },
+ 
     ]
     ,
     [
@@ -48,12 +49,7 @@ export const MenuItems: Array<Array<Menu>> = [
         {
             'title': 'Terna',
             'pathTo': '/',
-            'component': <>docnetes </>
-        },
-        {
-            'title': 'Documentacion',
-            'pathTo': '/',
-            'component': <>Documentacion </>
+            'component': <>Alumno</>
         },
     ]
 ]
