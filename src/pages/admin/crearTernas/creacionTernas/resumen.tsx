@@ -70,8 +70,8 @@ export default function Resumen() {
                 },
             };
             try {
-                await dispatch(FetcherAlumnos.saveDataAlumno(paramsUser));
-                await dispatch(FetcherAlumnos.saveDataAlumno(paramsAlumno));
+                dispatch(FetcherAlumnos.saveDataAlumno(paramsUser));
+                dispatch(FetcherAlumnos.saveDataAlumno(paramsAlumno));
             } catch (error) {
                 Swal.fire({
                     icon: "error",
@@ -81,7 +81,11 @@ export default function Resumen() {
                 success = false;
             }
         } else {
-            console.log("No hay datos de alumno por guardar");
+            Swal.fire({
+                icon: "warning",
+                title: "Datos faltantes",
+                text: "No hay datos de alumno por guardar.",
+            });
             success = false;
         }
     
@@ -109,7 +113,7 @@ export default function Resumen() {
 
             try {
                 
-                await dispatch(FetcherDetallesTerna.saveDetalleTernas(paramsDetalle));
+                dispatch(FetcherDetallesTerna.saveDetalleTernas(paramsDetalle));
             } catch (error) {
                 Swal.fire({
                     icon: "error",
@@ -118,8 +122,12 @@ export default function Resumen() {
                 });
                 success = false;
             }
-        } else {
-            console.log("No hay datos de terna por guardar");
+        } else if (success) {
+            Swal.fire({
+                icon: "warning",
+                title: "Datos faltantes",
+                text: "No hay datos de terna por guardar.",
+            });
         }
         if (success) {
             Swal.fire({
@@ -128,18 +136,20 @@ export default function Resumen() {
                 icon: "success",
             });
             setDocentesInfo([]);
-            dispatch(ActionTernas.cleanUserData());     
-            window.location.reload();
+            dispatch(ActionTernas.cleanUserData()) ;
+            dispatch(ActionTernas.setStep1(true));
+            dispatch(ActionTernas.setResumen(false));
+            dispatch(ActionTernas.setStep2(false));
         }
     };
     
     return (
-        <Container style={{ display: "flex", justifyContent: 'center' }}>
+        <Container className="container-centered">
             {isCardVisible && (
-                <Card style={{ width: '50%' }}>
+                <Card className="card-centered">
                     <CardBody>
                         <CardTitle tag="h5" className="mb-4">Datos de Terna</CardTitle>
-                        <CardSubtitle style={{ display: "flex", width: '75%', justifyContent: 'center', flexDirection: 'column' }} className="mb-2 text-muted" tag="div">
+                        <CardSubtitle className="card-subtitle mb-2 text-muted" tag="div">
                             <div className="text-start"><strong>Id: </strong><span>{ternas.alumno?.alumnoId}</span></div>
                             <div className="text-start"><strong>Nombre: </strong><span>{ternas.alumno?.nombre}</span></div>
                         </CardSubtitle>
