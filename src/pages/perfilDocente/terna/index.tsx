@@ -6,15 +6,15 @@ import { useDispatch, useSelector } from "../../../store";
 import { isEmpty } from "lodash";
 import { Selector as UserSelector } from '../../../store/slices/users';
 import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '../../../store/slices/docentes';
+import NotFound from "../../../components/shared/notFound";
 import { Tables } from "../../../components/commons/tables/tables";
-
 type TernaDetail = {
     detalleTernaId?: number;
     ternaId: number;
     docenteId: string;
     docenteNombre: string;
-    docenteTelefono?: string;
-    docenteEmail?: string;
+    docenteTelefono: string;
+    docenteEmail: string;
     coordina: string
 };
 type AlumnoInfo = {
@@ -116,39 +116,40 @@ export default function Docentes() {
             terna.docenteId === Userdata.userId
         )
     );
-    const DetalleTerna = (titulo: string, detalle: AlumnoInfo[]) => (
-        <>
-            <h4>{titulo}</h4>
-            {!isEmpty(detalle) ? (
-                <Tables
-                    data={detalle.map((alumno) => ({
-                        ...alumno,
-                        acciones: (
-                            <Button
-                                color="primary"
-                                onClick={() => VerDetalleTerna(alumno.ternaId)}>
-                                Ver más
-                            </Button>
-                        ),
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad','Email', 'Teléfono',  'Acciones']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas {titulo.toLowerCase()}.</p>
-            )}
-        </>
-    )
     return (
         <Container>
-            {DetalleTerna("Coordinador de Terna", detalleCoordinador)}
-            {DetalleTerna("Miembro de Terna", detalleMiembro)}
-            <Modal isOpen={modalOpen} toggle={toggleModal} style={{ maxWidth: '35%'}}>
+            {[
+                { title: 'Coordinador de terna', data: detalleCoordinador },
+                { title: 'Miembro de terna', data: detalleMiembro },
+            ].map(({ title, data }, index) => (
+                <Container key={index}>
+                    <h4>{title}</h4>
+                    {!isEmpty(data) ? (
+                        <Tables
+                            data={data.map((alumno) => ({
+                                ...alumno,
+                                acciones: (
+                                    <Button
+                                        color="primary"
+                                        onClick={() => VerDetalleTerna(alumno.ternaId)}>
+                                         Ver más
+                                    </Button>
+                                ),
+                            }))}
+                            headers={['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
+                            firstColumnIndex={0}
+                            paginated={false}
+                        />
+                    ) : (
+                        <NotFound />
+                    )}
+                </Container>
+            ))}
+            <Modal isOpen={modalOpen} toggle={toggleModal} className="modal-size">
                 <ModalHeader toggle={toggleModal}>
                     {`Docentes en la terna ${selectedTernaId}`}
                 </ModalHeader>
-                <ModalBody style={{ fontSize: '15px' }}>
+                <ModalBody className="modal-font-size">
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
                             <div key={docente.docenteId}>
@@ -160,7 +161,7 @@ export default function Docentes() {
                             </div>
                         ))
                     ) : (
-                        <p>No se encontraron docentes para esta terna.</p>
+                        <NotFound />
                     )}
                 </ModalBody>
             </Modal>

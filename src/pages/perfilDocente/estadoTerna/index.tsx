@@ -5,6 +5,7 @@ import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../s
 import { useDispatch, useSelector } from "../../../store";
 import { isEmpty } from "lodash";
 import { Selector as UserSelector } from '../../../store/slices/users';
+import NotFound from "../../../components/shared/notFound";
 import { Tables } from "../../../components/commons/tables/tables";
 
 type AlumnoInfo = {
@@ -74,29 +75,29 @@ export default function Docentes() {
             !terna.coordina && 
             terna.docenteId === Userdata.userId
         )
-    );
-    const DetalleTerna = (titulo: string, detalle: AlumnoInfo[]) => (
-        <>
-            <h4>{titulo}</h4>
-            {!isEmpty(detalle) ? (
-                <Tables
-                    data={detalle.map((alumno) => ({
-                        ...alumno,
-                        
-                    }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Teléfono', 'Estado']}
-                    firstColumnIndex={0}
-                    paginated={false}
-                />
-            ) : (
-                <p>No tienes ternas donde seas {titulo.toLowerCase()}.</p>
-            )}
-        </>
-    );
+    );  
     return (
         <Container>
-            {DetalleTerna("Coordinador de Terna", detalleCoordinador)}
-            {DetalleTerna("Miembro de Terna", detalleMiembro)}
+            {[
+                { title: 'Coordinador de terna', data: detalleCoordinador },
+                { title: 'Miembro de terna', data: detalleMiembro },
+            ].map(({ title, data }, index) => (
+                <Container key={index}>
+                    <h4>{title}</h4>
+                    {!isEmpty(data) ? (
+                        <Tables
+                            data={data.map((alumno) => ({
+                                ...alumno,
+                            }))}
+                            headers={['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Estado']}
+                            firstColumnIndex={0}
+                            paginated={false}
+                        />
+                    ) : (
+                        <NotFound/> 
+                    )}
+                </Container>
+            ))}
         </Container>
     );
 }
