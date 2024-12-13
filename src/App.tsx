@@ -8,11 +8,13 @@ import { TypeUtilities } from './utilities/TypeUtilities';
 import { Route, Routes } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
-
 function App() {
     const userData = useSelector(UserSelector.getUser);
+    const isLogged = useSelector(UserSelector.IsLogged);
+    const passwordResetRequired = useSelector(UserSelector.getPasswordResetRequired);
     const dispatch = useDispatch();
     const CurrentNav = MenuItems[userData.roleId - 1]
+
     useEffect(() => {
         if (userData.roleId) {
             const uriConst = (userData.roleId === 3) ? 'alumno' : 'docente';
@@ -22,10 +24,15 @@ function App() {
             dispatch(FetcherUser.userInfo(utils))
         }
     }, [dispatch, userData.userId, userData.roleId])
+
+
+    if (!isLogged || passwordResetRequired) {
+        return <Login />
+    }
+
     return (
         <React.Fragment>
             <Navigation roleId={userData.roleId} />
-            {!userData.message && <Login />}
             <Container tag='div' style={{ display: 'flex' }} fluid className='justify-content-center'>
                 {CurrentNav && <Routes>
                     {
