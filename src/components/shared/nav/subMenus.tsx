@@ -7,6 +7,7 @@ import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
 import Carreras from "../../../pages/pensums/mostrarPensums/carreras";
 import Laboratorios from "../../../pages/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramaticas";
+import NuevaCarga from "../../../pages/admin/Cargas/NuevaCarga";
 import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno";
 import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarTernas";
 
@@ -15,7 +16,7 @@ export const adminMenu: Array<Menu> = [
     paneId: "AlumnoTernas",
     title: "Ver Ternas",
     pathTo: "/ternas/modificarTernas",
-    component: <VerTernas/>,
+    component: <VerTernas />,
   },
   {
     paneId: "CrearTernas",
@@ -27,7 +28,7 @@ export const adminMenu: Array<Menu> = [
     paneId: "ModificarAlumnos",
     title: "Ver y Modificar Alumnos",
     pathTo: "/Alumnos/modificarAlumnos",
-    component: <ModificarAlumnos/>,
+    component: <ModificarAlumnos />,
   },
 ];
 
@@ -42,7 +43,7 @@ export const cargasMenu: Array<Menu> = [
     paneId: "NuevaCarga",
     title: "Nueva Carga Académica",
     pathTo: "/cargas/crearCarga",
-    component: <>Aquí la página de crear carga</>,
+    component: <NuevaCarga />,
   },
 ];
 
@@ -57,7 +58,7 @@ export const docenteMenu: Array<Menu> = [
     paneId: "ModificarDocente",
     title: "Modificar Docente",
     pathTo: "/docentes/viewAllDocente",
-    component: <ModificarDocentes/>,
+    component: <ModificarDocentes />,
   },
   {
     paneId: "MostrarDocente",
@@ -72,19 +73,19 @@ export const pensumMenu: Array<Menu> = [
     paneId: "Carreras",
     title: "Carreras",
     pathTo: "/pensum/carreras",
-    component: <Carreras/>,
+    component: <Carreras />,
   },
   {
     paneId: "Laboratorios",
     title: "Laboratorios",
     pathTo: "/pensum/laboratorios",
-    component: <Laboratorios/>,
+    component: <Laboratorios />,
   },
   {
     paneId: "Coprogramaticas",
     title: "Coprogramáticas",
     pathTo: "/pensum/coprogramaticas",
-    component: <Coprogramaticas/>,
+    component: <Coprogramaticas />,
   }
 ];
 
