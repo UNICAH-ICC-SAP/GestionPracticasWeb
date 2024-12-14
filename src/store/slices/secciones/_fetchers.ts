@@ -49,6 +49,6 @@ export default CreateFetchers(NAME, {
   },
 
   async deleteSection(params: TypeUtilities) {
-    const response = await deleteData(params);
+    await deleteData(params);
   }
 });
