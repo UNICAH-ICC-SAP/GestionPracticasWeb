@@ -1,7 +1,7 @@
 import { Type as TypeError } from "../../../Api/namespaces/modalError";
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./_namespace";
-import { getData, saveData, updateData } from "../../../utilities/Utilities";
+import { deleteData, getData, saveData, updateData } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
@@ -49,16 +49,6 @@ export default CreateFetchers(NAME, {
   },
 
   async deleteSection(params: TypeUtilities) {
-    const response = await saveData(params);
-    if (isError<TypeError.ModalError>(response?.error)) {
-      return {
-        secciones: response?.data,
-        error: response?.error,
-      };
-    }
-    return {
-      secciones: response?.data,
-      error: response?.error,
-    };
-  },
+    const response = await deleteData(params);
+  }
 });

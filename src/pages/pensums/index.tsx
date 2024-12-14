@@ -10,6 +10,10 @@ import {
 import { pensumMenu } from "../../components/shared/nav/subMenus";
 import Breadcrumbs from "../../components/shared/breadcrumb/Breadcrumbs";
 
+type TypeBreadcumb = {
+    title: string;
+}
+
 export default function Pensums() {
     const [activePane, setActivePane] = useState<string>(pensumMenu[0].paneId!);
     const onChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -17,14 +21,16 @@ export default function Pensums() {
     };
     const currentTab = pensumMenu.find((item) => item.paneId === activePane);
 
+    const tabsBreadcrumb: Array<TypeBreadcumb> = [
+        { title: "Inicio" },
+        { title: "Pensums" },
+        { title: currentTab?.title || "" },
+    ];
+
     return (
         <div className="align-self-center w-100 px-5">
             <Breadcrumbs
-                items={[
-                    { title: "Inicio" },
-                    { title: "Pensums" },
-                    { title: currentTab?.title || "" },
-                ]}
+                items={tabsBreadcrumb}
             />
             <Nav className="mt-5" justified tabs>
                 {pensumMenu.map((item, index) => (
