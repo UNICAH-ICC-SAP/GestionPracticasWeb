@@ -6,8 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faKey, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import Img from '../../components/shared/Img';
 import { ButtonPrimary } from '../../components/shared/buttons';
-import { Fetcher, Fetcher as FetcherLogin } from '../../store/slices/users';
-import { useDispatch } from '../../store';
+import { Fetcher as FetcherLogin, Selector as SelectorLogin } from '../../store/slices/users';
+import { useDispatch, useSelector } from '../../store';
 import { TypeUtilities } from '../../utilities/TypeUtilities';
 import Swal from 'sweetalert2';
 
@@ -29,6 +29,7 @@ function Login() {
 
     const [isLoginPasswordVisible, setIsLoginPasswordVisible] = React.useState(false);
     const [isResetPasswordVisible, setIsResetPasswordVisible] = React.useState(false);
+    const passwordRequired = useSelector(SelectorLogin.getPasswordResetRequired);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormLogin({
@@ -46,47 +47,45 @@ function Login() {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-    
+
         const utilities: TypeUtilities = { url: '/user/login', data: formLogin };
-    
-        dispatch(FetcherLogin.login(utilities))
-    .then((response) => {
-        const responsePayload = response?.payload;
 
-        if (responsePayload && responsePayload.passwordResetRequired) {
-            setShowWelcomeModal(true);
-        }
-    });
-
+        dispatch(FetcherLogin.login(utilities));
     };
-    
+
 
     const handlePasswordResetSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
-        const utilities: TypeUtilities = { 
-            url: `/user/resetPassword?userId=${formLogin.userId}`, 
-            data: { newPassword: formPasswordReset.newPass }, 
+
+        const utilities: TypeUtilities = {
+            url: `/user/resetPassword?userId=${formLogin.userId}`,
+            data: { newPassword: formPasswordReset.newPass },
         };
-    
-        dispatch(Fetcher.updateData(utilities))
-    .then(() => {
-        setShowPasswordResetModal(false);
-        Swal.fire({
-            title: "¡Éxito!",
-            text: "Contraseña actualizada con éxito.",
-            icon: "success",
-        });
-    });
+
+        dispatch(FetcherLogin.updateData(utilities))
+            .then(() => {
+                setShowPasswordResetModal(false);
+                Swal.fire({
+                    title: "¡Éxito!",
+                    text: "Contraseña actualizada con éxito.",
+                    icon: "success",
+                });
+            });
 
     };
-    
+
 
     const handleWelcomeModalNext = () => {
         setShowWelcomeModal(false);
         setShowPasswordResetModal(true);
     };
 
+    React.useEffect(() => {
+        alert("useEffect")
+        if (passwordRequired) {
+            setShowWelcomeModal(true);
+        }
+    }, [passwordRequired])
     return (
         <Container className="container-login justify-content-center">
             <Img style={{ width: '75%' }} src={Image["logo:main"]} />
