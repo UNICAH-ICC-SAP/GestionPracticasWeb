@@ -10,6 +10,7 @@ import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramatic
 import NuevaCarga from "../../../pages/admin/Cargas/NuevaCarga";
 import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno";
 import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarTernas";
+import CargasDocente from "../../../pages/cargasPage/mostrarCargas/cargasDocentes";
 
 export const adminMenu: Array<Menu> = [
   {
@@ -37,7 +38,7 @@ export const cargasMenu: Array<Menu> = [
     paneId: "VerClasesDocente",
     title: "Ver Clases por Docente",
     pathTo: "/cargas/verCargasDocente",
-    component: <>Aquí la página de ver clases por docente</>,
+    component: <CargasDocente />,
   },
   {
     paneId: "NuevaCarga",
