@@ -8,6 +8,7 @@ import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
 import Carreras from "../../../pages/pensums/mostrarPensums/carreras";
 import Laboratorios from "../../../pages/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramaticas";
+import NuevaCarga from "../../../pages/admin/Cargas/NuevaCarga";
 
 export const adminMenu: Array<Menu> = [
   {
@@ -41,7 +42,7 @@ export const cargasMenu: Array<Menu> = [
     paneId: "NuevaCarga",
     title: "Nueva Carga Académica",
     pathTo: "/cargas/crearCarga",
-    component: <>Aquí la página de crear carga</>,
+    component: <NuevaCarga />,
   },
 ];
 
