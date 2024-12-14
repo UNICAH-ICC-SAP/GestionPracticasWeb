@@ -94,11 +94,6 @@ const INITIAL_MODAL_STATE: ModalState = {
     type: null
 };
 
-const getDayName = (day: number): string => {
-    const days = ['', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
-    return days[day] || '';
-};
-
 export default function Carreras() {
     const dispatch = useDispatch();
     const [filtroClase, setFiltroClase] = useState<string>('');
@@ -122,7 +117,7 @@ export default function Carreras() {
                 dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" })),
                 dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadId}` })),
                 dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" })),
-                dispatch(FetcherSecciones.getSecciones({ url: "/secciones/getSections?id_periodo=I-2028" }))
+                dispatch(FetcherSecciones.getSecciones({ url: "/secciones/getSections?id_periodo=I-2025" }))
             ]);
         } finally {
             setIsLoading(false);
@@ -154,6 +149,11 @@ export default function Carreras() {
         setClasesPorBloque(porBloque);
         setClasesFiltradas(porBloque);
     }, [clases, carreras]);
+
+    const getDayName = (day: number): string => {
+        const days = ['', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
+        return days[day] || '';
+    };
 
     const handleOpenModal = (type: ModalType, bloque?: number, clase?: ClaseDetail) => {
         const newFormData = type === 'create'
@@ -249,6 +249,7 @@ export default function Carreras() {
     const handleSectionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+
         try {
             const actions = {
                 createSeccion: () => dispatch(FetcherSecciones.insertSeccion({
@@ -260,7 +261,7 @@ export default function Carreras() {
                     }
                 })),
                 editSeccion: () => dispatch(FetcherSecciones.updateSeccion({
-                    url: `/secciones/updateSection?id_detalle=${sectionForm.seccion}`,
+                    url: "/secciones/updateSection",
                     data: {
                         ...sectionForm,
                         id_clase: modal.currentClase?.id_clase,
@@ -268,11 +269,7 @@ export default function Carreras() {
                     }
                 })),
                 deleteSeccion: () => dispatch(FetcherSecciones.deleteSection({
-                    url: "/secciones/deleteSeccion",
-                    data: {
-                        id_clase: modal.currentClase?.id_clase,
-                        seccion: sectionForm.seccion
-                    }
+                    url: `/secciones/deleteSection?id_clase=${modal.currentClase?.id_clase}&seccion=${sectionForm.seccion}`,
                 }))
             };
 
@@ -400,7 +397,7 @@ export default function Carreras() {
                                                 <h6 className={"text-muted"}> Créditos: {clase.creditos} </h6>
                                                 <ButtonGroup>
                                                     <Button
-                                                        color="primary"
+                                                        color={"primary"}
                                                         onClick={() => handleOpenSectionModal('createSeccion', clase)}
                                                     >
                                                         <FontAwesomeIcon icon={faPlus} />
@@ -412,7 +409,7 @@ export default function Carreras() {
                                                         <FontAwesomeIcon icon={faEdit} />
                                                     </Button>
                                                     <Button
-                                                        color={clase.estado ? "warning" : "info"}
+                                                        color={"warning"}
                                                         onClick={() => handleOpenModal('status', parseInt(bloque), clase)}
                                                     >
                                                         <FontAwesomeIcon icon={clase.estado ? faBan : faCheck} />
@@ -533,12 +530,12 @@ export default function Carreras() {
                             Cancelar
                         </Button>
                         <Button
-                            color={modal.type === 'status' ? (modal.currentClase?.estado ? 'warning' : 'success') : 'primary'}
+                            color='primary'
                             type="submit"
                         >
-                            {modal.type === 'create' && 'Crear'}
+                            {modal.type === 'create' && 'Agregar'}
                             {modal.type === 'edit' && 'Guardar'}
-                            {modal.type === 'status' && (modal.currentClase?.estado ? 'Desactivar' : 'Activar')}
+                            {modal.type === 'status' && 'Desactivar'}
                         </Button>
                     </ModalFooter>
                 </Form>
@@ -587,6 +584,8 @@ export default function Carreras() {
                                         type="text"
                                         value={sectionForm.seccion}
                                         onChange={handleSectionInputChange}
+                                        disabled={modal.type === 'createSeccion'}
+                                        required
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -666,39 +665,24 @@ export default function Carreras() {
                         <Button color="secondary" onClick={handleCloseModal}>
                             Cancelar
                         </Button>
-                        <Button color="primary" type="submit">
-                            {modal.type === 'createSeccion' ? 'Crear' : modal.type === 'editSeccion' ? 'Guardar' : 'Eliminar'}
-                        </Button>
                         {modal.type === 'editSeccion' && (
-                            <Button color="warning" onClick={() => {
-                                setModal(prev => ({ 
-                                    ...prev, 
-                                    type: 'deleteSeccion'
-                                }));
-                            }}>
+                            <Button
+                                color="danger"
+                                onClick={() => setModal(prev => ({ ...prev, type: 'deleteSeccion' }))}
+                            >
                                 Eliminar
                             </Button>
                         )}
+                        <Button
+                            color="primary" 
+                            type="submit"
+                        >
+                            {modal.type === 'createSeccion' && 'Agregar'}
+                            {modal.type === 'editSeccion' && 'Guardar'}
+                            {modal.type === 'deleteSeccion' && 'Eliminar'}
+                        </Button>
                     </ModalFooter>
                 </Form>
-            </Modal>
-
-            {/* Modal anidado para cambiar estado de sección */}
-            <Modal isOpen={modal.nestedModal === 'statusSeccion'} toggle={() => setModal(prev => ({ ...prev, nestedModal: undefined }))}>
-                <ModalHeader toggle={() => setModal(prev => ({ ...prev, nestedModal: undefined }))}>
-                    Eliminar Sección
-                </ModalHeader>
-                <ModalBody>
-                    ¿Está seguro que desea eliminar esta sección?
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="danger" onClick={handleSectionSubmit}>
-                        Eliminar
-                    </Button>
-                    <Button color="secondary" onClick={() => setModal(prev => ({ ...prev, nestedModal: undefined }))}>
-                        Cancelar
-                    </Button>
-                </ModalFooter>
             </Modal>
         </Container>
     );

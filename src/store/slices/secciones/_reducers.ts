@@ -23,9 +23,4 @@ export default CreateReducer(INIT, ({ addCase }) => {
     secciones: JSON.parse(JSON.stringify(payload.secciones)),
     error: JSON.parse(JSON.stringify(payload.error)),
   }));
-  addCase(Fetcher.deleteSection.fulfilled, (state, { payload }) => ({
-    ...state,
-    secciones: JSON.parse(JSON.stringify(payload.secciones)),
-    error: JSON.parse(JSON.stringify(payload.error)),
-  }));
 });
