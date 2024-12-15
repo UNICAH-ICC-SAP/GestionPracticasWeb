@@ -144,7 +144,7 @@ export default function ModificarDocentes() {
                     }))}
                     headers={['Docente ID', 'Nombre', 'Email', 'Teléfono', 'Facultad', 'Acciones']}
                     firstColumnIndex={0}
-                    paginated={false}
+                    paginated={true}
                 />
             ) : (
                 <NotFound />

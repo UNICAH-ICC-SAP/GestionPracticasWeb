@@ -2,29 +2,32 @@ import { Type as TypeError } from './../../../Api/namespaces/errorService';
 import { CreateFetchers } from "../../../storeConfig";
 /**SingleSelectoAccount */
 import { NAME } from "./_namespace";
-import { LogIn, checkUser, getData, getToken } from "../../../utilities/Utilities";
+import { LogIn, checkUser, getData, getToken, updateData } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
     async login(params: TypeUtilities) {
-        console.log(params)
+        console.log(params);
         const response = await LogIn(params);
         if (isError<TypeError.ErrorSchema>(response?.error)) {
-            console.log(response?.error)
+            console.log(response?.error);
             return {
-                user: response?.singleData,
+                user: {}, 
                 error: response?.error,
-                logged: false
+                logged: false,
+                passwordResetRequired: false 
             };
         }
         return {
             user: response?.singleData,
             error: response?.error,
-            logged: true
+            logged: true,
+            passwordResetRequired: response?.singleData?.passwordResetRequired || false
         };
-    },
+    }
+    ,
     async checkUserLogged() {
         const response = await checkUser();
         if (isError<TypeError.ErrorSchema>(response?.error)) {
@@ -61,5 +64,23 @@ export default CreateFetchers(NAME, {
         const hasToken = getToken();
         if (!hasToken) { return { user: {}, error: {}, logged: false } }
         return { user: {}, error: {}, logged: true }
+    },
+    async updateData(params: TypeUtilities) {
+        const response = await updateData(params);
+        
+        if (isError<TypeError.ErrorSchema>(response?.error)) {
+            console.log('Error al actualizar contraseña:', response?.error);
+            return {
+                data: null,
+                error: response?.error,
+                success: false
+            };
+        }
+        
+        return {
+            data: response?.singleData,
+            error: null,
+            success: true
+        };
     }
 });

@@ -16,4 +16,6 @@ Selector.IsLogged = CreateSelector(Selector, (state) => state.logged)
 Selector.getUserInfo = CreateSelector(Selector, (state) => state.userInfo)
 /**Selector: fetching is loading */
 Selector.fetching = CreateSelector(Selector, (state) => state.loading);
+Selector.getPasswordResetRequired = CreateSelector(Selector, (state) => state.passwordResetRequired);
+
 

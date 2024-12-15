@@ -7,7 +7,7 @@ interface BreadcrumbProps {
 
 const Breadcrumbs: React.FC<BreadcrumbProps> = ({ items }) => {
     return (
-        <Breadcrumb>
+        <Breadcrumb className="pt-3">
             {items.map((item, index) => (
                 <BreadcrumbItem key={index} active={index === items.length - 1}>
                     {item.title}

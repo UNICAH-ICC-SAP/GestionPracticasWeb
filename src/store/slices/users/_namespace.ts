@@ -10,6 +10,7 @@ export declare namespace Type {
         roleId: number;
         message: string;
         token: string;
+        passwordResetRequired: boolean;  
     }
     export type UserInfo = {
         userInfo: string;
@@ -27,6 +28,7 @@ export declare namespace StoreUser {
         error: TypeModal.ModalError;
         loading: boolean;
         logged: boolean;
+        passwordResetRequired: boolean;
     };
 }
 
@@ -45,7 +47,8 @@ export const INIT: StoreUser.State = {
         userId: '',
         roleId: 0,
         message: '',
-        token: ''
+        token: '',
+        passwordResetRequired: true, 
     },
     userInfo: {
         userInfo: '',
@@ -59,5 +62,6 @@ export const INIT: StoreUser.State = {
         message: ''
     },
     loading: false,
-    logged: false
+    logged: false,
+    passwordResetRequired: false,
 };
