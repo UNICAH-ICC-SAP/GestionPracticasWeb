@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "../../../store";
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
 import { Tables } from "../../../components/commons/tables/tables";
 import NotFound from "../../../components/shared/notFound";
+import { TypeUtilities } from "../../../utilities/TypeUtilities";
 
 type DocenteDetail = {
     docenteId: string;
@@ -17,9 +18,8 @@ export default function MostrarDocentes() {
     const dispatch = useDispatch();
     const [detalle, setDetalle] = useState<Array<DocenteDetail>>([]);
 
-    // Configuración del fetch
-    const utils = {
-        url: '/docente/getDocentes'
+    const utils: TypeUtilities = {
+         url: '/docente/getDocentes'
     };
 
     useEffect(() => {
@@ -49,7 +49,7 @@ export default function MostrarDocentes() {
                     data={detalle}
                     headers={['Docente ID', 'Nombre', 'Email', 'Teléfono', 'Facultad']}
                     firstColumnIndex={0}
-                    paginated={false}
+                    paginated={true}
                 />
             ) : (
                 <NotFound />

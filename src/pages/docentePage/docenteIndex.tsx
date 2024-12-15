@@ -12,14 +12,20 @@ export default function DocenteMenu() {
 
   const currentTab = docenteMenu.find((item) => item.paneId === activePane);
 
+  type TypeBreadcumb = {
+    title: string;
+  };
+
+  const tabsBreadcrumb: Array<TypeBreadcumb> = [
+      { title: "Inicio" },
+      { title: "Docente" },
+      { title: currentTab?.title || "" },
+  ];
+
   return (
     <div className="align-self-center w-100 px-5">
       <Breadcrumbs
-        items={[
-          { title: "Inicio" },
-          { title: "Docente" },
-          { title: currentTab?.title || "" },
-        ]}
+        items={tabsBreadcrumb}
       />
       <Nav className="mt-5" justified tabs>
         {docenteMenu.map((item, index) => (
