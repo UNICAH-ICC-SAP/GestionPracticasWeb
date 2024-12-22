@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.3...v0.0.4) (2024-12-22)
+
+
+### Features
+
+* add seccion en vista pensums ([#42](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/42)) ([eac4e75](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/eac4e75914658dbe9970eb7ed6a914163cf6dc3b))
+* add vista clases cargas docentes ([#43](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/43)) ([4f661d8](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/4f661d89c61af0818c8ca47a7ec58ed3c8b957c9))
+* creacion de perfil alumno ([#36](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/36)) ([a3e0d6e](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/a3e0d6efcf3540179e086be2981adc7c1e25ad97))
+* creacion del modulo de periodo ([#41](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/41)) ([9145c3a](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/9145c3a3cf58dd927ea5bf2db3833fad5f0f3456))
+* creacion modificar alumnos y mostrar las ternas ([#40](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/40)) ([af6629b](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/af6629b8d33483c38c3a8f708eb4ee647013edab))
+
+
+### Bug Fixes
+
+* reset version to v0.0.3 ([edbade8](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/edbade836fc3a541d4d23ade946a80cffbf24252))
+
 ### [0.0.3](https://github.com/Acalix-unicah/Web/compare/v0.0.2...v0.0.3) (2024-12-01)
 
 
