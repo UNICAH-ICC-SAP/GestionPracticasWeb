@@ -20,12 +20,6 @@ export const adminMenu: Array<Menu> = [
     component: <CrearTernas />,
   },
   {
-    paneId: "DocenteTernas",
-    title: "Ternas por Docente",
-    pathTo: "/ternas/verTernasDocentes",
-    component: <Docentes />,
-  },
-  {
     paneId: "AlumnoTernas",
     title: "Ver Ternas",
     pathTo: "/ternas/modificarTernas",
