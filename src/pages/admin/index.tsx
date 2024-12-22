@@ -11,15 +11,21 @@ export default function Admin() {
   };
 
   const currentTab = adminMenu.find((item) => item.paneId === activePane);
+  type TypeBreadcrumb = {
+    title: string;
+  };
 
+  const tabsBreadcrumb: Array<TypeBreadcrumb> = [
+    { title: "Inicio" },
+    { title: "Ternas" },
+    { title: currentTab?.title || "" },
+  ];
   return (
     <div className="align-self-center w-100 px-5">
       <Breadcrumbs
-        items={[
-          { title: "Inicio" },
-          { title: "Ternas" },
-          { title: currentTab?.title || "" },
-        ]}
+        items={
+          tabsBreadcrumb
+        }
       />
       <Nav className="mt-5" justified tabs>
         {adminMenu.map((item, index) => (

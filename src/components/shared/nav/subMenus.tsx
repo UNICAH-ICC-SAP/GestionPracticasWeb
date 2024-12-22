@@ -1,5 +1,4 @@
 import React from "react";
-import Docentes from "../../../pages/admin/docentes";
 import CrearTernas from "../../../pages/admin/crearTernas";
 import CreacionDocente from "../../../pages/docentePage/crearDocente/creacionDocente";
 import { Menu } from "./types";
@@ -8,25 +7,27 @@ import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
 import Carreras from "../../../pages/pensums/mostrarPensums/carreras";
 import Laboratorios from "../../../pages/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramaticas";
+import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno";
+import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarTernas";
 
 export const adminMenu: Array<Menu> = [
   {
-    paneId: "DocenteTernas",
-    title: "Ternas por Docente",
-    pathTo: "/ternas/verTernasDocentes",
-    component: <Docentes />,
-  },
-  {
     paneId: "AlumnoTernas",
-    title: "Ternas por Alumno",
-    pathTo: "/ternas/verTernasAlumnos",
-    component: <>Ternas por Alumno</>,
+    title: "Ver Ternas",
+    pathTo: "/ternas/modificarTernas",
+    component: <VerTernas/>,
   },
   {
     paneId: "CrearTernas",
     title: "Crear Ternas",
     pathTo: "/ternas/crearTernas",
     component: <CrearTernas />,
+  },
+  {
+    paneId: "ModificarAlumnos",
+    title: "Ver y Modificar Alumnos",
+    pathTo: "/Alumnos/modificarAlumnos",
+    component: <ModificarAlumnos/>,
   },
 ];
 
@@ -56,7 +57,7 @@ export const docenteMenu: Array<Menu> = [
     paneId: "ModificarDocente",
     title: "Modificar Docente",
     pathTo: "/docentes/viewAllDocente",
-    component: <ModificarDocentes />,
+    component: <ModificarDocentes/>,
   },
   {
     paneId: "MostrarDocente",
