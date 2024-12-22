@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.4...v0.0.5) (2024-12-22)
+
+
+### Bug Fixes
+
+* creacion funcional de las ternas y actualizaciones en store ([#37](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/37)) ([0c2a3a0](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/0c2a3a064b10549f8730992ec427cf5230a0a0ac))
+* optimizacion de codigo y mostrar coordina en el modal, en el per… ([#35](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/35)) ([660b869](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/660b869d9d2a79494782d93a8d19e9efa93be3c8))
+* reset de password en el primer logeo ([#39](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/39)) ([842d1c7](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/842d1c74a7ceceac0dae963f9f2b257c0d054a50))
+
 ### [0.0.4](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.3...v0.0.4) (2024-12-22)
 
 
