@@ -43,7 +43,12 @@ export default function Step1() {
             })
         }
         if (e.currentTarget.name === FormItems.email) {
-            validate(e.currentTarget.value)
+            const emailWithDomain = e.currentTarget.value + '@unicah.edu';
+            validate(emailWithDomain);
+            setState((prevState) => ({
+                ...prevState,
+                email: emailWithDomain
+            }));
         }
     };
     const selectedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +71,7 @@ export default function Step1() {
     const handleButtonNext = () => {
         console.log(state)
         dispatch(ActionTernas.setDataAlumno(state));
-        dispatch(ActionTernas.setUserCreate(userState));
+        dispatch(ActionTernas.setUserCreate({userId: userState.userId, pass: 'Unicah2024', roleId: 3}));
         dispatch(ActionTernas.setStep1(false));
     }
     return <div className="form-group">
@@ -100,11 +105,11 @@ export default function Step1() {
             </Input>
         </InputGroup>
         <InputGroup>
-            <Input invalid={!isValidItem.email} valid={isValidItem.email} value={state.email} onChange={inputFunction} name="email" id="email" placeholder="jvelas" />
-            <InputGroupText>
-                @unicah.edu
-            </InputGroupText>
-        </InputGroup>
+                <Input invalid={!isValidItem.email} valid={isValidItem.email} value={state.email.replace('@unicah.edu', '')} onChange={inputFunction} name="email" id="email" placeholder="jvelas" />
+                <InputGroupText>
+                    @unicah.edu
+                </InputGroupText>
+            </InputGroup>
         <InputGroup>
             <InputGroupText>
                 Número de Teléfono
@@ -113,11 +118,12 @@ export default function Step1() {
         </InputGroup>
         <ButtonSecondary onClick={handleButtonNext} >Siguiente</ButtonSecondary>
     </div>
+
     function validate(value: string) {
-        const valid = value !== '' ? !value.includes("@") : false
+        const isValid = value.includes("@unicah.edu");
         setIsValidItem({
             ...isValidItem,
-            [FormItems.email]: valid
-        })
+            [FormItems.email]: isValid
+        });
     }
 }

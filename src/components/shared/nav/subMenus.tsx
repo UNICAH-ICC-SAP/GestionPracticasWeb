@@ -14,6 +14,12 @@ import CargasDocente from "../../../pages/cargasPage/mostrarCargas/cargasDocente
 
 export const adminMenu: Array<Menu> = [
   {
+    paneId: "CrearTernas",
+    title: "Crear Ternas",
+    pathTo: "/ternas/crearTernas",
+    component: <CrearTernas />,
+  },
+  {
     paneId: "AlumnoTernas",
     title: "Ver Ternas",
     pathTo: "/ternas/modificarTernas",
