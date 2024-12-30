@@ -35,7 +35,7 @@ export function Navigation(props: Props<PROPS, typeof DEF>) {
             <Nav className="me-auto" navbar>
                 {menuMain && menuMain.map(item => {
                     return <NavItem key={item.pathTo}>
-                        <NavLink className='nav-link  py-1' to={item.pathTo}>{item.title}</NavLink>
+                        <NavLink className='nav-link py-1' to={item.pathTo}>{item.title}</NavLink>
                     </NavItem>
                 })}
                 {/* <UncontrolledDropdown nav inNavbar>

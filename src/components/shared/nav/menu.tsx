@@ -13,7 +13,7 @@ export const MenuItems: Array<Array<Menu>> = [
     [
         {
             'title': 'Home',
-            'pathTo': '/home',
+            'pathTo': '/',
             'component': <Home />,
         },
         {
@@ -29,7 +29,7 @@ export const MenuItems: Array<Array<Menu>> = [
         {
             'title': 'Pemsuns',
             'pathTo': '/pemsuns',
-            'component': <Pensums/>
+            'component': <Pensums />
         },
         {
             'title': 'Cargas Academicas',
@@ -49,7 +49,7 @@ export const MenuItems: Array<Array<Menu>> = [
         {
             'title': 'Alumno',
             'pathTo': '/',
-            'component': <Alumno/>
+            'component': <Alumno />
         },
         {
             'title': 'Documentacion',
