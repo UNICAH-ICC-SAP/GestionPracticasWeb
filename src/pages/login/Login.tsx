@@ -56,7 +56,8 @@ function Login() {
   const [isResetPasswordVisible, setIsResetPasswordVisible] =
     React.useState(false);
   const passwordRequired = useSelector(SelectorLogin.getPasswordResetRequired);
-
+  // const isLogged = useSelector(SelectorLogin.IsLogged);
+  // console.log(isLogged)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormLogin({
       ...formLogin,
@@ -89,7 +90,7 @@ function Login() {
       data: { newPassword: formPasswordReset.newPass },
     };
 
-    dispatch(Fetcher.updateData(utilities));
+    dispatch(FetcherLogin.updateData(utilities));
     setShowPasswordResetModal(false);
     Swal.fire({
       title: "¡Éxito!",
@@ -109,6 +110,12 @@ function Login() {
     }
   }, [passwordRequired]);
 
+  // React.useEffect(() => {
+  //   if (!isLogged) {
+  //     dispatch(FetcherLogin.validateSession())
+  //     dispatch(FetcherLogin.checkUserLogged())
+  //   }
+  // }, [isLogged]);
   return (
     <Container className="container-login justify-content-center">
       <Img style={{ width: "75%" }} src={Image["logo:main"]} />
