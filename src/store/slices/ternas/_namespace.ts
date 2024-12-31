@@ -17,7 +17,7 @@ export declare namespace Type {
         docenteId: string;
         coordina: string;
     }
-    
+
     export type UserCreation = {
         userId: string;
         pass: string;
@@ -29,8 +29,11 @@ export declare namespace StoreUser {
     export type State = {
         ternaInfo: Type.TernaInfo;
         detallesTernasInfo: Array<Type.DetalleTernaInfo>;
+        savedTernaInfo: Type.TernaInfo;
         ternasInfo: Array<Type.TernaInfo>
         userToCreate: Type.UserCreation;
+        ternaCreatedState: boolean;
+        ternaDetailCreateState: boolean;
         error: TypeModal.ModalError;
         step1: boolean;
         step2: boolean;
@@ -63,7 +66,18 @@ export const INIT: StoreUser.State = {
         },
         detalleTernas: []
     },
-    
+    savedTernaInfo: {
+        ternaId: 0,
+        idEstadoTerna: '',
+        alumno: {
+            alumnoId: '',
+            nombre: '',
+            email: '',
+            facultadId: '',
+            telefono: '504'
+        },
+        detalleTernas: []
+    },
     detallesTernasInfo: [],
     userToCreate: {
         userId: '',
@@ -77,5 +91,7 @@ export const INIT: StoreUser.State = {
     },
     step1: true,
     step2: false,
-    resumen: false
+    resumen: false,
+    ternaCreatedState: false,
+    ternaDetailCreateState: false,
 };
