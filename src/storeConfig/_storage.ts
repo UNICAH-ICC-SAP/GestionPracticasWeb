@@ -122,6 +122,7 @@ export function StorageReducer<S>({ store, self, state, action }: StorageReducer
                         type: ACTION.STORAGE_HYDRATE,
                         payload: { key: slice.key, slice: JSON.parse(value) },
                     });
+                    // eslint-enable-next-line @typescript-eslint/ban-ts-comment
                 })
                 .catch(() => {
                     throw new StorageError(ErrCode.E04, slice.key);

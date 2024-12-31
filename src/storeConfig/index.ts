@@ -72,3 +72,4 @@ export function CreateStore<S>({ Storage, Reducer }: CreateStoreArgs<S>) {
 
     return { Store, useDispatch, useSelector: Redux.useSelector };
 }
+// eslint-enable-next-line @typescript-eslint/no-explicit-any

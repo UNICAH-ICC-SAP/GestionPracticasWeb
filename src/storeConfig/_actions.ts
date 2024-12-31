@@ -20,3 +20,4 @@ export default function CreateActions<T extends Record<string, unknown>>(
     );
     return reduced;
 }
+// eslint-enable-next-line @typescript-eslint/ban-ts-comment

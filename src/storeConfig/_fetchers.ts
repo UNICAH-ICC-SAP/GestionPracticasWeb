@@ -43,6 +43,7 @@ export default function CreateFetchers<
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
             [key]: createAsyncThunk(`${name}/fetch/${key}`, thunk),
+            // eslint-enable-next-line @typescript-eslint/ban-ts-comment
         };
     }, {} as Fetchers);
 }
