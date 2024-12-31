@@ -11,3 +11,5 @@ export default function Selector(store: StoreState): StorePensum.State {
 Selector.getClases = CreateSelector(Selector, (state) => state.clases);
 Selector.getCarreras = CreateSelector(Selector, (state) => state.carreras);
 Selector.getError = CreateSelector(Selector, (state) => state.error);
+Selector.getIsLoading = CreateSelector(Selector, (state) => state.loading);
+Selector.getIsUpdate = CreateSelector(Selector, (state) => state.update);

@@ -3,7 +3,7 @@ import { INIT, Action } from "./_namespace";
 import Fetcher from "./_fetchers";
 
 export default CreateReducer(INIT, ({ addCase }) => {
-   
+
     addCase(Action.cleanStore, (state) => ({
         ...state,
         ...INIT,
@@ -14,11 +14,16 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.getAlumnos.fulfilled, (state, { payload }) => ({
         ...state,
-        alumnos: JSON.parse(JSON.stringify(payload.alumnos)), 
+        alumnos: JSON.parse(JSON.stringify(payload.alumnos)),
     }));
-    addCase(Fetcher.saveDataAlumno.fulfilled, (state, { payload}) => ({
+    addCase(Fetcher.saveDataUser.fulfilled, (state, { payload }) => ({
         ...state,
-        saveDataAlumno: JSON.parse(JSON.stringify(payload))
+        isSavedUser: payload.isSavedUser
+    }));
+    addCase(Fetcher.saveDataAlumno.fulfilled, (state, { payload }) => ({
+        ...state,
+        saveDataAlumno: JSON.parse(JSON.stringify(payload.alumno)),
+        isSavedAlumno: payload.isSavedAlumno
     }));
     addCase(Fetcher.updatealumno.fulfilled, (state, { payload }) => ({
         ...state,

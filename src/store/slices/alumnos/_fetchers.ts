@@ -35,17 +35,34 @@ export default CreateFetchers(NAME, {
             error: response?.error,
         };
     },
+    async saveDataUser(params: TypeUtilities) {
+        const response = await saveData(params);
+        if (isError<TypeError.ModalError>(response?.error)) {
+            return {
+                alumno: null,
+                error: response?.error,
+                isSavedUser: false,
+            };
+        }
+        return {
+            alumno: response?.data,
+            error: response?.error,
+            isSavedUser: true,
+        };
+    },
     async saveDataAlumno(params: TypeUtilities) {
         const response = await saveData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 alumno: null,
                 error: response?.error,
+                isSavedAlumno: false,
             };
         }
         return {
             alumno: response?.data,
             error: response?.error,
+            isSavedAlumno: true,
         };
     },
     async updatealumno(params: TypeUtilities) {

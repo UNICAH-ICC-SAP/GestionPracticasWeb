@@ -41,7 +41,7 @@ export default function ModificarDocentes() {
                 nombre: docente.nombre,
                 email: docente.email,
                 telefono: docente.telefono,
-                facultad: docente.facultad.nombreFacultad
+                facultad: docente.facultadId
             }));
 
             setDetalle(docentesMapped);

@@ -10,7 +10,7 @@ export default function Selector(store: StoreState): StoreFacultad.State {
 
 /**Selector: get accountDetails data */
 Selector.getFacultad = CreateSelector(Selector, (state) => state.facultad);
-Selector.getFacutades = CreateSelector(Selector, (state) => state.facultades)
+Selector.getFacultades = CreateSelector(Selector, (state) => state.facultades)
 Selector.getError = CreateSelector(Selector, (state) => state.facultad);
 /**Selector: fetching is loading */
 // Selector.fetching = CreateSelector(Selector, (state) => state.loading);

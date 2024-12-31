@@ -18,6 +18,7 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.getFacultades.fulfilled, (state, { payload }) => ({
         ...state,
-        facultades: JSON.parse(JSON.stringify(payload.facultades))
+        facultades: JSON.parse(JSON.stringify(payload.facultades)),
+        error: payload.error
     }))
 });

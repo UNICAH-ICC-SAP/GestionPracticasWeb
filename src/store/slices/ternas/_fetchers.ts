@@ -3,7 +3,7 @@ import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from './_namespace';
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
-import { getData, saveData} from "../../../utilities/Utilities";
+import { getData, saveData } from "../../../utilities/Utilities";
 
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
@@ -37,35 +37,39 @@ export default CreateFetchers(NAME, {
             logged: true
         };
     },
-    async saveDetalleTernas (params: TypeUtilities){
+    async saveDetalleTernas(params: TypeUtilities) {
         const response = await saveData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 detalleTernas: response?.data,
                 error: response?.error,
-                logged: false
+                logged: false,
+                savedDetailTerna: false,
             };
         }
         return {
             detalleTernas: response?.data,
             error: response?.error,
-            logged: true
+            logged: true,
+            savedDetailTerna: true,
         };
     },
-    async saveTernas (params: TypeUtilities){
+    async saveTernas(params: TypeUtilities) {
         const response = await saveData(params);
+        console.log(response?.data)
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                ternaInfo: response?.data['ternaId'].toString(),
+                savedTerna: response?.data,
                 error: response?.error,
-                logged: false
+                logged: false,
+                savedTernaState: false,
             };
         }
-        console.log(response?.data)
         return {
-            ternaInfo: response?.data['ternaId'].toString(),
+            savedTerna: response?.data,
             error: response?.error,
-            logged: true
+            logged: true,
+            savedTernaState: true,
         };
     },
 });

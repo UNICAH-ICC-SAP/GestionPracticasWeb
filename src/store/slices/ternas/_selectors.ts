@@ -17,8 +17,12 @@ Selector.getResume = CreateSelector(Selector, (state) => state.resumen);
 Selector.getAlumo = CreateSelector(Selector, (state) => state.ternaInfo.alumno);
 Selector.getDetalleTernas = CreateSelector(Selector, (state) => state.ternaInfo.detalleTernas);
 Selector.getDetalleTernasDocente = CreateSelector(Selector, (state) => state.detallesTernasInfo);
-Selector.getUserToCreate = CreateSelector(Selector,(state) => state.userToCreate);
+Selector.getUserToCreate = CreateSelector(Selector, (state) => state.userToCreate);
 Selector.getError = CreateSelector(Selector, (state) => state.error);
+Selector.getSavedItem = CreateSelector(Selector, (state) => state.savedTernaInfo);
+Selector.getSavedTernaState = CreateSelector(Selector, (state) => state.ternaCreatedState);
+Selector.getSavedDetailState = CreateSelector(Selector, (state) => state.ternaDetailCreateState);
+
 
 /**Selector: fetching is loading */
 // Selector.fetching = CreateSelector(Selector, (state) => state.loading);

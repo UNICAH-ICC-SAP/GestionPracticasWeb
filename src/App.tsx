@@ -11,7 +11,6 @@ import { Container } from 'reactstrap';
 function App() {
     const userData = useSelector(UserSelector.getUser);
     const isLogged = useSelector(UserSelector.IsLogged);
-    const passwordResetRequired = useSelector(UserSelector.getPasswordResetRequired);
     const dispatch = useDispatch();
     const CurrentNav = MenuItems[userData.roleId - 1]
 
@@ -26,8 +25,11 @@ function App() {
     }, [dispatch, userData.userId, userData.roleId])
 
 
-    if (!isLogged || passwordResetRequired) {
-        return <Login />
+    if (!isLogged) {
+        return <React.Fragment>
+            <Navigation roleId={userData.roleId} />
+            <Login />
+        </React.Fragment>
     }
 
     return (

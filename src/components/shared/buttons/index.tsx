@@ -32,6 +32,7 @@ export const ButtonDanger = styled(Button)`
     }
 `
 export const ButtonTransparent = styled(Button)`
+    width: auto;
     background-color: transparent;
     border-color: transparent;
     &:hover{

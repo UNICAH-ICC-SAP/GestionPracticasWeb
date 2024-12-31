@@ -1,49 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../../../store";
-import { Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
+
+import type { Type as TypePensums } from "../../../store/slices/pensums/_namespace";
+import type { Type as TypeSecciones } from "../../../store/slices/secciones/_namespace";
+import type { Type as TypeModals } from "../../../Api/namespaces/modals";
+
+import { Action as ActionPensum, Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
-import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
+import { Action as ActionSecciones, Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
+import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "../../../store/slices/periodo";
+import { Fetcher as FetcherFacultad, Selector as SelectorFacultad } from "../../../store/slices/facultades";
+
 import { Container, Card, Row, Col, Button, CardHeader, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import NotFound from "../../../components/shared/notFound";
 import { isEmpty } from "lodash";
 
-type ClaseDetail = {
-    id_clase: string;
-    nombre_clase: string;
-    creditos: number;
-    estado: boolean;
-    TipoClase: number;
-    bloque?: number;
-};
+import { days, MODALS_TYPES } from "../../../consts"
 
-type SeccionDetail = {
-    id_detalle: number;
-    seccion: string;
-    docenteId: string;
-    id_ccb: number;
-    id_periodo: string;
-    hora_inicio: string;
-    dia_inicio: number;
-    dia_final: number;
-    hora_final: string;
-    horario_especial?: boolean;
-}
+type ClasesPorBloque = Record<number, TypePensums.ClaseInfo[]>;
 
-type ClasesPorBloque = Record<number, ClaseDetail[]>;
-
-type ModalType = 'create' | 'edit' | 'status' | 'createSeccion' | 'editSeccion' | 'deleteSeccion';
-
-type ModalState = {
-    isOpen: boolean;
-    type: ModalType | null;
-    currentClase?: ClaseDetail;
-    currentBloque?: number;
-    nestedModal?: 'statusSeccion';
-};
-
-type ClaseForm = Omit<ClaseDetail, 'estado'> & {
+type ClaseForm = Omit<TypePensums.ClaseInfo, 'estado'> & {
     facultadId: string;
     id_bloque: number;
 };
@@ -58,17 +36,6 @@ type SectionForm = {
     horario_especial?: boolean;
     seccion?: string;
 };
-
-const facultades: { id: string; nombre: string }[] = [
-    { id: 'IG04001', nombre: 'Ingeniería Civil' },
-    { id: 'LG01002', nombre: 'Derecho' },
-    { id: 'CE03100', nombre: 'Gestión Estrategica de Empresas' },
-    { id: 'IF01002', nombre: 'Ingenieria en Ciencias de la Computación' },
-    { id: 'IG02002', nombre: 'Ingeniería Industrial' },
-    { id: 'MD01102', nombre: 'Medicina' },
-    { id: 'CE02002', nombre: 'Mercadotecnia' },
-    { id: 'PS01001', nombre: 'Psicologia' }
-];
 
 const INITIAL_FORM_STATE: ClaseForm = {
     id_clase: '',
@@ -89,7 +56,7 @@ const INITIAL_SECTION_FORM: SectionForm = {
     horario_especial: false,
 };
 
-const INITIAL_MODAL_STATE: ModalState = {
+const INITIAL_MODAL_STATE: TypeModals.ModalState = {
     isOpen: false,
     type: null
 };
@@ -100,33 +67,44 @@ export default function Carreras() {
     const [clasesFiltradas, setClasesFiltradas] = useState<ClasesPorBloque>({});
     const [clasesPorBloque, setClasesPorBloque] = useState<ClasesPorBloque>({});
     const [facultadSeleccionada, setFacultadSeleccionada] = useState<string>('IG04001');
-    const [modal, setModal] = useState<ModalState>(INITIAL_MODAL_STATE);
+    const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
+    const [modal, setModal] = useState<TypeModals.ModalState>(INITIAL_MODAL_STATE);
     const [formData, setFormData] = useState<ClaseForm>(INITIAL_FORM_STATE);
     const [sectionForm, setSectionForm] = useState<SectionForm>(INITIAL_SECTION_FORM);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
 
+    const isLoading = useSelector(SelectorPensum.getIsLoading);
+    const isUpdatePensum = useSelector(SelectorPensum.getIsUpdate);
+    const isUpdateSecciones = useSelector(SelectorSecciones.getIsUpdate);
     const clases = useSelector(SelectorPensum.getClases);
     const carreras = useSelector(SelectorPensum.getCarreras);
     const docentes = useSelector(SelectorDocentes.getDocentes);
     const secciones = useSelector(SelectorSecciones.getSecciones);
-
-    const loadData = async (facultadId: string) => {
-        setIsLoading(true);
-        try {
-            await Promise.all([
-                dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" })),
-                dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadId}` })),
-                dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" })),
-                dispatch(FetcherSecciones.getSecciones({ url: "/secciones/getSections?id_periodo=I-2025" }))
-            ]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const periodos = useSelector(SelectorPeriodos.getPeriodos);
+    const facultades = useSelector(SelectorFacultad.getFacultades);
 
     useEffect(() => {
-        loadData(facultadSeleccionada);
-    }, []);
+        if (clases && carreras && periodos && isLoading) {
+            dispatch(ActionPensum.setIsLoading(false));
+            setPeriodoSeleccionado(periodos[periodos.length - 1].id_periodo)
+        }
+        if (clases === null && carreras === null && periodos === null && !isLoading) {
+            dispatch(ActionPensum.setIsLoading(true));
+            dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" }));
+            dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }));
+            dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
+            dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
+            dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
+            dispatch(FetcherFacultad.getFacultades({ url: "/facultad/getFacultades" }))
+        }
+    }, [dispatch, clases, carreras, periodos]);
+
+    useEffect(() => {
+        dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }))
+    }, [facultadSeleccionada, isUpdatePensum]);
+
+    useEffect(() => {
+        dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
+    }, [periodoSeleccionado, isUpdateSecciones]);
 
     useEffect(() => {
         if (!clases?.length || !carreras?.length) return;
@@ -151,14 +129,13 @@ export default function Carreras() {
     }, [clases, carreras]);
 
     const getDayName = (day: number): string => {
-        const days = ['', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
         return days[day] || '';
     };
 
-    const handleOpenModal = (type: ModalType, bloque?: number, clase?: ClaseDetail) => {
-        const newFormData = type === 'create'
+    const handleOpenModal = (type: TypeModals.ModalType, bloque?: number, clase?: TypePensums.ClaseInfo) => {
+        const newFormData = type === MODALS_TYPES.CREATE
             ? { ...INITIAL_FORM_STATE, id_bloque: bloque || 1, facultadId: facultadSeleccionada }
-            : type === 'edit' && clase
+            : type === MODALS_TYPES.EDIT && clase
                 ? {
                     id_clase: clase.id_clase,
                     nombre_clase: clase.nombre_clase,
@@ -173,14 +150,14 @@ export default function Carreras() {
         setModal({ isOpen: true, type, currentClase: clase, currentBloque: bloque });
     };
 
-    const handleOpenSectionModal = (type: ModalType, clase: ClaseDetail, seccion?: SeccionDetail) => {
-        const newSectionForm = type === 'createSeccion'
+    const handleOpenSectionModal = (type: TypeModals.ModalType, clase: TypePensums.ClaseInfo, seccion?: TypeSecciones.SeccionInfo) => {
+        const newSectionForm = type === MODALS_TYPES.CREATE_SECCION
             ? {
                 ...INITIAL_SECTION_FORM,
                 id_clase: clase.id_clase,
                 horario_especial: false
             }
-            : type === 'editSeccion' && seccion
+            : type === MODALS_TYPES.EDIT_SECCION && seccion
                 ? {
                     docenteId: seccion.docenteId,
                     id_clase: clase.id_clase,
@@ -219,68 +196,61 @@ export default function Carreras() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
-
-        try {
-            const actions = {
-                create: () => dispatch(FetcherPensum.insertClase({
+        dispatch(ActionPensum.setIsUpdate(true));
+        switch (modal.type) {
+            case MODALS_TYPES.CREATE:
+                dispatch(FetcherPensum.insertClase({
                     url: '/pensum/insert',
                     data: formData
-                })),
-                edit: () => modal.currentClase && dispatch(FetcherPensum.updateClase({
-                    url: `/pensum/update?id_clase=${modal.currentClase.id_clase}`,
+                }));
+                break;
+            case MODALS_TYPES.EDIT:
+                dispatch(FetcherPensum.updateClase({
+                    url: `/pensum/update?id_clase=${modal?.currentClase?.id_clase}`,
                     data: formData
-                })),
-                status: () => modal.currentClase && dispatch(FetcherPensum.updateClase({
-                    url: `/pensum/updateStatus?id_clase=${modal.currentClase.id_clase}`,
                 }))
-            };
-
-            if (modal.type && actions[modal.type]) {
-                await actions[modal.type]();
-                await loadData(facultadSeleccionada);
-                handleCloseModal();
-            }
-        } finally {
-            setIsLoading(false);
+                break;
+            case MODALS_TYPES.STATUS:
+                dispatch(FetcherPensum.updateClase({
+                    url: `/pensum/updateStatus?id_clase=${modal?.currentClase?.id_clase}`,
+                }))
+                break;
         }
+        handleCloseModal();
     };
 
     const handleSectionSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
+        dispatch(ActionSecciones.setIsUpdate(true));
 
-        try {
-            const actions = {
-                createSeccion: () => dispatch(FetcherSecciones.insertSeccion({
+        switch (modal.type) {
+            case MODALS_TYPES.CREATE_SECCION:
+                dispatch(FetcherSecciones.insertSeccion({
                     url: '/secciones/insertSection',
                     data: {
                         ...sectionForm,
                         id_clase: modal.currentClase?.id_clase,
                         horario_especial: sectionForm.horario_especial ? 1 : 0
                     }
-                })),
-                editSeccion: () => dispatch(FetcherSecciones.updateSeccion({
+                }));
+                break;
+            case MODALS_TYPES.EDIT_SECCION:
+                dispatch(FetcherSecciones.updateSeccion({
                     url: "/secciones/updateSection",
                     data: {
                         ...sectionForm,
                         id_clase: modal.currentClase?.id_clase,
                         horario_especial: sectionForm.horario_especial ? 1 : 0
                     }
-                })),
-                deleteSeccion: () => dispatch(FetcherSecciones.deleteSection({
+                }));
+                break;
+            case MODALS_TYPES.DELETE_SECCION:
+                dispatch(FetcherSecciones.deleteSection({
                     url: `/secciones/deleteSection?id_clase=${modal.currentClase?.id_clase}&seccion=${sectionForm.seccion}`,
-                }))
-            };
-
-            if (modal.type && actions[modal.type]) {
-                await actions[modal.type]();
-                await loadData(facultadSeleccionada);
-                handleCloseModal();
-            }
-        } finally {
-            setIsLoading(false);
+                }));
+                break;
         }
+        handleCloseModal();
     };
 
     const handleFiltroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -310,13 +280,15 @@ export default function Carreras() {
     const handleFacultadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nuevaFacultad = e.target.value;
         setFacultadSeleccionada(nuevaFacultad);
-        loadData(nuevaFacultad);
     };
-
+    const handleChangePeriodo = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const periodo = e.target.value;
+        setPeriodoSeleccionado(periodo);
+    };
     return (
         <Container>
             <h4 className="mb-3">
-                {facultades.find(f => f.id === facultadSeleccionada)?.nombre}
+                {facultades.find(f => f.facultadId === facultadSeleccionada)?.nombreFacultad}
             </h4>
             <Form>
                 <Row>
@@ -331,8 +303,8 @@ export default function Carreras() {
                                 onChange={handleFacultadChange}
                             >
                                 {facultades.map(facultad => (
-                                    <option key={facultad.id} value={facultad.id}>
-                                        {facultad.nombre}
+                                    <option key={facultad.facultadId} value={facultad.facultadId}>
+                                        {facultad.nombreFacultad}
                                     </option>
                                 ))}
                             </Input>
@@ -345,7 +317,14 @@ export default function Carreras() {
                                 id="periodoId"
                                 name="periodo"
                                 type="select"
+                                value={periodoSeleccionado}
+                                onChange={handleChangePeriodo}
                             >
+                                {periodos && periodos.map(facultad => (
+                                    <option key={facultad.id_periodo} value={facultad.id_periodo}>
+                                        {facultad.id_periodo}
+                                    </option>
+                                ))}
                             </Input>
                         </FormGroup>
                     </Col>
@@ -366,7 +345,7 @@ export default function Carreras() {
                     <Col md={6}>
                         <Button
                             color={"primary"}
-                            onClick={() => handleOpenModal('create')}
+                            onClick={() => handleOpenModal(MODALS_TYPES.CREATE as TypeModals.ModalType)}
                         >
                             AGREGAR CLASE
                         </Button>
@@ -374,7 +353,7 @@ export default function Carreras() {
                 </Row>
             </Form>
 
-            {isLoading ? (
+            {isLoading || isUpdatePensum || isUpdateSecciones ? (
                 <div className="text-center my-5">
                     <Spinner color="primary">
                         Loading...
@@ -398,26 +377,26 @@ export default function Carreras() {
                                                 <ButtonGroup>
                                                     <Button
                                                         color={"primary"}
-                                                        onClick={() => handleOpenSectionModal('createSeccion', clase)}
+                                                        onClick={() => handleOpenSectionModal(MODALS_TYPES.CREATE_SECCION as TypeModals.ModalType, clase)}
                                                     >
                                                         <FontAwesomeIcon icon={faPlus} />
                                                     </Button>
                                                     <Button
                                                         color={"success"}
-                                                        onClick={() => handleOpenModal('edit', parseInt(bloque), clase)}
+                                                        onClick={() => handleOpenModal(MODALS_TYPES.EDIT as TypeModals.ModalType, parseInt(bloque), clase)}
                                                     >
                                                         <FontAwesomeIcon icon={faEdit} />
                                                     </Button>
                                                     <Button
                                                         color={"warning"}
-                                                        onClick={() => handleOpenModal('status', parseInt(bloque), clase)}
+                                                        onClick={() => handleOpenModal(MODALS_TYPES.STATUS as TypeModals.ModalType, parseInt(bloque), clase)}
                                                     >
                                                         <FontAwesomeIcon icon={clase.estado ? faBan : faCheck} />
                                                     </Button>
                                                 </ButtonGroup>
                                             </CardHeader>
                                             <CardBody>
-                                                {secciones
+                                                {secciones.length > 0 && carreras && secciones
                                                     ?.filter(seccion => {
                                                         const carrera = carreras.find(c => c.id_clase === clase.id_clase);
                                                         return carrera && seccion.id_ccb === carrera.id_ccb;
@@ -428,7 +407,7 @@ export default function Carreras() {
                                                                 href="#"
                                                                 onClick={(e) => {
                                                                     e.preventDefault();
-                                                                    handleOpenSectionModal('editSeccion', clase, seccion);
+                                                                    handleOpenSectionModal(MODALS_TYPES.EDIT_SECCION as TypeModals.ModalType, clase, seccion);
                                                                 }}
                                                                 className="text-decoration-none text-inherit"
                                                             >
@@ -463,15 +442,15 @@ export default function Carreras() {
                 )
             )}
 
-            <Modal isOpen={modal.isOpen && ['create', 'edit', 'status'].includes(modal.type || '')} toggle={handleCloseModal}>
+            <Modal isOpen={modal.isOpen && [MODALS_TYPES.CREATE, MODALS_TYPES.EDIT, MODALS_TYPES.STATUS].includes(modal.type || '')} toggle={handleCloseModal}>
                 <ModalHeader toggle={handleCloseModal}>
-                    {modal.type === 'create' && 'Crear Nueva Clase'}
-                    {modal.type === 'edit' && 'Editar Clase'}
-                    {modal.type === 'status' && 'Cambiar Estado de Clase'}
+                    {modal.type === MODALS_TYPES.CREATE && 'Crear Nueva Clase'}
+                    {modal.type === MODALS_TYPES.EDIT && 'Editar Clase'}
+                    {modal.type === MODALS_TYPES.STATUS && 'Cambiar Estado de Clase'}
                 </ModalHeader>
                 <Form onSubmit={handleSubmit}>
                     <ModalBody>
-                        {modal.type === 'status' ? (
+                        {modal.type === MODALS_TYPES.STATUS ? (
                             <div className="text-center">
                                 <h5>¿Está seguro que desea {modal.currentClase?.estado ? 'desactivar' : 'activar'} la clase?</h5>
                                 <p className="mb-0">Clase: {modal.currentClase?.nombre_clase}</p>
@@ -533,23 +512,23 @@ export default function Carreras() {
                             color='primary'
                             type="submit"
                         >
-                            {modal.type === 'create' && 'Agregar'}
-                            {modal.type === 'edit' && 'Guardar'}
-                            {modal.type === 'status' && 'Desactivar'}
+                            {modal.type === MODALS_TYPES.CREATE && 'Agregar'}
+                            {modal.type === MODALS_TYPES.EDIT && 'Guardar'}
+                            {modal.type === MODALS_TYPES.STATUS && 'Desactivar'}
                         </Button>
                     </ModalFooter>
                 </Form>
             </Modal>
 
-            <Modal isOpen={modal.isOpen && ['createSeccion', 'editSeccion', 'deleteSeccion'].includes(modal.type || '')} toggle={handleCloseModal}>
+            <Modal isOpen={modal.isOpen && [MODALS_TYPES.CREATE_SECCION, MODALS_TYPES.EDIT_SECCION, MODALS_TYPES.DELETE_SECCION].includes(modal.type || '')} toggle={handleCloseModal}>
                 <ModalHeader toggle={handleCloseModal}>
-                    {modal.type === 'createSeccion' && `Agregar Sección - ${modal.currentClase?.nombre_clase}`}
-                    {modal.type === 'editSeccion' && `Editar Sección - ${modal.currentClase?.nombre_clase}`}
-                    {modal.type === 'deleteSeccion' && `Eliminar Sección - ${modal.currentClase?.nombre_clase}`}
+                    {modal.type === MODALS_TYPES.CREATE_SECCION && `Agregar Sección - ${modal.currentClase?.nombre_clase}`}
+                    {modal.type === MODALS_TYPES.EDIT_SECCION && `Editar Sección - ${modal.currentClase?.nombre_clase}`}
+                    {modal.type === MODALS_TYPES.DELETE_SECCION && `Eliminar Sección - ${modal.currentClase?.nombre_clase}`}
                 </ModalHeader>
                 <Form onSubmit={handleSectionSubmit}>
                     <ModalBody>
-                        {modal.type === 'deleteSeccion' ? (
+                        {modal.type === MODALS_TYPES.DELETE_SECCION ? (
                             <div className="text-center">
                                 <h5>¿Está seguro que desea eliminar esta sección?</h5>
                                 <p className="mb-0">Sección: {sectionForm.seccion}</p>
@@ -584,7 +563,7 @@ export default function Carreras() {
                                         type="text"
                                         value={sectionForm.seccion}
                                         onChange={handleSectionInputChange}
-                                        disabled={modal.type === 'createSeccion'}
+                                        disabled={modal.type === MODALS_TYPES.CREATE_SECCION}
                                         required
                                     />
                                 </FormGroup>
@@ -598,12 +577,9 @@ export default function Carreras() {
                                         onChange={handleSectionInputChange}
                                         required
                                     >
-                                        <option value="1">Lunes</option>
-                                        <option value="2">Martes</option>
-                                        <option value="3">Miércoles</option>
-                                        <option value="4">Jueves</option>
-                                        <option value="5">Viernes</option>
-                                        <option value="6">Sábado</option>
+                                        {days && days.map((day, index) => {
+                                            return <option key={day + index + 1} value={index + 1}>{day}</option>
+                                        })}
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
@@ -616,12 +592,9 @@ export default function Carreras() {
                                         onChange={handleSectionInputChange}
                                         required
                                     >
-                                        <option value="1">Lunes</option>
-                                        <option value="2">Martes</option>
-                                        <option value="3">Miércoles</option>
-                                        <option value="4">Jueves</option>
-                                        <option value="5">Viernes</option>
-                                        <option value="6">Sábado</option>
+                                        {days && days.map((day, index) => {
+                                            return <option key={day + index + 2} value={index + 1}>{day}</option>
+                                        })}
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
@@ -665,21 +638,21 @@ export default function Carreras() {
                         <Button color="secondary" onClick={handleCloseModal}>
                             Cancelar
                         </Button>
-                        {modal.type === 'editSeccion' && (
+                        {modal.type === MODALS_TYPES.EDIT_SECCION && (
                             <Button
                                 color="danger"
-                                onClick={() => setModal(prev => ({ ...prev, type: 'deleteSeccion' }))}
+                                onClick={() => setModal(prev => ({ ...prev, type: MODALS_TYPES.DELETE_SECCION as TypeModals.ModalType }))}
                             >
                                 Eliminar
                             </Button>
                         )}
                         <Button
-                            color="primary" 
+                            color="primary"
                             type="submit"
                         >
-                            {modal.type === 'createSeccion' && 'Agregar'}
-                            {modal.type === 'editSeccion' && 'Guardar'}
-                            {modal.type === 'deleteSeccion' && 'Eliminar'}
+                            {modal.type === MODALS_TYPES.CREATE_SECCION && 'Agregar'}
+                            {modal.type === MODALS_TYPES.EDIT_SECCION && 'Guardar'}
+                            {modal.type === MODALS_TYPES.DELETE_SECCION && 'Eliminar'}
                         </Button>
                     </ModalFooter>
                 </Form>

@@ -136,9 +136,25 @@ async function deleteData(props: TypeUtilities) {
     try {
         return await api.delete(props.url)
             .then(response => {
-                return response.status;
+                if (response['status'] === 200) {
+                    responseData.status = 200;
+                    return responseData
+                };
+                responseData.data = response.data;
+                responseData.status = response.status;
+                return responseData;
             })
-            .catch(error => { return { message: error } });
+            .catch(error => {
+                const response = error["response"];
+                if (response["status"] === 401 || response["status"] === 404) {
+                    responseData.error.code = parseInt(response["status"], 10);
+                    responseData.error.message = response["statusText"];
+                    return responseData;
+                }
+                responseData.error.code = 503;
+                responseData.error.message = error["statusText"];
+                return responseData;
+            });
     } catch (error) {
         console.error(error)
     }

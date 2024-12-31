@@ -7,6 +7,11 @@ import {
     TabContent,
     TabPane,
 } from "reactstrap";
+import { useDispatch } from "../../store";
+import { Action as ActionPensum } from '../../store/slices/pensums';
+import { Action as ActionSecciones } from '../../store/slices/secciones';
+import { Action as ActionPeriodo } from '../../store/slices/periodo';
+
 import { pensumMenu } from "../../components/shared/nav/subMenus";
 import Breadcrumbs from "../../components/shared/breadcrumb/Breadcrumbs";
 
@@ -15,8 +20,12 @@ type TypeBreadcumb = {
 }
 
 export default function Pensums() {
+    const dispatch = useDispatch();
     const [activePane, setActivePane] = useState<string>(pensumMenu[0].paneId!);
     const onChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        dispatch(ActionPensum.cleanStore());
+        dispatch(ActionSecciones.cleanStore());
+        dispatch(ActionPeriodo.cleanStore());
         setActivePane(e.currentTarget.name);
     };
     const currentTab = pensumMenu.find((item) => item.paneId === activePane);

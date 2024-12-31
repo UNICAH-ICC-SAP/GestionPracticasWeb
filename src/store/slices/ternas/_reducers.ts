@@ -20,17 +20,19 @@ export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Action.setStep1, (state, { payload }) => ({
         ...state,
         step1: payload,
-        step2: !payload
+        step2: false,
+        resumen: false,
     }));
     addCase(Action.setStep2, (state, { payload }) => ({
         ...state,
-        step1: !payload,
-        step2: payload
+        step1: false,
+        step2: payload,
+        resumen: false
     }));
     addCase(Action.setResumen, (state, { payload }) => ({
         ...state,
-        step1: !payload,
-        step2: !payload,
+        step1: false,
+        step2: false,
         resumen: payload
     }));
     addCase(Action.setDetalleTerna, (state, { payload }) => ({
@@ -61,10 +63,12 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.saveDetalleTernas.fulfilled, (state, { payload }) => ({
         ...state,
-        saveDetalleTernas: payload
+        saveDetalleTernas: JSON.parse(JSON.stringify(payload.detalleTernas)),
+        ternaDetailCreateState: payload.savedDetailTerna,
     }));
     addCase(Fetcher.saveTernas.fulfilled, (state, { payload }) => ({
         ...state,
-        currentTernaId:payload.ternaInfo
+        savedTernaInfo: JSON.parse(JSON.stringify(payload.savedTerna)),
+        ternaCreatedState: payload.savedTernaState
     }));
 });

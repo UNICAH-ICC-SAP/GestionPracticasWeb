@@ -77,6 +77,7 @@ export default function VerTernas() {
 
     useEffect(() => {
         const alumnosMapped: AlumnoInfo[] = [];
+        console.log(ternas)
         if (!isEmpty(ternas)) {
             ternas.forEach((terna) => {
                 if (terna.alumno) {
@@ -101,7 +102,7 @@ export default function VerTernas() {
         toggleModal();
     };
 
-    const detalleAllternas = alumnos.filter((alumno) => ternasDetalle.some((terna) => 
+    const detalleAllternas = alumnos.filter((alumno) => ternasDetalle.some((terna) =>
         terna.ternaId === alumno.ternaId &&
         !terna.coordina && terna.docenteId
     )
@@ -134,7 +135,7 @@ export default function VerTernas() {
                 <ModalHeader toggle={toggleModal}>
                     {`Docentes en la terna ${selectedTernaId}`}
                 </ModalHeader>
-                <ModalBody style={{fontSize: '15px'}}>
+                <ModalBody style={{ fontSize: '15px' }}>
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
                             <div key={docente.docenteId}>
@@ -152,4 +153,4 @@ export default function VerTernas() {
         </Container>
     );
 }
-                    
+
