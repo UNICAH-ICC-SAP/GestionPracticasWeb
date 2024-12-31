@@ -9,5 +9,6 @@ export default function Selector(store: StoreState): StorePeriodo.State {
 }
 
 Selector.getNuevoPeriodo = CreateSelector(Selector, (state) => state.nuevoPeriodo);
+Selector.getPeriodos = CreateSelector(Selector, (state) => state.periodos);
 
 Selector.getError = CreateSelector(Selector, (state) => state.error);
