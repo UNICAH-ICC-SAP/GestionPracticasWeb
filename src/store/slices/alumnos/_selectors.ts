@@ -10,6 +10,9 @@ export default function Selector(store: StoreState): StoreAlumnos.State {
 Selector.getAlumno = CreateSelector(Selector, (state) => state.alumno);
 Selector.getAlumnos = CreateSelector(Selector, (state) => state.alumnos)
 Selector.getError = CreateSelector(Selector, (state) => state.error);
+Selector.getSavedUserState = CreateSelector(Selector, (state) => state.isSavedUser);
+Selector.getSavedAlumnoState = CreateSelector(Selector, (state) => state.isSavedAlumno);
+
 /**Selector: fetching is loading */
 // Selector.fetching = CreateSelector(Selector, (state) => state.loading);
 
