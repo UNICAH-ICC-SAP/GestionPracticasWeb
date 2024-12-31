@@ -40,11 +40,13 @@ export default CreateFetchers(NAME, {
       return {
         clases: response?.data,
         error: response?.error,
+        update: false,
       };
     }
     return {
       clases: response?.data,
       error: response?.error,
+      update: false,
     };
   },
 
@@ -54,11 +56,13 @@ export default CreateFetchers(NAME, {
       return {
         clases: response?.data,
         error: response?.error,
+        update: false,
       };
     }
     return {
       clases: response?.data,
       error: response?.error,
+      update: false,
     };
   },
 });

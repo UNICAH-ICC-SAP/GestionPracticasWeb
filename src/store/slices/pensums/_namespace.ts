@@ -10,6 +10,7 @@ export declare namespace Type {
     creditos: number;
     estado: boolean;
     TipoClase: number;
+    bloque?: number
   };
 
   export type CarreraInfo = {
@@ -22,9 +23,11 @@ export declare namespace Type {
 
 export declare namespace StorePensum {
   export type State = {
-    clases: Array<Type.ClaseInfo>;
-    carreras: Array<Type.CarreraInfo>;
+    clases: Array<Type.ClaseInfo> | null;
+    carreras: Array<Type.CarreraInfo> | null;
     error: TypeModal.ModalError;
+    loading: boolean;
+    update: boolean;
   };
 }
 
@@ -33,13 +36,17 @@ export const Action = CreateActions<{
   cleanStore: void;
   setClases: boolean;
   setCarreras: boolean;
-}>(NAME, ["cleanStore", "cleanUserData", "setClases", "setCarreras"]);
+  setIsLoading: boolean;
+  setIsUpdate: boolean;
+}>(NAME, ["cleanStore", "cleanUserData", "setClases", "setCarreras", "setIsLoading", "setIsUpdate"]);
 
 export const INIT: StorePensum.State = {
-  clases: [],
-  carreras: [],
+  clases: null,
+  carreras: null,
   error: {
     code: 0,
     message: "",
-  }
+  },
+  loading: false,
+  update: false
 };
