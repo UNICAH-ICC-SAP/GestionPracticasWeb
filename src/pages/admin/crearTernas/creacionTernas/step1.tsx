@@ -67,12 +67,12 @@ export default function Step1() {
         }
 
     }, [dispatch])
-    const facultades = useSelector(SelectorFacultades.getFacutades)
+    const facultades = useSelector(SelectorFacultades.getFacultades)
     const handleButtonNext = () => {
         console.log(state)
         dispatch(ActionTernas.setDataAlumno(state));
-        dispatch(ActionTernas.setUserCreate({userId: userState.userId, pass: 'Unicah2024', roleId: 3}));
-        dispatch(ActionTernas.setStep1(false));
+        dispatch(ActionTernas.setUserCreate({ userId: userState.userId, pass: 'Unicah2024', roleId: 3 }));
+        dispatch(ActionTernas.setStep2(true));
     }
     return <div className="form-group">
         <h5 className="mb-4">Creacion de Nueva Terna</h5>
@@ -80,7 +80,7 @@ export default function Step1() {
             <InputGroupText>
                 Numero de Identidad
             </InputGroupText>
-            <MaskedInput maxLength={15} value={state.alumnoId} inputMaskChange={inputFunction} name="alumnoId" mask="DNI" id="alumnoId" placeholder={maskDNI(PlaceHolder.dni)} />
+            <MaskedInput maxLength={13} value={state.alumnoId} inputMaskChange={inputFunction} name="alumnoId" mask="DNI" id="alumnoId" placeholder={maskDNI(PlaceHolder.dni)} />
         </InputGroup>
         <InputGroup>
             <InputGroupText>
@@ -105,11 +105,11 @@ export default function Step1() {
             </Input>
         </InputGroup>
         <InputGroup>
-                <Input invalid={!isValidItem.email} valid={isValidItem.email} value={state.email.replace('@unicah.edu', '')} onChange={inputFunction} name="email" id="email" placeholder="jvelas" />
-                <InputGroupText>
-                    @unicah.edu
-                </InputGroupText>
-            </InputGroup>
+            <Input invalid={!isValidItem.email} valid={isValidItem.email} value={state.email.replace('@unicah.edu', '')} onChange={inputFunction} name="email" id="email" placeholder="jvelas" />
+            <InputGroupText>
+                @unicah.edu
+            </InputGroupText>
+        </InputGroup>
         <InputGroup>
             <InputGroupText>
                 Número de Teléfono

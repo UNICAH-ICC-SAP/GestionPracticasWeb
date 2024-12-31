@@ -9,11 +9,11 @@ import NotFound from "../../../../components/shared/notFound";
 import Swal from 'sweetalert2';
 
 type AlumnoDetails = {
-  alumnoid: string,
-  email: string,
-  nombre: string,
-  facultad: string,
-  telefono: string
+    alumnoid: string,
+    email: string,
+    nombre: string,
+    facultad: string,
+    telefono: string
 }
 
 export default function ModificarAlumnos() {
@@ -40,9 +40,9 @@ export default function ModificarAlumnos() {
                 alumnoid: alumno.alumnoId,
                 email: alumno.email,
                 nombre: alumno.nombre,
-                facultad: alumno.facultad.nombreFacultad,
+                facultad: alumno.facultadId,
                 telefono: alumno.telefono
-              }));   
+            }));
 
             setDetalle(alumnosMapped);
         }
@@ -53,7 +53,8 @@ export default function ModificarAlumnos() {
 
     const handleEditClick = (alumno: AlumnoDetails) => {
         setSelectedAlumno(alumno);
-        toggleModal();}
+        toggleModal();
+    }
 
     const handleDeleteClick = (alumno: AlumnoDetails) => {
         setSelectedAlumno(alumno);
@@ -67,7 +68,7 @@ export default function ModificarAlumnos() {
                 url: `/alumno/update?alumnoId=${selectedAlumno.alumnoid}`,
                 data: selectedAlumno,
             };
-    
+
             dispatch(FetcherAlumno.updatealumno(params))
                 .then(() => {
                     // Después de actualizar al alumno, recargar la lista
@@ -100,19 +101,19 @@ export default function ModificarAlumnos() {
 
     const handleConfirmDelete = () => {
         if (confirmText === selectedAlumno?.nombre) {
-          const params = { url: `/alumno/updateStatus?alumnoId=${selectedAlumno.alumnoid}` };
-          try {
-            dispatch(FetcherAlumno.updatealumno(params));
-            dispatch(FetcherAlumno.getAlumnos(utils));
-            toggleDeleteModal();
-            Swal.fire("¡Éxito!", "El alumno se ha eliminado exitosamente.", "success");
-          } catch (error) {
-            Swal.fire("Oops...", "Hubo un error al eliminar el alumno.", error);
-          }
+            const params = { url: `/alumno/updateStatus?alumnoId=${selectedAlumno.alumnoid}` };
+            try {
+                dispatch(FetcherAlumno.updatealumno(params));
+                dispatch(FetcherAlumno.getAlumnos(utils));
+                toggleDeleteModal();
+                Swal.fire("¡Éxito!", "El alumno se ha eliminado exitosamente.", "success");
+            } catch (error) {
+                Swal.fire("Oops...", "Hubo un error al eliminar el alumno.", error);
+            }
         } else {
-          alert("El nombre ingresado no coincide.");
+            alert("El nombre ingresado no coincide.");
         }
-      };
+    };
 
 
     const isSaveDisabled = () => {
@@ -144,32 +145,32 @@ export default function ModificarAlumnos() {
                             <div>
                                 <Label for="nombre" className="text-left">Nombre Alumno:</Label>
                                 <Input
-                                idnombre="nombre"
-                                type="text"
-                                value={selectedAlumno.nombre}
-                                onChange={(e) => setSelectedAlumno({ ...selectedAlumno, nombre: e.target.value })}
-                                placeholder="Ingrese el nombre del alumno"
-                            />
+                                    idnombre="nombre"
+                                    type="text"
+                                    value={selectedAlumno.nombre}
+                                    onChange={(e) => setSelectedAlumno({ ...selectedAlumno, nombre: e.target.value })}
+                                    placeholder="Ingrese el nombre del alumno"
+                                />
                             </div>
                             <div>
                                 <Label for="email" className="text-left">Email:</Label>
                                 <Input
-                                id="email"
-                                type="email"
-                                value={selectedAlumno.email}
-                                onChange={(e) => setSelectedAlumno({ ...selectedAlumno, email: e.target.value })}
-                                placeholder="Ingrese el email del alumno"
-                            />
+                                    id="email"
+                                    type="email"
+                                    value={selectedAlumno.email}
+                                    onChange={(e) => setSelectedAlumno({ ...selectedAlumno, email: e.target.value })}
+                                    placeholder="Ingrese el email del alumno"
+                                />
                             </div>
                             <div>
                                 <Label for="telefono" className="text-left">Teléfono:</Label>
                                 <Input
-                                id="telefono"
-                                type="text"
-                                value={selectedAlumno.telefono}
-                                onChange={(e) => setSelectedAlumno({ ...selectedAlumno, telefono: e.target.value })}
-                                placeholder="Ingrese el teléfono del alumno"
-                            />
+                                    id="telefono"
+                                    type="text"
+                                    value={selectedAlumno.telefono}
+                                    onChange={(e) => setSelectedAlumno({ ...selectedAlumno, telefono: e.target.value })}
+                                    placeholder="Ingrese el teléfono del alumno"
+                                />
                             </div>
                         </>
                     )}
@@ -196,7 +197,7 @@ export default function ModificarAlumnos() {
                     />
                 </ModalBody>
                 <ModalFooter className="d-flex justify-content-center">
-                <Button color="danger" onClick={handleConfirmDelete} disabled={confirmText !== selectedAlumno?.nombre}>
+                    <Button color="danger" onClick={handleConfirmDelete} disabled={confirmText !== selectedAlumno?.nombre}>
                         Eliminar
                     </Button>
                     <Button color="secondary" onClick={toggleDeleteModal}>
@@ -205,7 +206,6 @@ export default function ModificarAlumnos() {
                 </ModalFooter>
             </Modal>
         </Container>
-    );                       
+    );
 }
-        
-        
+
