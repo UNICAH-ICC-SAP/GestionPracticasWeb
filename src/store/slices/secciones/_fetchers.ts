@@ -26,11 +26,13 @@ export default CreateFetchers(NAME, {
       return {
         secciones: response?.data,
         error: response?.error,
+        update: false,
       };
     }
     return {
       secciones: response?.data,
       error: response?.error,
+      update: false,
     };
   },
 
@@ -40,15 +42,29 @@ export default CreateFetchers(NAME, {
       return {
         secciones: response?.data,
         error: response?.error,
+        update: false,
       };
     }
     return {
       secciones: response?.data,
       error: response?.error,
+      update: false,
     };
   },
 
   async deleteSection(params: TypeUtilities) {
-    await deleteData(params);
+    const response = await deleteData(params);
+    if (isError<TypeError.ModalError>(response?.error)) {
+      return {
+        secciones: response?.data,
+        error: response?.error,
+        update: false,
+      };
+    }
+    return {
+      secciones: response?.data,
+      error: response?.error,
+      update: false,
+    };
   }
 });

@@ -10,3 +10,4 @@ export default function Selector(store: StoreState): StoreSeccion.State {
 
 Selector.getSecciones = CreateSelector(Selector, (state) => state.secciones);
 Selector.getError = CreateSelector(Selector, (state) => state.error);
+Selector.getIsUpdate = CreateSelector(Selector, (state) => state.update);
