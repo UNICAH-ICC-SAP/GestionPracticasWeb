@@ -26,12 +26,13 @@ enum PlaceHolder {
 
 export default function CrearDocente() {
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
-    const [state, setState] = React.useState<DocentesType.DocentesInfo>({
+    const [state, setState] = React.useState<DocentesType.DocenteInfo>({
         docenteId: '',
         email: '',
         nombre: '',
         facultadId: '',
-        telefono: '504'
+        telefono: '504',
+        coordina: false
     });
     const dispatch = useDispatch();
 
@@ -59,7 +60,8 @@ export default function CrearDocente() {
             email: '',
             nombre: '',
             facultadId: '',
-            telefono: '504'
+            telefono: '504',
+            coordina: false
         });
         setIsValidItem({ email: false });
     };
@@ -81,7 +83,7 @@ export default function CrearDocente() {
         }
     }, [dispatch]);
 
-    const facultades = useSelector(SelectorFacultades.getFacutades);
+    const facultades = useSelector(SelectorFacultades.getFacultades);
 
     const handleSaveDocente = async () => {
         if (state) {

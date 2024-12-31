@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, } from "reactstrap";
 import { TypeUtilities } from '../../../utilities/TypeUtilities';
 import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../store/slices/ternas'
+import { Selector as SelectorDocentes } from '../../../store/slices/docentes'
 import { useDispatch, useSelector } from "../../../store";
 import { Tables } from "../../../components/commons/tables/tables";
 import { isEmpty } from "lodash";
@@ -15,6 +16,7 @@ type TernaDetail = {
     docenteId: string;
     docenteNombre: string;
     coordina: string;
+    actionButton?: JSX.Element
 }
 
 export default function Docetes() {
@@ -26,14 +28,17 @@ export default function Docetes() {
     useEffect(() => {
         dispatch(FetcherTernas.getDetalleTernas(utils))
     }, [dispatch])
-    const docentes = useSelector(SelectorTernas.ternasInfo);
+    const detalleTernas = useSelector(SelectorTernas.getDetalleTernas);
+    const docentes = useSelector(SelectorDocentes.getDocentes);
     useEffect(() => {
-        if (!isEmpty(docentes)) {
-            const docentesMapped = docentes.map(docente => {
+        if (!isEmpty(detalleTernas)) {
+            const docentesMapped = detalleTernas.map(detalle => {
+                const currentDocente = docentes.filter(docente => docente.docenteId = detalle.docenteId);
+
                 const terna: TernaDetail = {
-                    docenteId: docente.docenteId,
-                    docenteNombre: docente.docente.nombre,
-                    coordina: docente.coordina ? "Coordinador" : ''
+                    docenteId: detalle.docenteId,
+                    docenteNombre: currentDocente[0].nombre,
+                    coordina: detalle.coordina ? "Coordinador" : ''
                 };
                 const jsx = <td><ButtonGroup>
                     <Button color="success">

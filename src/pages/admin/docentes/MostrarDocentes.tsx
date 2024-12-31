@@ -19,7 +19,7 @@ export default function MostrarDocentes() {
     const [detalle, setDetalle] = useState<Array<DocenteDetail>>([]);
 
     const utils: TypeUtilities = {
-         url: '/docente/getDocentes'
+        url: '/docente/getDocentes'
     };
 
     useEffect(() => {
@@ -35,7 +35,7 @@ export default function MostrarDocentes() {
                 nombre: docente.nombre,
                 email: docente.email,
                 telefono: docente.telefono,
-                facultad: docente.facultad.nombreFacultad
+                facultad: docente.facultadId
             }));
 
             setDetalle(docentesMapped);
