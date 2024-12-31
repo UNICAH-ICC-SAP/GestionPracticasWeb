@@ -1,11 +1,16 @@
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "../../../store";
-import { Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
+
+import { Fetcher as FetcherPensum, Selector as SelectorPensum, Action as ActionPensum } from "../../../store/slices/pensums";
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
 import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
+import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "../../../store/slices/periodo";
+
 import NotFound from "../../../components/shared/notFound";
 import { isEmpty } from "lodash";
 import { Col, Container, Form, FormGroup, Input, Label, Row, Card, CardHeader, CardBody, Spinner } from "reactstrap";
-import React, { useEffect, useState } from "react";
+
+import { days } from "../../../consts"
 
 type SeccionDetail = {
     nombre_clase: string;
@@ -19,37 +24,39 @@ type SeccionDetail = {
 
 export default function CargasDocente() {
     const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(false);
     const [docenteSeleccionado, setDocenteSeleccionado] = useState('ANGEL DASSA');
+    const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
     const clases = useSelector(SelectorPensum.getClases);
     const docentes = useSelector(SelectorDocentes.getDocentes);
     const secciones = useSelector(SelectorSecciones.getSecciones);
-
-    const loadData = async (docenteId: string) => {
-        setIsLoading(true);
-        try {
-            await Promise.all([
-                dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" })),
-                dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" })),
-                dispatch(FetcherSecciones.getSecciones({ url: `/clasesDocentes/get?docenteId=${docenteId}&id_periodo=I-2025` }))
-            ]);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const periodos = useSelector(SelectorPeriodos.getPeriodos);
+    const isLoading = useSelector(SelectorPensum.getIsLoading);
 
     useEffect(() => {
-        loadData(docenteSeleccionado);
-    }, []);
+        if (periodos === null) {
+            dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
+        }
+    }, [dispatch, periodos])
+
+    useEffect(() => {
+        if (clases && docentes && periodos && isLoading) {
+            dispatch(ActionPensum.setIsLoading(false));
+            setPeriodoSeleccionado(periodos[periodos.length - 1].id_periodo);
+            setDocenteSeleccionado(docentes[docentes.length - 1].nombre);
+        }
+        if (clases === null && docentes === null && secciones === null && !isLoading) {
+            dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" }));
+            dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
+            dispatch(FetcherSecciones.getSecciones({ url: `/clasesDocentes/get?docenteId=${docenteSeleccionado}&id_periodo=${periodoSeleccionado}` }));
+        }
+    }, [dispatch, clases, docentes, secciones])
 
     const handleDocenteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const nuevoDocente = e.target.value;
         setDocenteSeleccionado(nuevoDocente);
-        loadData(nuevoDocente);
     };
 
     const getDayName = (day: number): string => {
-        const days = ['', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
         return days[day] || '';
     };
 
@@ -69,6 +76,10 @@ export default function CargasDocente() {
         return acc;
     }, {});
 
+    const handleChangePeriodo = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const periodo = e.target.value;
+        setPeriodoSeleccionado(periodo);
+    };
     return (
         <Container>
             <Form>
@@ -98,7 +109,14 @@ export default function CargasDocente() {
                                 id="periodoId"
                                 name="periodo"
                                 type="select"
+                                value={periodoSeleccionado}
+                                onChange={handleChangePeriodo}
                             >
+                                {periodos && periodos.map(facultad => (
+                                    <option key={facultad.id_periodo} value={facultad.id_periodo}>
+                                        {facultad.id_periodo}
+                                    </option>
+                                ))}
                             </Input>
                         </FormGroup>
                     </Col>
