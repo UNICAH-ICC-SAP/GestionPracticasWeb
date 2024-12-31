@@ -24,7 +24,7 @@ export default CreateFetchers(NAME, {
             user: response?.singleData,
             error: response?.error,
             logged: true,
-            passwordResetRequired: response?.singleData?.passwordResetRequired || false
+            passwordResetRequired: response?.singleData["passwordResetRequired"] || false
         };
     }
     ,
