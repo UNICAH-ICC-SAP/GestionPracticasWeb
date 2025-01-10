@@ -56,8 +56,7 @@ function Login() {
   const [isResetPasswordVisible, setIsResetPasswordVisible] =
     React.useState(false);
   const passwordRequired = useSelector(SelectorLogin.getPasswordResetRequired);
-  // const isLogged = useSelector(SelectorLogin.IsLogged);
-  // console.log(isLogged)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormLogin({
       ...formLogin,

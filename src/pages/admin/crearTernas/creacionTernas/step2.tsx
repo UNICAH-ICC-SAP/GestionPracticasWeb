@@ -57,7 +57,6 @@ export default function Step2() {
 
     useEffect(() => {
         const hasItem = detalleTernas.find(item => item.coordina === 'Si')
-        console.log(hasItem, detalleTernas.length)
         if (!hasItem && detalleTernas.length > 0) {
             setHasCoor(true);
             setTimeout(() => {

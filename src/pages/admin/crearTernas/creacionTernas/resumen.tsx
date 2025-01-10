@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+
+import type { Type as TypeDocente } from "../../../../store/slices/docentes/_namespace"
 import { useSelector, useDispatch } from "../../../../store";
 import { Selector as SelectorTernas } from "../../../../store/slices/ternas";
 import { Selector as SelectorDocentes } from "../../../../store/slices/docentes";
@@ -7,6 +9,8 @@ import { Fetcher as FetcherAlumnos, Selector as SelectorAlumno } from "../../../
 import { Fetcher as FetcherDetallesTerna } from "../../../../store/slices/ternas";
 import { Fetcher as FetcherTernas } from "../../../../store/slices/ternas";
 import { Action as ActionTernas } from "../../../../store/slices/ternas";
+import { Fetcher as FetcherCorreo } from "../../../../store/slices/plantillas"
+import { TypeUtilities } from "../../../../utilities/TypeUtilities";
 import Swal from 'sweetalert2';
 import { ButtonSecondary, ButtonPrimary } from "../../../../components/shared/buttons";
 
@@ -28,13 +32,11 @@ export default function Resumen() {
     const userToCreate = useSelector(SelectorTernas.getUserToCreate);
     const docentes = useSelector(SelectorDocentes.getDocentes);
     const alumno = useSelector(SelectorTernas.getAlumo);
-    const detalleTerna = useSelector(SelectorTernas.getDetalleTernas);
     const savedTerna = useSelector(SelectorTernas.getSavedItem);
     const savedUserState = useSelector(SelectorAlumno.getSavedUserState);
     const savedAlumnoState = useSelector(SelectorAlumno.getSavedAlumnoState);
     const savedTernaState = useSelector(SelectorTernas.getSavedTernaState);
     const savedDetailState = useSelector(SelectorTernas.getSavedDetailState);
-    console.log(userToCreate, docentes, alumno, detalleTerna);
 
     useEffect(() => {
         if (savedTerna.ternaId !== 0) {
@@ -44,14 +46,13 @@ export default function Resumen() {
                 coordina: detalle.coordina === 'Si',
             }));
 
-            const paramsDetalle = {
+            const paramsDetalle: TypeUtilities = {
                 url: '/detalleTernas/insert',
                 data: docentesData,
             };
             setDispatched(true)
             dispatch(FetcherDetallesTerna.saveDetalleTernas(paramsDetalle));
-            dispatch(ActionTernas.cleanUserData());
-            dispatch(ActionTernas.setStep1(true));
+
         }
     }, [dispatch, savedTerna])
 
@@ -73,6 +74,16 @@ export default function Resumen() {
                     title: "Datos Creados",
                     text: `La terna fue creada exitosamente`,
                 });
+                sendEmail(2, alumno.email, userToCreate.userId, userToCreate.pass);
+                const docentesEmails: Array<string> = [];
+                docentesInfo.forEach(docente => {
+                    const docenteFound: TypeDocente.DocenteInfo = docentes.find(docenteItem => docente.docenteId === docenteItem.docenteId);
+                    docentesEmails.push(docenteFound.email)
+                })
+                sendEmail(3, docentesEmails.join(','), alumno.nombre);
+                dispatch(ActionTernas.cleanUserData());
+                dispatch(ActionTernas.setStep1(true));
+                setDispatched(false);
             }
             if (!savedDetailState) {
                 Swal.fire({
@@ -90,6 +101,30 @@ export default function Resumen() {
             }
         }
     }, [savedUserState, savedAlumnoState, savedTernaState, savedDetailState])
+
+    function sendEmail(plantillaID, correoUsuario, usuario, nombreUsuario?) {
+        const info: TypeUtilities = {
+            url: `/correo/enviarCorreo/${plantillaID}`,
+        };
+        switch (plantillaID) {
+            case 2:
+                info.data = {
+                    correoDestino: correoUsuario,
+                    userId: usuario,
+                    nombreUsuario: nombreUsuario,
+                }
+                dispatch(FetcherCorreo.sendEmail(info))
+                break;
+            case 3:
+                info.data = {
+                    correoDestino: correoUsuario,
+                    userId: usuario,
+                    nombreUsuario: nombreUsuario,
+                }
+                dispatch(FetcherCorreo.sendEmail(info))
+                break;
+        }
+    }
 
     useEffect(() => {
         if (terna.detalleTernas.length === 3) {
@@ -117,7 +152,7 @@ export default function Resumen() {
 
     useEffect(() => {
         if (savedAlumnoState) {
-            const paramsTerna = {
+            const paramsTerna: TypeUtilities = {
                 url: '/ternas/insert',
                 data: {
                     alumnoId: alumno.alumnoId,
@@ -129,7 +164,7 @@ export default function Resumen() {
 
     const handlesavedata = async () => {
         if (alumno) {
-            const paramsUser = {
+            const paramsUser: TypeUtilities = {
                 url: '/user/signUp',
                 data: {
                     userId: alumno.alumnoId,

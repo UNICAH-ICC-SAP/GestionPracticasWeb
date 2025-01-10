@@ -1,12 +1,13 @@
+import React from 'react';
 import { Menu } from './types';
 import Docentes from '../../../pages/admin';
-import React from 'react';
-import DocenteMenu from '../../../pages/docentePage/docenteIndex';
-import CargasMenu from '../../../pages/cargasPage/cargasIndex';
-import DocentePerfil from "../../../pages/perfilDocente"
+import DocenteMenu from '../../../pages/admin/docentePage/docenteIndex';
+import CargasMenu from '../../../pages/admin/cargasPage/cargasIndex';
 import Pensums from '../../../pages/pensums/';
 import { Home } from '../../../pages/home/home';
-import Alumno from '../../../pages/alumnospage/alumno';
+import Alumno from '../../../pages/perfilAlumnos/alumno';
+import DocentePerfil from "../../../pages/perfilDocente"
+import ConfigEmail from "../../../pages/admin/configEmail"
 
 
 export const MenuItems: Array<Array<Menu>> = [
@@ -35,9 +36,14 @@ export const MenuItems: Array<Array<Menu>> = [
             'title': 'Cargas Academicas',
             'pathTo': '/cargas',
             'component': <CargasMenu />
+        },
+        ,
+        {
+            'title': 'Configurar Plantilla Correo',
+            'pathTo': '/configEmail',
+            'component': <ConfigEmail />
         }
-    ]
-    ,
+    ],
     [
         {
             'title': 'misTernas',

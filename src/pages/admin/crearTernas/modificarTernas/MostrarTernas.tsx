@@ -77,7 +77,6 @@ export default function VerTernas() {
 
     useEffect(() => {
         const alumnosMapped: AlumnoInfo[] = [];
-        console.log(ternas)
         if (!isEmpty(ternas)) {
             ternas.forEach((terna) => {
                 if (terna.alumno) {

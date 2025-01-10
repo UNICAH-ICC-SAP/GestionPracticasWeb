@@ -19,8 +19,54 @@ api.interceptors.request.use(
     });
 
 async function getData(props: TypeUtilities) {
-    try {
-        return await api.get(props.url).then(response => {
+    return await api.get(props.url).then(response => {
+        if (response['status'] === 401) {
+            responseData.status = 401;
+            return responseData
+        };
+        responseData.data = response.data;
+        responseData.status = response.status;
+        return responseData;
+    }).catch(error => {
+        const response = error["response"];
+        if (response["status"] === 401 || response["status"] === 404) {
+            responseData.error.code = parseInt(response["status"], 10);
+            responseData.error.message = response["statusText"];
+            return responseData;
+        }
+        responseData.error.code = 503;
+        responseData.error.message = error["statusText"];
+        return responseData;
+    });
+};
+
+async function getSingleData(props: TypeUtilities) {
+    return await api.get(props.url).then(response => {
+        const dataArray = response.data;
+        if (response['status'] === 401) {
+            responseData.status = 401;
+            return responseData
+        };
+        responseData.singleData = dataArray[0];
+        responseData.status = response.status;
+        return responseData;
+    }).catch(error => {
+        const response = error["response"];
+        if (response["status"] === 401 || response["status"] === 404) {
+            responseData.error.code = parseInt(response["status"], 10);
+            responseData.error.message = response["statusText"];
+            return responseData;
+        }
+        responseData.error.code = 503;
+        responseData.error.message = error["statusText"];
+        return responseData;
+    });
+};
+
+async function saveData(props: TypeUtilities) {
+    const { data } = props;
+    return await api.post(props.url, data)
+        .then(response => {
             if (response['status'] === 401) {
                 responseData.status = 401;
                 return responseData
@@ -28,7 +74,8 @@ async function getData(props: TypeUtilities) {
             responseData.data = response.data;
             responseData.status = response.status;
             return responseData;
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error["response"];
             if (response["status"] === 401 || response["status"] === 404) {
                 responseData.error.code = parseInt(response["status"], 10);
@@ -39,23 +86,24 @@ async function getData(props: TypeUtilities) {
             responseData.error.message = error["statusText"];
             return responseData;
         });
-    } catch (err) {
-        console.error(err);
-    }
-};
+}
 
-async function getSingleData(props: TypeUtilities) {
-    try {
-        return await api.get(props.url).then(response => {
-            const dataArray = response.data;
+async function updateData(props: TypeUtilities) {
+    if (config.headers) {
+        config.headers['content-type'] = 'application/x-www-form-urlencoded'
+    }
+    const { data } = props;
+    return await api.put(props.url, data)
+        .then(response => {
             if (response['status'] === 401) {
                 responseData.status = 401;
                 return responseData
             };
-            responseData.singleData = dataArray[0];
+            responseData.data = response.data;
             responseData.status = response.status;
             return responseData;
-        }).catch(error => {
+        })
+        .catch(error => {
             const response = error["response"];
             if (response["status"] === 401 || response["status"] === 404) {
                 responseData.error.code = parseInt(response["status"], 10);
@@ -66,127 +114,55 @@ async function getSingleData(props: TypeUtilities) {
             responseData.error.message = error["statusText"];
             return responseData;
         });
-    } catch (err) {
-        console.error(err);
-    }
-};
-
-async function saveData(props: TypeUtilities) {
-    try {
-        const { data } = props;
-        return await api.post(props.url, data)
-            .then(response => {
-                if (response['status'] === 401) {
-                    responseData.status = 401;
-                    return responseData
-                };
-                responseData.data = response.data;
-                responseData.status = response.status;
-                return responseData;
-            })
-            .catch(error => {
-                const response = error["response"];
-                if (response["status"] === 401 || response["status"] === 404) {
-                    responseData.error.code = parseInt(response["status"], 10);
-                    responseData.error.message = response["statusText"];
-                    return responseData;
-                }
-                responseData.error.code = 503;
-                responseData.error.message = error["statusText"];
-                return responseData;
-            });
-    } catch (error) {
-        console.error(error)
-    }
-}
-
-async function updateData(props: TypeUtilities) {
-    try {
-        if (config.headers) {
-            config.headers['content-type'] = 'application/x-www-form-urlencoded'
-        }
-        const { data } = props;
-        return await api.put(props.url, data)
-            .then(response => {
-                if (response['status'] === 401) {
-                    responseData.status = 401;
-                    return responseData
-                };
-                responseData.data = response.data;
-                responseData.status = response.status;
-                return responseData;
-            })
-            .catch(error => {
-                const response = error["response"];
-                if (response["status"] === 401 || response["status"] === 404) {
-                    responseData.error.code = parseInt(response["status"], 10);
-                    responseData.error.message = response["statusText"];
-                    return responseData;
-                }
-                responseData.error.code = 503;
-                responseData.error.message = error["statusText"];
-                return responseData;
-            });
-    } catch (error) {
-        console.error(error)
-    }
 }
 
 async function deleteData(props: TypeUtilities) {
-    try {
-        return await api.delete(props.url)
-            .then(response => {
-                if (response['status'] === 200) {
-                    responseData.status = 200;
-                    return responseData
-                };
-                responseData.data = response.data;
-                responseData.status = response.status;
+    return await api.delete(props.url)
+        .then(response => {
+            if (response['status'] === 200) {
+                responseData.status = 200;
+                return responseData
+            };
+            responseData.data = response.data;
+            responseData.status = response.status;
+            return responseData;
+        })
+        .catch(error => {
+            const response = error["response"];
+            if (response["status"] === 401 || response["status"] === 404) {
+                responseData.error.code = parseInt(response["status"], 10);
+                responseData.error.message = response["statusText"];
                 return responseData;
-            })
-            .catch(error => {
-                const response = error["response"];
-                if (response["status"] === 401 || response["status"] === 404) {
-                    responseData.error.code = parseInt(response["status"], 10);
-                    responseData.error.message = response["statusText"];
-                    return responseData;
-                }
-                responseData.error.code = 503;
-                responseData.error.message = error["statusText"];
-                return responseData;
-            });
-    } catch (error) {
-        console.error(error)
-    }
+            }
+            responseData.error.code = 503;
+            responseData.error.message = error["statusText"];
+            return responseData;
+        });
 }
 
 async function signUp(props: TypeUtilities) {
-    try {
-        const { data } = props;
-        return await api.post(props.url, data)
-            .then(response => {
-                if (response['status'] === 401) {
-                    responseData.status = 401;
-                    return responseData
-                };
-                responseData.data = response.data;
-                responseData.status = response.status;
+    const { data } = props;
+    return await api.post(props.url, data)
+        .then(response => {
+            if (response['status'] === 401) {
+                responseData.status = 401;
+                return responseData
+            };
+            responseData.data = response.data;
+            responseData.status = response.status;
+            return responseData;
+        })
+        .catch(error => {
+            const response = error["response"];
+            if (response["status"] === 401 || response["status"] === 404) {
+                responseData.error.code = parseInt(response["status"], 10);
+                responseData.error.message = response["statusText"];
                 return responseData;
-            })
-            .catch(error => {
-                const response = error["response"];
-                if (response["status"] === 401 || response["status"] === 404) {
-                    responseData.error.code = parseInt(response["status"], 10);
-                    responseData.error.message = response["statusText"];
-                    return responseData;
-                }
-                responseData.error.code = 503;
-                responseData.error.message = error["statusText"];
-                return responseData;
-            });
-    } catch (error) {
-        console.log(error)
-    }
+            }
+            responseData.error.code = 503;
+            responseData.error.message = error["statusText"];
+            return responseData;
+        });
 }
 
 async function LogIn(props: TypeUtilities) {
@@ -194,33 +170,29 @@ async function LogIn(props: TypeUtilities) {
         config.headers['content-type'] = 'application/x-www-form-urlencoded'
     }
     delete api.defaults.headers.common['Authorization'];
-    try {
-        const { data, url } = props;
-        return await api.post(url, data)
-            .then(response => {
-                if (response['status'] === 401) {
-                    responseData.status = 401;
-                    return responseData
-                };
-                responseData.singleData = response.data;
-                responseData.status = response.status;
-                localStorage.setItem('SECURE', responseData.singleData["token"]);
+    const { data, url } = props;
+    return await api.post(url, data)
+        .then(response => {
+            if (response['status'] === 401) {
+                responseData.status = 401;
+                return responseData
+            };
+            responseData.singleData = response.data;
+            responseData.status = response.status;
+            localStorage.setItem('SECURE', responseData.singleData["token"]);
+            return responseData;
+        })
+        .catch(error => {
+            const response = error["response"];
+            if (response["status"] === 401 || response["status"] === 404) {
+                responseData.error.code = parseInt(response["status"], 10);
+                responseData.error.message = response["statusText"];
                 return responseData;
-            })
-            .catch(error => {
-                const response = error["response"];
-                if (response["status"] === 401 || response["status"] === 404) {
-                    responseData.error.code = parseInt(response["status"], 10);
-                    responseData.error.message = response["statusText"];
-                    return responseData;
-                }
-                responseData.error.code = 503;
-                responseData.error.message = error["statusText"];
-                return responseData;
-            });
-    } catch (error) {
-        console.error(error)
-    }
+            }
+            responseData.error.code = 503;
+            responseData.error.message = error["statusText"];
+            return responseData;
+        });
 }
 
 async function LogOut() {
@@ -231,32 +203,28 @@ async function checkUser() {
     if (config.headers) {
         config.headers['content-type'] = 'application/x-www-form-urlencoded'
     }
-    try {
-        return await api.get('/user/whoami')
-            .then(response => {
-                if (response.status === 200) {
-                    responseData.data = response.data;
-                    responseData.status = response.status;
-                    return responseData;
-                } else {
-                    responseData.error.code = 500;
-                    responseData.error.message = "Error de Autenticacion";
-                    return responseData
-                }
-            }).catch(error => {
-                const response = error["response"]
-                if (response["status"] === 401 || response["status"] === 404) {
-                    responseData.error.code = response["status"];
-                    responseData.error.message = response["statusText"];
-                    return responseData;
-                }
-                responseData.error.code = 503;
-                responseData.error.message = error["message"];
+    return await api.get('/user/whoami')
+        .then(response => {
+            if (response.status === 200) {
+                responseData.data = response.data;
+                responseData.status = response.status;
                 return responseData;
-            })
-    } catch (error) {
-        console.error('catch', error)
-    }
+            } else {
+                responseData.error.code = 500;
+                responseData.error.message = "Error de Autenticacion";
+                return responseData
+            }
+        }).catch(error => {
+            const response = error["response"]
+            if (response["status"] === 401 || response["status"] === 404) {
+                responseData.error.code = response["status"];
+                responseData.error.message = response["statusText"];
+                return responseData;
+            }
+            responseData.error.code = 503;
+            responseData.error.message = error["message"];
+            return responseData;
+        })
 }
 
 function getToken() {

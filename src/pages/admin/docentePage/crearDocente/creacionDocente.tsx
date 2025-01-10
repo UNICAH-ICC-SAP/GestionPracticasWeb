@@ -1,14 +1,14 @@
 import React from "react";
 import { InputGroup, InputGroupText, Input } from "reactstrap";
-import { Type as DocentesType } from '../../../store/slices/docentes/_namespace';
-import { ButtonSecondary } from "../../../components/shared/buttons";
-import MaskedInput from "../../../components/shared/inputs";
-import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "../../../store/slices/facultades";
-import { Fetcher as FetcherDocentes } from "../../../store/slices/docentes";
-import { useDispatch, useSelector } from "../../../store";
-import { TypeUtilities } from "../../../utilities/TypeUtilities";
-import { maskDNI, maskPhone } from "../../../components/shared/inputs/utils/index";
-import '../../admin/crearTernas/_ternas.css'
+import { Type as DocentesType } from '../../../../store/slices/docentes/_namespace';
+import { ButtonSecondary } from "../../../../components/shared/buttons";
+import MaskedInput from "../../../../components/shared/inputs";
+import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "../../../../store/slices/facultades";
+import { Fetcher as FetcherDocentes } from "../../../../store/slices/docentes";
+import { useDispatch, useSelector } from "../../../../store";
+import { TypeUtilities } from "../../../../utilities/TypeUtilities";
+import { maskDNI, maskPhone } from "../../../../components/shared/inputs/utils/index";
+import '../../../admin/crearTernas/_ternas.css'
 import Swal from 'sweetalert2';
 
 type ValidItems = {
@@ -104,9 +104,9 @@ export default function CrearDocente() {
             };
 
             try {
-                await dispatch(FetcherDocentes.insertUserDocente(paramsUser));
+                dispatch(FetcherDocentes.insertUserDocente(paramsUser));
 
-                await dispatch(FetcherDocentes.insertDocente(paramsDocente));
+                dispatch(FetcherDocentes.insertDocente(paramsDocente));
                 dispatch(FetcherDocentes.getDocentes(utils));
                 Swal.fire({
                     title: "¡Éxito!",
@@ -127,8 +127,6 @@ export default function CrearDocente() {
 
 
             }
-        } else {
-            console.log("No hay datos de docente para guardar.");
         }
     };
 

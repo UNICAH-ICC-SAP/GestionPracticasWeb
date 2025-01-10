@@ -63,6 +63,7 @@ export default function ModificarAlumnos() {
     }
 
     const handleUpdateAlumno = () => {
+        //FIX: Dispatch call
         if (selectedAlumno) {
             const params = {
                 url: `/alumno/update?alumnoId=${selectedAlumno.alumnoid}`,
@@ -81,8 +82,7 @@ export default function ModificarAlumnos() {
                 })
                 .catch((error) => {
                     // Manejar errores y mostrar alerta al usuario
-                    Swal.fire("Oops...", "Hubo un error al actualizar el alumno.", "error");
-                    console.error("Error actualizando alumno:", error);
+                    Swal.fire("Oops...", `Hubo un error al actualizar el alumno. ${error}`, "error");
                 });
         }
     };

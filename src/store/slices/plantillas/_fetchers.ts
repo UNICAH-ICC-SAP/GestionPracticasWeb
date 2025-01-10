@@ -1,74 +1,80 @@
 import { Type as TypeError } from '../../../Api/namespaces/modalError';
 import { CreateFetchers } from "../../../storeConfig";
-import { NAME } from './_namespace';
+import { NAME } from "./_namespace";
+import { getData, saveData, updateData } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
-import { getData, saveData } from "../../../utilities/Utilities";
 
 export default CreateFetchers(NAME, {
-    /**Fetcher: Get singleSelectAccount service */
-    async getDetalleTernas(params: TypeUtilities) {
+    /** Fetcher: Obtener todos los alumnos */
+    async getPlantillas(params: TypeUtilities) {
         const response = await getData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                detalleTernasInfo: response?.data,
+                plantillas: response?.data,
                 error: response?.error,
-                logged: false
             };
         }
         return {
-            detalleTernasInfo: response?.data,
+            plantillas: response?.data,
             error: response?.error,
-            logged: true
         };
     },
-    async getTernasInfo(params: TypeUtilities) {
+    /** Fetcher: Obtener datos de un alumno */
+    async getPlantilla(params: TypeUtilities) {
         const response = await getData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                ternasInfo: response?.data,
+                plantilla: response?.data,
                 error: response?.error,
-                logged: false
             };
         }
         return {
-            ternasInfo: response?.data,
+            plantilla: response?.data,
             error: response?.error,
-            logged: true
         };
     },
-    async saveDetalleTernas(params: TypeUtilities) {
+    async sendEmail(params: TypeUtilities) {
         const response = await saveData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                detalleTernas: response?.data,
+                plantilla: null,
                 error: response?.error,
-                logged: false,
-                savedDetailTerna: false,
+                isSavedUser: false,
             };
         }
         return {
-            detalleTernas: response?.data,
+            plantilla: response?.data,
             error: response?.error,
-            logged: true,
-            savedDetailTerna: true,
+            isSavedUser: true,
         };
     },
-    async saveTernas(params: TypeUtilities) {
+    async saveDataAlumno(params: TypeUtilities) {
         const response = await saveData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                savedTerna: response?.data,
+                plantilla: null,
                 error: response?.error,
-                logged: false,
-                savedTernaState: false,
+                isSavedAlumno: false,
             };
         }
         return {
-            savedTerna: response?.data,
+            plantilla: response?.data,
             error: response?.error,
-            logged: true,
-            savedTernaState: true,
+            isSavedAlumno: true,
+        };
+    },
+    async updatealumno(params: TypeUtilities) {
+        const response = await updateData(params);
+        if (isError<TypeError.ModalError>(response?.error)) {
+            return {
+                plantilla: response?.data,
+                error: response?.error,
+            };
+        }
+        return {
+            plantilla: response?.data,
+            error: response?.error,
         };
     },
 });

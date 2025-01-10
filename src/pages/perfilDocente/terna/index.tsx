@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Modal, ModalHeader, ModalBody } from "reactstrap";
+import { Container, Button, Modal, ModalHeader, ModalBody, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
 import { TypeUtilities } from '../../../utilities/TypeUtilities';
 import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../store/slices/ternas';
 import { useDispatch, useSelector } from "../../../store";
@@ -62,11 +62,11 @@ export default function Docentes() {
                 if (docentesData) {
                     const ternaDetail: TernaDetail = {
                         ternaId: terna.ternaId,
-                        coordina: terna.coordina ? "Coordinador": "Miembro",
+                        coordina: terna.coordina ? "Coordinador" : "Miembro",
                         docenteId: docentesData.docenteId,
                         docenteNombre: docentesData.nombre,
                         docenteTelefono: docentesData.telefono,
-                        docenteEmail: docentesData.email, 
+                        docenteEmail: docentesData.email,
                     };
                     if (!DetallesDocentes[terna.ternaId]) {
                         DetallesDocentes[terna.ternaId] = [];
@@ -103,48 +103,80 @@ export default function Docentes() {
         toggleModal();
     };
     const detalleCoordinador = alumnos.filter((alumno) =>
-        ternasDetalle.some((terna) => 
-            terna.ternaId === alumno.ternaId && 
-            terna.coordina && 
+        ternasDetalle.some((terna) =>
+            terna.ternaId === alumno.ternaId &&
+            terna.coordina &&
             terna.docenteId === Userdata.userId
         )
     );
     const detalleMiembro = alumnos.filter((alumno) =>
-        ternasDetalle.some((terna) => 
-            terna.ternaId === alumno.ternaId && 
-            !terna.coordina && 
+        ternasDetalle.some((terna) =>
+            terna.ternaId === alumno.ternaId &&
+            !terna.coordina &&
             terna.docenteId === Userdata.userId
         )
     );
+    const [tabSel, setTabSel] = useState(0)
+    const tabs = [
+        {
+            title: 'Coordinador de terna', data: detalleCoordinador,
+            headers: ['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']
+        },
+        {
+            title: 'Miembro de terna', data: detalleMiembro,
+            headers: ['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']
+        },
+    ]
     return (
         <Container>
-            {[
-                { title: 'Coordinador de terna', data: detalleCoordinador },
-                { title: 'Miembro de terna', data: detalleMiembro },
-            ].map(({ title, data }, index) => (
-                <Container key={index}>
-                    <h4>{title}</h4>
-                    {!isEmpty(data) ? (
-                        <Tables
-                            data={data.map((alumno) => ({
-                                ...alumno,
-                                acciones: (
-                                    <Button
-                                        color="primary"
-                                        onClick={() => VerDetalleTerna(alumno.ternaId)}>
-                                         Ver más
-                                    </Button>
-                                ),
-                            }))}
-                            headers={['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
-                            firstColumnIndex={0}
-                            paginated={false}
-                        />
-                    ) : (
-                        <NotFound />
-                    )}
-                </Container>
-            ))}
+            <div>
+                <Row>
+                    <Col sm="12" md="2">
+                        <Nav pills tabs vertical>
+                            {tabs && tabs.map((item, index) => {
+                                return <NavItem key={index}>
+                                    <NavLink
+                                        className={tabSel === index ? "active" : ""}
+                                        onClick={() => setTabSel(index)}
+                                    >
+                                        {item.title}
+                                    </NavLink>
+                                </NavItem>
+                            })}
+                        </Nav>
+                    </Col>
+                    <Col sm="12" md="10">
+                        <TabContent activeTab={tabSel}>
+                            {tabs && tabs.map((item, index) => {
+                                return <TabPane key={index} tabId={index}>
+                                    <Container>
+                                        <h4>{item.title}</h4>
+                                        {!isEmpty(item.data) ? (
+                                            <Tables
+                                                data={item.data.map((alumno) => ({
+                                                    ...alumno,
+                                                    acciones: (
+                                                        <Button
+                                                            color="primary"
+                                                            onClick={() => VerDetalleTerna(alumno.ternaId)}>
+                                                            Ver más
+                                                        </Button>
+                                                    ),
+                                                }))}
+                                                headers={item.headers}
+                                                firstColumnIndex={0}
+                                                paginated={false}
+                                            />
+                                        ) : (
+                                            <NotFound />
+                                        )}
+                                    </Container>
+                                </TabPane>
+                            })}
+                        </TabContent>
+                    </Col>
+                </Row>
+            </div>
             <Modal isOpen={modalOpen} toggle={toggleModal} className="modal-size">
                 <ModalHeader toggle={toggleModal}>
                     {`Docentes en la terna ${selectedTernaId}`}

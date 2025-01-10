@@ -1,6 +1,6 @@
 import React from "react";
 import CrearTernas from "../../../pages/admin/crearTernas";
-import CreacionDocente from "../../../pages/docentePage/crearDocente/creacionDocente";
+import CreacionDocente from "../../../pages/admin/docentePage/crearDocente/creacionDocente";
 import { Menu } from "./types";
 import MostrarDocentes from "../../../pages/admin/docentes/MostrarDocentes";
 import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
@@ -10,7 +10,9 @@ import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramatic
 import NuevaCarga from "../../../pages/admin/cargas/NuevaCarga";
 import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno";
 import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarTernas";
-import CargasDocente from "../../../pages/cargasPage/mostrarCargas/cargasDocentes";
+import CargasDocente from "../../../pages/admin/cargasPage/mostrarCargas/cargasDocentes";
+import MostrarPlantilla from "../../../pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
+// import CrearPlantilla from "../../../pages/admin/configEmail/crearPlantilla/CrearPlantilla";
 
 export const adminMenu: Array<Menu> = [
   {
@@ -32,6 +34,21 @@ export const adminMenu: Array<Menu> = [
     component: <ModificarAlumnos />,
   },
 ];
+
+export const configEmail: Array<Menu> = [
+  {
+    paneId: "VerPlantillas",
+    title: "Ver Plantillas de Correo",
+    pathTo: "/plantilla/verPlantilla",
+    component: <MostrarPlantilla />,
+  },
+  {
+    paneId: "CrearPlantilla",
+    title: "Crear Plantillas de Correo",
+    pathTo: "/plantilla/crearPlantilla",
+    component: <>En Construccion</>,
+  },
+]
 
 export const cargasMenu: Array<Menu> = [
   {
@@ -90,4 +107,4 @@ export const pensumMenu: Array<Menu> = [
   }
 ];
 
-export default { adminMenu, cargasMenu, docenteMenu, pensumMenu };
+export default { adminMenu, cargasMenu, docenteMenu, pensumMenu, configEmail };

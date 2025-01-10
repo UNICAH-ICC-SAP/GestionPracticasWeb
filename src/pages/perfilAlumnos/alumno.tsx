@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import {  Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Menu } from "../../components/shared/nav/types";
 import MostrarAlumnos from './mostrar_alumno';
-import UnderConstruction  from "../../components/shared/construction";
+import UnderConstruction from "../../components/shared/construction";
 
 
 
@@ -11,15 +11,15 @@ const adminMenu: Array<Menu> = [
         paneId: 'miTerna',
         title: 'Ternas del Alumno',
         pathTo: '/alumnospage/mostrar_alumnos',
-        component: <MostrarAlumnos/>
+        component: <MostrarAlumnos />
     },
     {
         paneId: 'Documentacion',
         title: 'Documentación',
         pathTo: '/doente/actualizar',
-        component: <UnderConstruction/>
+        component: <UnderConstruction />
     }
- 
+
 
 ]
 
@@ -30,7 +30,7 @@ export default function Admin() {
     }
 
 
-return <div className='align-self-center w-100 px-5'>
+    return <div className='align-self-center w-100 px-5'>
 
         <Nav className="mt-5" justified tabs>
             {adminMenu && adminMenu.map((item, index) => {

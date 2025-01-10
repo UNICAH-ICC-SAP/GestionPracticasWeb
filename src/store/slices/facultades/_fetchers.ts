@@ -9,11 +9,8 @@ import { isError } from "../../../Api/utilsError";
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
     async getFacultades(params: TypeUtilities) {
-        console.log(params)
         const response = await getData(params);
-        console.log(response)
         if (isError<TypeError.ModalError>(response?.error)) {
-            console.log(response.error)
             return {
                 facultades: response?.data,
                 error: response?.error,
@@ -25,10 +22,8 @@ export default CreateFetchers(NAME, {
         };
     },
     async getFacultadesBy(params: TypeUtilities) {
-        console.log(params)
         const response = await getData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
-            console.log(response?.error)
             return {
                 facultades: response?.data,
                 error: response?.error,
