@@ -69,7 +69,6 @@ export default function Step1() {
     }, [dispatch])
     const facultades = useSelector(SelectorFacultades.getFacultades)
     const handleButtonNext = () => {
-        console.log(state)
         dispatch(ActionTernas.setDataAlumno(state));
         dispatch(ActionTernas.setUserCreate({ userId: userState.userId, pass: 'Unicah2024', roleId: 3 }));
         dispatch(ActionTernas.setStep2(true));

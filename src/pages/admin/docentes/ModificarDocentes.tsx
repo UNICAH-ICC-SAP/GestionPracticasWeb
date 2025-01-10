@@ -63,6 +63,7 @@ export default function ModificarDocentes() {
     }
 
     const handleUpdateDocente = () => {
+        //FIX: Dispatch call
         if (selectedDocente) {
             const params = {
                 url: `/docente/update?docenteId=${selectedDocente.docenteId}`,
@@ -80,11 +81,10 @@ export default function ModificarDocentes() {
                     });
                 })
                 .catch(error => {
-                    console.error("Error actualizando docente:", error);
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: "Hubo un error al actualizar el docente.",
+                        text: `Hubo un error al actualizar el docente. ${error}`,
                     });
                 });
         }
@@ -121,9 +121,8 @@ export default function ModificarDocentes() {
                     Swal.fire({
                         icon: "error",
                         title: "Oops...",
-                        text: "Hubo un error al desactivar el docente o usuario.",
+                        text: `Hubo un error al desactivar el docente o usuario. ${error}`,
                     });
-                    console.error("Error desactivando docente:", error);
                 });
         } else {
             alert("El nombre ingresado no coincide. Por favor, verifica y escribe el nombre del docente para confirmar.");

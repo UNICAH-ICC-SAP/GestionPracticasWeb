@@ -9,7 +9,6 @@ export default CreateFetchers(NAME, {
     /** Fetcher: Obtener todos los alumnos */
     async getAlumnos(params: TypeUtilities) {
         const response = await getData(params);
-        console.log(response, params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 alumnos: response?.data,

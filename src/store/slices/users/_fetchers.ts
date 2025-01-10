@@ -9,10 +9,8 @@ import { isError } from "../../../Api/utilsError";
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
     async login(params: TypeUtilities) {
-        console.log(params);
         const response = await LogIn(params);
         if (isError<TypeError.ErrorSchema>(response?.error)) {
-            console.log(response?.error);
             return {
                 user: {},
                 error: response?.error,
@@ -31,7 +29,6 @@ export default CreateFetchers(NAME, {
     async checkUserLogged() {
         const response = await checkUser();
         if (isError<TypeError.ErrorSchema>(response?.error)) {
-            console.log(response?.error)
             return {
                 user: response?.data,
                 error: response?.error,
@@ -47,7 +44,6 @@ export default CreateFetchers(NAME, {
     async userInfo(params: TypeUtilities) {
         const response = await getData(params);
         if (isError<TypeError.ErrorSchema>(response?.error)) {
-            console.log(response?.error)
             return {
                 user: response?.data,
                 error: response?.error,
@@ -68,7 +64,6 @@ export default CreateFetchers(NAME, {
     async signUp(params: TypeUtilities) {
         const response = await signUp(params);
         if (isError<TypeError.ErrorSchema>(response?.error)) {
-            console.log(response?.error)
             return {
                 user: response?.data,
                 error: response?.error,
@@ -85,7 +80,6 @@ export default CreateFetchers(NAME, {
         const response = await updateData(params);
 
         if (isError<TypeError.ErrorSchema>(response?.error)) {
-            console.log('Error al actualizar contraseña:', response?.error);
             return {
                 data: null,
                 error: response?.error,

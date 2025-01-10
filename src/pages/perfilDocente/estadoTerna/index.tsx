@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container} from "reactstrap";
+import { Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
 import { TypeUtilities } from '../../../utilities/TypeUtilities';
 import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../store/slices/ternas';
 import { useDispatch, useSelector } from "../../../store";
@@ -25,6 +25,8 @@ const estados = {
 export default function Docentes() {
     const dispatch = useDispatch();
     const [alumnos, setAlumnos] = useState<AlumnoInfo[]>([]);
+    const [tabSel, setTabSel] = useState(0)
+
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const Userdata = useSelector(UserSelector.getUser);
     const ternas = useSelector(SelectorTernas.ternasInfo);
@@ -54,7 +56,7 @@ export default function Docentes() {
                         facultadId: terna.alumno.facultadId,
                         email: terna.alumno.email,
                         telefono: terna.alumno.telefono,
-                        estado:estados[terna.idEstadoTerna], 
+                        estado: estados[terna.idEstadoTerna],
                     };
                     alumnosMapped.push(data);
                 }
@@ -63,41 +65,73 @@ export default function Docentes() {
         }
     }, [ternas]);
     const detalleCoordinador = alumnos.filter((alumno) =>
-        ternasDetalle.some((terna) => 
-            terna.ternaId === alumno.ternaId && 
-            terna.coordina && 
+        ternasDetalle.some((terna) =>
+            terna.ternaId === alumno.ternaId &&
+            terna.coordina &&
             terna.docenteId === Userdata.userId
         )
     );
     const detalleMiembro = alumnos.filter((alumno) =>
-        ternasDetalle.some((terna) => 
-            terna.ternaId === alumno.ternaId && 
-            !terna.coordina && 
+        ternasDetalle.some((terna) =>
+            terna.ternaId === alumno.ternaId &&
+            !terna.coordina &&
             terna.docenteId === Userdata.userId
         )
-    );  
+    );
+    const tabs = [
+        {
+            title: 'Coordinador de terna', data: detalleCoordinador,
+            headers: ['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']
+        },
+        {
+            title: 'Miembro de terna', data: detalleMiembro,
+            headers: ['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Estado']
+        },
+    ]
     return (
         <Container>
-            {[
-                { title: 'Coordinador de terna', data: detalleCoordinador },
-                { title: 'Miembro de terna', data: detalleMiembro },
-            ].map(({ title, data }, index) => (
-                <Container key={index}>
-                    <h4>{title}</h4>
-                    {!isEmpty(data) ? (
-                        <Tables
-                            data={data.map((alumno) => ({
-                                ...alumno,
-                            }))}
-                            headers={['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Estado']}
-                            firstColumnIndex={0}
-                            paginated={false}
-                        />
-                    ) : (
-                        <NotFound/> 
-                    )}
-                </Container>
-            ))}
+            <div>
+                <Row>
+                    <Col sm="12" md="2">
+                        <Nav pills tabs vertical>
+                            {tabs && tabs.map((item, index) => {
+                                return <NavItem key={index}>
+                                    <NavLink
+                                        className={tabSel === index ? "active" : ""}
+                                        onClick={() => setTabSel(index)}
+                                    >
+                                        {item.title}
+                                    </NavLink>
+                                </NavItem>
+                            })}
+                        </Nav>
+                    </Col>
+                    <Col sm="12" md="10">
+                        <TabContent activeTab={tabSel}>
+                            {tabs && tabs.map((item, index) => {
+                                return <TabPane key={index} tabId={index}>
+                                    <Container>
+                                        <h4>{item.title}</h4>
+                                        {!isEmpty(item.data) ? (
+                                            <Tables
+                                                data={item.data.map((alumno) => ({
+                                                    ...alumno,
+                                                }))}
+                                                headers={item.headers}
+                                                firstColumnIndex={0}
+                                                paginated={false}
+                                            />
+                                        ) : (
+                                            <NotFound />
+                                        )}
+                                    </Container>
+                                </TabPane>
+                            })}
+
+                        </TabContent>
+                    </Col>
+                </Row>
+            </div>
         </Container>
     );
 }

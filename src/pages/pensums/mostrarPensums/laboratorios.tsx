@@ -83,7 +83,6 @@ export default function Laboratorios() {
     const isUpdateSecciones = useSelector(SelectorSecciones.getIsUpdate);
 
     useEffect(() => {
-        console.log(clases, carreras, periodos, !isLoading)
         if (clases && carreras && periodos && isLoading) {
             dispatch(ActionPensum.setIsLoading(false));
             setPeriodoSeleccionado(periodos[periodos.length - 1].id_periodo)

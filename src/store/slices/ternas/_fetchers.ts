@@ -56,7 +56,6 @@ export default CreateFetchers(NAME, {
     },
     async saveTernas(params: TypeUtilities) {
         const response = await saveData(params);
-        console.log(response?.data)
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 savedTerna: response?.data,
