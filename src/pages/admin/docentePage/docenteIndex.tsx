@@ -1,29 +1,34 @@
-// CargasMenu.tsx
 import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { cargasMenu } from "../../components/shared/nav/subMenus"; // Ajusta según tu ruta
-import Breadcrumbs from "../../components/shared/breadcrumb/Breadcrumbs";
+import { docenteMenu } from "../../../components/shared/nav/subMenus";
+import Breadcrumbs from "../../../components/shared/breadcrumb/Breadcrumbs";
 
-export default function CargasMenu() {
-  const [activePane, setActivePane] = useState<string>(cargasMenu[0].paneId!);
+export default function DocenteMenu() {
+  const [activePane, setActivePane] = useState<string>(docenteMenu[0].paneId!);
 
   const onChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
     setActivePane(e.currentTarget.name);
   };
 
-  const currentTab = cargasMenu.find((item) => item.paneId === activePane);
+  const currentTab = docenteMenu.find((item) => item.paneId === activePane);
+
+  type TypeBreadcumb = {
+    title: string;
+  };
+
+  const tabsBreadcrumb: Array<TypeBreadcumb> = [
+    { title: "Inicio" },
+    { title: "Docente" },
+    { title: currentTab?.title || "" },
+  ];
 
   return (
     <div className="align-self-center w-100 px-5">
       <Breadcrumbs
-        items={[
-          { title: "Inicio" },
-          { title: "Cargas" },
-          { title: currentTab?.title || "" },
-        ]}
+        items={tabsBreadcrumb}
       />
       <Nav className="mt-5" justified tabs>
-        {cargasMenu.map((item, index) => (
+        {docenteMenu.map((item, index) => (
           <NavItem key={item.paneId! + index}>
             <NavLink
               active={activePane === item.paneId}
@@ -36,7 +41,7 @@ export default function CargasMenu() {
         ))}
       </Nav>
       <TabContent className="justify-items-center mt-5" activeTab={activePane}>
-        {cargasMenu.map((item, index) => (
+        {docenteMenu.map((item, index) => (
           <TabPane key={item.paneId! + (index + 1) + "Pane"} tabId={item.paneId}>
             <Container>{item.component}</Container>
           </TabPane>

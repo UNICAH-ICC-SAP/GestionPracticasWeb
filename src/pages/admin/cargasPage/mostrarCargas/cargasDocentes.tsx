@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "../../../store";
+import { useDispatch, useSelector } from "../../../../store";
 
-import { Fetcher as FetcherPensum, Selector as SelectorPensum, Action as ActionPensum } from "../../../store/slices/pensums";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
-import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
-import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "../../../store/slices/periodo";
+import { Fetcher as FetcherPensum, Selector as SelectorPensum, Action as ActionPensum } from "../../../../store/slices/pensums";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../../store/slices/docentes';
+import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../../store/slices/secciones';
+import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "../../../../store/slices/periodo";
 
-import NotFound from "../../../components/shared/notFound";
+import NotFound from "../../../../components/shared/notFound";
 import { isEmpty } from "lodash";
 import { Col, Container, Form, FormGroup, Input, Label, Row, Card, CardHeader, CardBody, Spinner } from "reactstrap";
 
-import { days } from "../../../consts"
+import { days } from "../../../../consts"
 
 type SeccionDetail = {
     nombre_clase: string;
