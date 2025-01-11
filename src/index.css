@@ -49,6 +49,12 @@
     --warning-rgb: rgb(186, 123, 36);
     --danger-rgb: rgb(244, 67, 54);
     --default-rgb: rgb(215, 208, 208);
+    /* RGB */
+    --info-rgba: var(--dark-shades-color-rgb, .25);
+    --success-rgba: rgb(60, 140, 92, .25);
+    --warning-rgba: rgb(186, 123, 36, .25);
+    --danger-rgba: rgb(244, 67, 54, .25);
+    --default-rgba: rgb(215, 208, 208, .25);
     /* Semantics shadow */
     --info-shadow: var(--main-brand-color-shadow);
     --success-shadow: #3c8c5c99;

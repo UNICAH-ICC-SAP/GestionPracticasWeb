@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Container, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Button, ButtonGroup, Container } from "reactstrap";
 import { useDispatch, useSelector } from "../../../../store";
 import { Fetcher as FetcherPlantillas, Selector as SelectorPlantillas } from '../../../../store/slices/plantillas';
 import { Tables } from "../../../../components/commons/tables/tables";
@@ -8,26 +8,25 @@ import { TypeUtilities } from "../../../../utilities/TypeUtilities";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
+import './mostrarPlantilla.css'
+import EditForm from "./editPlantilla";
 
-type PlantillaDetail = {
+export type PlantillaDetailPreview = {
     idPlantilla: number;
     correo_origen: string;
     correo_password: string;
     asunto: string;
+    preview: JSX.Element;
     cuerpo: string;
     estado: string;
 };
 
 export default function MostrarPlantilla() {
     const dispatch = useDispatch();
-    const [detalle, setDetalle] = useState<Array<PlantillaDetail>>([]);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedPlantilla, setSelectedPlantilla] = useState<PlantillaDetail | null>(null);
+    const [detalle, setDetalle] = useState<Array<PlantillaDetailPreview>>([]);
+    const [editMode, setEditMode] = useState(false);
+    const [selectedPlantilla, setSelectedPlantilla] = useState<PlantillaDetailPreview | null>(null);
     const [changePass, setChangePass] = useState<boolean>(false)
-    const toggleModal = () => {
-        setModalOpen(!modalOpen);
-        setChangePass(false);
-    };
 
     const utils: TypeUtilities = {
         url: '/correo/obtenerPlantillas'
@@ -46,6 +45,7 @@ export default function MostrarPlantilla() {
                 correo_origen: plantilla.correo_origen,
                 correo_password: plantilla.correo_password,
                 asunto: plantilla.asunto,
+                preview: <div className="plantilla-preview" dangerouslySetInnerHTML={{ __html: plantilla.cuerpo }}></div>,
                 cuerpo: plantilla.cuerpo,
                 estado: plantilla.estado ? "Activa" : "Inactiva",
             }));
@@ -54,9 +54,10 @@ export default function MostrarPlantilla() {
         }
     }, [plantillas]);
 
-    const handleEditClick = (plantilla: PlantillaDetail) => {
+    const handleEditClick = (plantilla: PlantillaDetailPreview) => {
         setSelectedPlantilla(plantilla);
-        toggleModal();
+        setEditMode(true);
+        setChangePass(false);
     }
 
     function obfuscateText(text: string) {
@@ -75,7 +76,7 @@ export default function MostrarPlantilla() {
             dispatch(FetcherPlantillas.updatealumno(params))
                 .then(() => {
                     dispatch(FetcherPlantillas.getPlantillas(utils));
-                    toggleModal();
+                    setEditMode(false);
                     Swal.fire({
                         title: "¡Éxito!",
                         text: "El plantilla se ha actualizado exitosamente.",
@@ -92,7 +93,7 @@ export default function MostrarPlantilla() {
         }
     };
 
-    const renderActions = (plantilla: PlantillaDetail) => (
+    const renderActions = (plantilla: PlantillaDetailPreview) => (
         <ButtonGroup>
             <Button color="success" onClick={() => handleEditClick(plantilla)}>
                 <FontAwesomeIcon icon={faEdit} />
@@ -105,12 +106,29 @@ export default function MostrarPlantilla() {
         return !(selectedPlantilla?.asunto && selectedPlantilla?.correo_origen && selectedPlantilla?.cuerpo);
     };
 
+    const handleClickCancel = () => {
+        setEditMode(false)
+    }
+    const changeText = (value) => {
+        setSelectedPlantilla((prevState) => ({
+            ...prevState,
+            [value.name]: value.value
+        }));
+    }
+
+    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedPlantilla({ ...selectedPlantilla, [e.target.id]: e.target.value })
+    }
     return (
         <Container>
             {detalle.length > 0 ? (
                 <Tables
                     data={detalle.map(plantilla => ({
-                        ...plantilla,
+                        idPlantilla: plantilla.idPlantilla,
+                        correo_origen: plantilla.correo_origen,
+                        asunto: plantilla.asunto,
+                        cuerpo: plantilla.preview,
+                        estado: plantilla.estado ? "Activa" : "Inactiva",
                         correo_password: obfuscateText(plantilla.correo_password),
                         actions: renderActions(plantilla)
                     }))}
@@ -121,74 +139,19 @@ export default function MostrarPlantilla() {
             ) : (
                 <NotFound />
             )}
-            <Modal isOpen={modalOpen} toggle={toggleModal} >
-                <ModalHeader toggle={toggleModal}>Modificar Plantilla</ModalHeader>
-                <ModalBody>
-                    {selectedPlantilla && (
-                        <>
-                            <div className="mb-3">
-                                <Label for="asunto" className="text-left">Asunto Correo</Label>
-                                <Input
-                                    id="asunto"
-                                    type="text"
-                                    value={selectedPlantilla.asunto}
-                                    onChange={(e) => setSelectedPlantilla({ ...selectedPlantilla, asunto: e.target.value })}
-                                    placeholder="Nombre"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Label for="pass" className="text-left">Pass</Label>
-                                <Input
-                                    id="pass"
-                                    type={changePass ? "text" : "password"}
-                                    disabled={!changePass}
-                                    value={selectedPlantilla.correo_password}
-                                    onChange={(e) => setSelectedPlantilla({ ...selectedPlantilla, correo_password: e.target.value })}
-                                    placeholder="Nombre"
-                                />
-                                <FormGroup switch>
-                                    <Label check>Modificar Password</Label>
-                                    <Input type="switch" checked={changePass} onClick={() => setChangePass(prevState => !prevState)} />
-                                </FormGroup>
-                            </div>
-                            <div className="mb-3">
-                                <Label for="correo_origen" className="text-left">Correo Origen</Label>
-                                <Input
-                                    id="correo_origen"
-                                    type="email"
-                                    value={selectedPlantilla.correo_origen}
-                                    onChange={(e) => setSelectedPlantilla({ ...selectedPlantilla, correo_origen: e.target.value })}
-                                    placeholder="Email"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Label for="cuerpo" className="text-left">Contenido</Label>
-                                <Input
-                                    id="cuerpo"
-                                    type="textarea"
-                                    value={selectedPlantilla.cuerpo}
-                                    onChange={(e) => setSelectedPlantilla({ ...selectedPlantilla, cuerpo: e.target.value })}
-                                    placeholder="Teléfono"
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Label for="estado" className="text-left">Contenido</Label>
-                                <Input
-                                    id="estado"
-                                    type="text"
-                                    value={selectedPlantilla.estado}
-                                    onChange={(e) => setSelectedPlantilla({ ...selectedPlantilla, estado: e.target.value })}
-                                    placeholder="Teléfono"
-                                />
-                            </div>
-                        </>
-                    )}
-                </ModalBody>
-                <ModalFooter className="d-flex justify-content-center">
-                    <Button color="primary" onClick={handleUpdatePlantilla} disabled={isSaveDisabled()}>Guardar Cambios</Button>
-                    <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
-                </ModalFooter>
-            </Modal>
-        </Container>
+            {editMode && (
+                <EditForm
+                    state={selectedPlantilla}
+                    onChange={onChangeInput}
+                    changeText={changeText}
+                    changePass={changePass}
+                    isSaveDisabled={isSaveDisabled}
+                    setChangePass={() => setChangePass(prevState => !prevState)}
+                    handleClickCancel={handleClickCancel}
+                    handleUpdatePlantilla={handleUpdatePlantilla}
+
+                />
+            )}
+        </Container >
     );
 }

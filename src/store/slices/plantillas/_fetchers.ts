@@ -49,19 +49,19 @@ export default CreateFetchers(NAME, {
             isSavedUser: true,
         };
     },
-    async saveDataAlumno(params: TypeUtilities) {
+    async savePlantilla(params: TypeUtilities) {
         const response = await saveData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 plantilla: null,
                 error: response?.error,
-                isSavedAlumno: false,
+                isSavedPlantillaState: false,
             };
         }
         return {
             plantilla: response?.data,
             error: response?.error,
-            isSavedAlumno: true,
+            isSavedPlantillaState: true,
         };
     },
     async updatealumno(params: TypeUtilities) {

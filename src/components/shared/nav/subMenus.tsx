@@ -12,7 +12,7 @@ import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/M
 import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarTernas";
 import CargasDocente from "../../../pages/admin/cargasPage/mostrarCargas/cargasDocentes";
 import MostrarPlantilla from "../../../pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
-// import CrearPlantilla from "../../../pages/admin/configEmail/crearPlantilla/CrearPlantilla";
+import CrearPlantilla from "../../../pages/admin/configEmail/crearPlantilla/CrearPlantilla";
 
 export const adminMenu: Array<Menu> = [
   {
@@ -46,7 +46,7 @@ export const configEmail: Array<Menu> = [
     paneId: "CrearPlantilla",
     title: "Crear Plantillas de Correo",
     pathTo: "/plantilla/crearPlantilla",
-    component: <>En Construccion</>,
+    component: <CrearPlantilla />,
   },
 ]
 

@@ -4,8 +4,7 @@ import Fetcher from "./_fetchers";
 
 export default CreateReducer(INIT, ({ addCase }) => {
 
-    addCase(Action.cleanStore, (state) => ({
-        ...state,
+    addCase(Action.cleanStore, () => ({
         ...INIT,
     }));
     addCase(Action.cleanAlumno, (state) => ({
@@ -20,10 +19,10 @@ export default CreateReducer(INIT, ({ addCase }) => {
         ...state,
         isSavedUser: payload.isSavedUser
     }));
-    addCase(Fetcher.saveDataAlumno.fulfilled, (state, { payload }) => ({
+    addCase(Fetcher.savePlantilla.fulfilled, (state, { payload }) => ({
         ...state,
         saveDataAlumno: JSON.parse(JSON.stringify(payload.plantilla)),
-        isSavedAlumno: payload.isSavedAlumno
+        isSavedPlantillaState: payload.isSavedPlantillaState
     }));
     addCase(Fetcher.updatealumno.fulfilled, (state, { payload }) => ({
         ...state,

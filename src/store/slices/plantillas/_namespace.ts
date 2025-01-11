@@ -19,17 +19,15 @@ export declare namespace StorePlantillas {
     export type State = {
         plantilla: Type.PlantillaInfo;
         plantillas: Array<Type.PlantillaInfo>;
-        isSavedUser: boolean;
-        isSavedAlumno: boolean;
         error: TypeModal.ModalError;
+        isSavedPlantillaState: boolean
     };
 }
 
 export const Action = CreateActions<{
     cleanAlumno: void;
     cleanStore: void;
-    setAlumno: object;
-}>(NAME, ["cleanAlumno", "cleanStore", "setAlumno"]);
+}>(NAME, ["cleanAlumno", "cleanStore"]);
 
 
 export const INIT: StorePlantillas.State = {
@@ -46,6 +44,5 @@ export const INIT: StorePlantillas.State = {
         code: 0,
         message: ""
     },
-    isSavedUser: false,
-    isSavedAlumno: false,
+    isSavedPlantillaState: false,
 };

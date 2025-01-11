@@ -10,8 +10,7 @@ export default function Selector(store: StoreState): StorePlantillas.State {
 Selector.getPlantilla = CreateSelector(Selector, (state) => state.plantilla);
 Selector.getPlantillas = CreateSelector(Selector, (state) => state.plantillas)
 Selector.getError = CreateSelector(Selector, (state) => state.error);
-Selector.getSavedUserState = CreateSelector(Selector, (state) => state.isSavedUser);
-Selector.getSavedPlantillaState = CreateSelector(Selector, (state) => state.isSavedAlumno);
+Selector.getSavedPlantilla = CreateSelector(Selector, (state) => state.isSavedPlantillaState);
 
 /**Selector: fetching is loading */
 // Selector.fetching = CreateSelector(Selector, (state) => state.loading);
