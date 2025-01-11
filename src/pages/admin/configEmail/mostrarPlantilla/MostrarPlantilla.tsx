@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Container } from "reactstrap";
+import { Button, ButtonGroup, Container, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { useDispatch, useSelector } from "../../../../store";
 import { Fetcher as FetcherPlantillas, Selector as SelectorPlantillas } from '../../../../store/slices/plantillas';
+import { Fetcher as FetcherCorreo } from "../../../../store/slices/plantillas";
 import { Tables } from "../../../../components/commons/tables/tables";
 import NotFound from "../../../../components/shared/notFound";
 import { TypeUtilities } from "../../../../utilities/TypeUtilities";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import './mostrarPlantilla.css'
@@ -27,6 +28,13 @@ export default function MostrarPlantilla() {
     const [editMode, setEditMode] = useState(false);
     const [selectedPlantilla, setSelectedPlantilla] = useState<PlantillaDetailPreview | null>(null);
     const [changePass, setChangePass] = useState<boolean>(false)
+    const [modalOpen, setModalOpen] = useState(false);
+    const [testEmail, setTestEmail] = useState("")
+
+    const toggleModal = () => {
+        setModalOpen(!modalOpen);
+        setTestEmail("");
+    };
 
     const utils: TypeUtilities = {
         url: '/correo/obtenerPlantillas'
@@ -93,10 +101,31 @@ export default function MostrarPlantilla() {
         }
     };
 
+    const handleTestTemplate = (idPlantilla: number) => {
+        console.log("handle")
+        const info: TypeUtilities = {
+            url: `/correo/enviarCorreo/${idPlantilla}`,
+            data: {
+                correoDestino: testEmail
+            }
+        };
+        dispatch(FetcherCorreo.sendEmail(info));
+        setModalOpen(false);
+        setTestEmail("");
+    }
+
+    const handleOpenModal = (plantilla: PlantillaDetailPreview) => {
+        setModalOpen(true)
+        setSelectedPlantilla(plantilla);
+    }
+
     const renderActions = (plantilla: PlantillaDetailPreview) => (
         <ButtonGroup>
             <Button color="success" onClick={() => handleEditClick(plantilla)}>
                 <FontAwesomeIcon icon={faEdit} />
+            </Button>
+            <Button color="warning" onClick={() => handleOpenModal(plantilla)}>
+                <FontAwesomeIcon icon={faEnvelopeOpenText} shake />
             </Button>
         </ButtonGroup>
     );
@@ -105,6 +134,10 @@ export default function MostrarPlantilla() {
     const isSaveDisabled = () => {
         return !(selectedPlantilla?.asunto && selectedPlantilla?.correo_origen && selectedPlantilla?.cuerpo);
     };
+
+    const isDisabled = () => {
+        return testEmail.length > 0;
+    }
 
     const handleClickCancel = () => {
         setEditMode(false)
@@ -152,6 +185,25 @@ export default function MostrarPlantilla() {
 
                 />
             )}
+            {modalOpen && <Modal isOpen={modalOpen} toggle={toggleModal} >
+                <ModalHeader toggle={toggleModal}>Correo de Prueba</ModalHeader>
+                <ModalBody>
+                    <div className="mb-3">
+                        <Label for="correo_origen" className="text-left">Correo Origen</Label>
+                        <Input
+                            id="correo_origen"
+                            type="email"
+                            value={testEmail}
+                            onChange={(e) => setTestEmail(e.currentTarget.value)}
+                            placeholder="Email"
+                        />
+                    </div>
+                </ModalBody>
+                <ModalFooter className="d-flex justify-content-center">
+                    <Button color="primary" onClick={() => handleTestTemplate(selectedPlantilla.idPlantilla)} disabled={!isDisabled()}>Enviar</Button>
+                    <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
+                </ModalFooter>
+            </Modal>}
         </Container >
     );
 }
