@@ -42,6 +42,13 @@ export default CreateReducer(INIT, ({ addCase }) => {
             detalleTernas: [...state.ternaInfo.detalleTernas, payload]
         }
     }));
+    addCase(Action.setNoDroppedData, (state, { payload }) => ({
+        ...state,
+        ternaInfo: {
+            ...state.ternaInfo,
+            detalleTernas: [...payload]
+        }
+    }));
     addCase(Action.setUserCreate, (state, { payload }) => ({
         ...state,
         userToCreate: {

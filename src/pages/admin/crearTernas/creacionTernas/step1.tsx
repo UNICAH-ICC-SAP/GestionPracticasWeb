@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { InputGroup, InputGroupText, Input } from "reactstrap";
 import { INIT as InitState } from '../../../../store/slices/ternas';
 import { Type as AlumnoType } from '../../../../store/slices/alumnos/_namespace'
@@ -30,8 +30,11 @@ export default function Step1() {
     const [userState, setUserState] = React.useState<TernaType.UserCreation>(InitState.userToCreate);
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
     const [state, setState] = React.useState<AlumnoType.AlumnoInfo>(formState)
+    const [domain, setDomain] = React.useState('@unicah.edu')
+    const [disableButton, setDisableButton] = useState(true);
     const dispatch = useDispatch();
     const inputFunction = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(state)
         setState({
             ...state,
             [e.currentTarget.name]: (e.currentTarget.name === 'nombre') ? e.currentTarget.value.toUpperCase() : e.currentTarget.value
@@ -42,14 +45,25 @@ export default function Step1() {
                 userId: e.currentTarget.value
             })
         }
-        if (e.currentTarget.name === FormItems.email) {
-            const emailWithDomain = e.currentTarget.value + '@unicah.edu';
-            validate(emailWithDomain);
-            setState((prevState) => ({
-                ...prevState,
-                email: emailWithDomain
-            }));
+        if (e.currentTarget.name === FormItems.email && !e.currentTarget.value.includes('@')) {
+            if (e.currentTarget.value !== '') {
+                const emailWithDomain = e.currentTarget.value + domain;
+                validate(emailWithDomain);
+                setState((prevState) => ({
+                    ...prevState,
+                    email: emailWithDomain
+                }));
+            } else validate(e.currentTarget.value);
         }
+        if (e.currentTarget.value.includes('@')) {
+            const splitted = e.currentTarget.value.split("@");
+            const emailWithDomain = e.currentTarget.value;
+            validate(emailWithDomain);
+            if (splitted[1].length === 0) setDomain('@unicah.edu')
+            else setDomain(`@${splitted[1]}`)
+            if (isValidItem.email) e.currentTarget.value.replace(domain, "");
+        }
+        almostOne();
     };
     const selectedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setState({
@@ -72,6 +86,14 @@ export default function Step1() {
         dispatch(ActionTernas.setDataAlumno(state));
         dispatch(ActionTernas.setUserCreate({ userId: userState.userId, pass: 'Unicah2024', roleId: 3 }));
         dispatch(ActionTernas.setStep2(true));
+    }
+    function almostOne() {
+        if (Object.values(state).some(value => value === "" || // String vacío
+            value === null || // null
+            value === undefined || // undefined
+            (typeof value === "object" && Object.keys(value).length === 0))) {
+            setDisableButton(true)
+        } else { setDisableButton(false) }
     }
     return <div className="form-group">
         <h5 className="mb-4">Creacion de Nueva Terna</h5>
@@ -106,7 +128,7 @@ export default function Step1() {
         <InputGroup>
             <Input invalid={!isValidItem.email} valid={isValidItem.email} value={state.email.replace('@unicah.edu', '')} onChange={inputFunction} name="email" id="email" placeholder="jvelas" />
             <InputGroupText>
-                @unicah.edu
+                {domain}
             </InputGroupText>
         </InputGroup>
         <InputGroup>
@@ -115,11 +137,11 @@ export default function Step1() {
             </InputGroupText>
             <MaskedInput maxLength={15} value={state.telefono} inputMaskChange={inputFunction} name="telefono" mask="phone" id="telefono" placeholder={maskPhone(PlaceHolder.phone)} />
         </InputGroup>
-        <ButtonSecondary onClick={handleButtonNext} >Siguiente</ButtonSecondary>
+        <ButtonSecondary className="w-50" disabled={disableButton} onClick={handleButtonNext} >Siguiente</ButtonSecondary>
     </div>
 
     function validate(value: string) {
-        const isValid = value.includes("@unicah.edu");
+        const isValid = value.includes(domain);
         setIsValidItem({
             ...isValidItem,
             [FormItems.email]: isValid

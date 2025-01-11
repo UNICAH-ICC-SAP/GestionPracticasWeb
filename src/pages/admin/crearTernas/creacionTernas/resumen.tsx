@@ -4,7 +4,7 @@ import type { Type as TypeDocente } from "../../../../store/slices/docentes/_nam
 import { useSelector, useDispatch } from "../../../../store";
 import { Selector as SelectorTernas } from "../../../../store/slices/ternas";
 import { Selector as SelectorDocentes } from "../../../../store/slices/docentes";
-import { ButtonGroup, Card, CardBody, CardSubtitle, CardText, CardTitle, Container } from "reactstrap";
+import { ButtonGroup, Card, CardBody, CardFooter, CardHeader, CardSubtitle, CardText, CardTitle, Container, Input, InputGroup, InputGroupText } from "reactstrap";
 import { Fetcher as FetcherAlumnos, Selector as SelectorAlumno } from "../../../../store/slices/alumnos";
 import { Fetcher as FetcherDetallesTerna } from "../../../../store/slices/ternas";
 import { Fetcher as FetcherTernas } from "../../../../store/slices/ternas";
@@ -112,6 +112,7 @@ export default function Resumen() {
                     correoDestino: correoUsuario,
                     userId: usuario,
                     nombreUsuario: nombreUsuario,
+                    pass: process.env.VITE_EMAIL_DEFAULT_PASS
                 }
                 dispatch(FetcherCorreo.sendEmail(info))
                 break;
@@ -188,25 +189,35 @@ export default function Resumen() {
     return (
         <Container className="container-centered">
             {isCardVisible && (
-                <Card className="card-centered">
+                <Card color="light" className="card-centered">
+                    <CardHeader>
+                        <CardTitle tag="h5">Datos de Terna</CardTitle>
+                    </CardHeader>
                     <CardBody>
-                        <CardTitle tag="h5" className="mb-4">Datos de Terna</CardTitle>
-                        <CardSubtitle className="card-subtitle mb-2 text-muted" tag="div">
-                            <div className="text-start"><strong>Id: </strong><span>{terna.alumno?.alumnoId}</span></div>
-                            <div className="text-start"><strong>Nombre: </strong><span>{terna.alumno?.nombre}</span></div>
+                        <CardSubtitle className="card-subtitle mb-2" tag="div">
+                            <InputGroup className="w-100">
+                                <InputGroupText className="text-bg-primary">Identidad</InputGroupText>
+                                <Input value={terna.alumno?.alumnoId} readOnly />
+                            </InputGroup>
+                            <InputGroup className="w-100">
+                                <InputGroupText className="text-bg-primary">Nombre: </InputGroupText>
+                                <Input value={terna.alumno?.nombre} readOnly />
+                            </InputGroup>
                         </CardSubtitle>
                         <CardText>
                             {docentesInfo.length > 0 && docentesInfo.map(docente => (
                                 <div className="text-start mb-2" key={docente.docenteId}>
-                                    {docente.docenteId} - {docente.nombre} - {docente.telefono}
+                                    <strong>{docente.docenteId}</strong> - {docente.nombre} - {docente.telefono}
                                 </div>
                             ))}
                         </CardText>
+                    </CardBody>
+                    <CardFooter>
                         <ButtonGroup>
                             <ButtonSecondary onClick={handleClickBack}>Atras</ButtonSecondary>
                             <ButtonPrimary onClick={handlesavedata} disabled={isButtonDisabled}>Guardar</ButtonPrimary>
                         </ButtonGroup>
-                    </CardBody>
+                    </CardFooter>
                 </Card>
             )}
         </Container>

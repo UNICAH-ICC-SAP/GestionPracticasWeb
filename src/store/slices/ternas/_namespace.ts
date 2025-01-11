@@ -51,7 +51,8 @@ export const Action = CreateActions<{
     setStep1: boolean;
     setStep2: boolean;
     setResumen: boolean;
-}>(NAME, ["cleanUserData", "cleanStore", "setDataAlumno", "setStep1", "setStep2", "setResumen", "getAlumno", "setUserCreate", "setDetalleTerna"]);
+    setNoDroppedData: Type.DetalleTernaInfo[];
+}>(NAME, ["cleanUserData", "cleanStore", "setDataAlumno", "setStep1", "setStep2", "setResumen", "getAlumno", "setUserCreate", "setDetalleTerna", "setNoDroppedData"]);
 
 export const INIT: StoreUser.State = {
     ternaInfo: {
