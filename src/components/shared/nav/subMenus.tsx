@@ -13,6 +13,7 @@ import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarT
 import CargasDocente from "../../../pages/admin/cargasPage/mostrarCargas/cargasDocentes";
 import MostrarPlantilla from "../../../pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
 import CrearPlantilla from "../../../pages/admin/configEmail/crearPlantilla/CrearPlantilla";
+import AccionesPlantillas from "../../../pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
 
 export const adminMenu: Array<Menu> = [
   {
@@ -48,6 +49,12 @@ export const configEmail: Array<Menu> = [
     pathTo: "/plantilla/crearPlantilla",
     component: <CrearPlantilla />,
   },
+  {
+    paneId: "AccionesPlantillas",
+    title: "Configurar Acciones",
+    pathTo: "/plantilla/Acciones y Plantillas",
+    component: <AccionesPlantillas />
+  }
 ]
 
 export const cargasMenu: Array<Menu> = [

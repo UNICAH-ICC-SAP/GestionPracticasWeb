@@ -5,10 +5,9 @@ import { useSelector, useDispatch } from "../../../../store";
 import { Selector as SelectorTernas } from "../../../../store/slices/ternas";
 import { Selector as SelectorDocentes } from "../../../../store/slices/docentes";
 import { ButtonGroup, Card, CardBody, CardFooter, CardHeader, CardSubtitle, CardText, CardTitle, Container, Input, InputGroup, InputGroupText } from "reactstrap";
-import { Fetcher as FetcherAlumnos, Selector as SelectorAlumno } from "../../../../store/slices/alumnos";
-import { Fetcher as FetcherDetallesTerna } from "../../../../store/slices/ternas";
-import { Fetcher as FetcherTernas } from "../../../../store/slices/ternas";
-import { Action as ActionTernas } from "../../../../store/slices/ternas";
+import { Fetcher as FetcherAlumnos, Selector as SelectorAlumno, Action as ActionAlumno } from "../../../../store/slices/alumnos";
+import { Fetcher as FetcherTernas, Action as ActionTernas } from "../../../../store/slices/ternas";
+import { } from "../../../../store/slices/ternas";
 import { Fetcher as FetcherCorreo } from "../../../../store/slices/plantillas"
 import { TypeUtilities } from "../../../../utilities/TypeUtilities";
 import Swal from 'sweetalert2';
@@ -51,7 +50,7 @@ export default function Resumen() {
                 data: docentesData,
             };
             setDispatched(true)
-            dispatch(FetcherDetallesTerna.saveDetalleTernas(paramsDetalle));
+            dispatch(FetcherTernas.saveDetalleTernas(paramsDetalle));
 
         }
     }, [dispatch, savedTerna])
@@ -74,15 +73,20 @@ export default function Resumen() {
                     title: "Datos Creados",
                     text: `La terna fue creada exitosamente`,
                 });
-                sendEmail(2, alumno.email, userToCreate.userId, userToCreate.pass);
+                sendEmail("notificarAlumno", alumno.email, userToCreate.userId, alumno.nombre);
                 const docentesEmails: Array<string> = [];
                 docentesInfo.forEach(docente => {
                     const docenteFound: TypeDocente.DocenteInfo = docentes.find(docenteItem => docente.docenteId === docenteItem.docenteId);
                     docentesEmails.push(docenteFound.email)
                 })
-                sendEmail(3, docentesEmails.join(','), alumno.nombre);
-                dispatch(ActionTernas.cleanUserData());
+                sendEmail("notificarDocente", docentesEmails.join(','), alumno.nombre);
+                dispatch(ActionTernas.cleanStore());
+                dispatch(ActionAlumno.cleanStore());
                 dispatch(ActionTernas.setStep1(true));
+                const utils: TypeUtilities = { url: `/detalleTernas/getDetalleTernas` };
+                dispatch(FetcherTernas.getDetalleTernas(utils));
+                utils.url = '/alumno/getAlumnos';
+                dispatch(FetcherAlumnos.getAlumnos(utils));
                 setDispatched(false);
             }
             if (!savedDetailState) {
@@ -107,16 +111,16 @@ export default function Resumen() {
             url: `/correo/enviarCorreo/${plantillaID}`,
         };
         switch (plantillaID) {
-            case 2:
+            case "notificarAlumno":
                 info.data = {
                     correoDestino: correoUsuario,
-                    userId: usuario,
+                    usuarioId: usuario,
                     nombreUsuario: nombreUsuario,
-                    pass: process.env.VITE_EMAIL_DEFAULT_PASS
+                    pass: import.meta.env.VITE_EMAIL_DEFAULT_PASS
                 }
                 dispatch(FetcherCorreo.sendEmail(info))
                 break;
-            case 3:
+            case "notificarDocente":
                 info.data = {
                     correoDestino: correoUsuario,
                     userId: usuario,
@@ -213,7 +217,7 @@ export default function Resumen() {
                         </CardText>
                     </CardBody>
                     <CardFooter>
-                        <ButtonGroup>
+                        <ButtonGroup className="w-50">
                             <ButtonSecondary onClick={handleClickBack}>Atras</ButtonSecondary>
                             <ButtonPrimary onClick={handlesavedata} disabled={isButtonDisabled}>Guardar</ButtonPrimary>
                         </ButtonGroup>

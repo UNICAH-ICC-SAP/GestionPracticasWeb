@@ -102,7 +102,6 @@ export default function MostrarPlantilla() {
     };
 
     const handleTestTemplate = (idPlantilla: number) => {
-        console.log("handle")
         const info: TypeUtilities = {
             url: `/correo/enviarCorreo/${idPlantilla}`,
             data: {
