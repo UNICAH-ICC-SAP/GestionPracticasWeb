@@ -85,7 +85,8 @@ export default function Carreras() {
     useEffect(() => {
         if (clases && carreras && periodos && isLoading) {
             dispatch(ActionPensum.setIsLoading(false));
-            setPeriodoSeleccionado(periodos[periodos.length - 1].id_periodo)
+            if (periodos.length > 0)
+                setPeriodoSeleccionado(periodos[periodos.length - 1].id_periodo)
         }
         if (clases === null && carreras === null && periodos === null && !isLoading) {
             dispatch(ActionPensum.setIsLoading(true));

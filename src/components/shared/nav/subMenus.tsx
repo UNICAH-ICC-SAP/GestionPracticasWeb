@@ -59,16 +59,16 @@ export const configEmail: Array<Menu> = [
 
 export const cargasMenu: Array<Menu> = [
   {
-    paneId: "VerClasesDocente",
-    title: "Ver Clases por Docente",
-    pathTo: "/cargas/verCargasDocente",
-    component: <CargasDocente />,
-  },
-  {
     paneId: "NuevaCarga",
     title: "Nueva Carga Académica",
     pathTo: "/cargas/crearCarga",
     component: <NuevaCarga />,
+  },
+  {
+    paneId: "VerClasesDocente",
+    title: "Ver Clases por Docente",
+    pathTo: "/cargas/verCargasDocente",
+    component: <CargasDocente />,
   },
 ];
 

@@ -21,7 +21,7 @@ enum FormItems {
 
 enum PlaceHolder {
     phone = "50495000648",
-    dni = "0801199125021"
+    employee = "9090"
 }
 
 export default function CrearDocente() {
@@ -134,16 +134,14 @@ export default function CrearDocente() {
         return state.docenteId !== '' && state.nombre !== '' && isValidItem.email && state.email !== '' && state.facultadId !== '' && state.telefono !== '';
     };
 
-
-
     return (
         <div className="form-group">
             <h5 className="mb-4">Creación de Nuevo Docente</h5>
             <InputGroup>
                 <InputGroupText>
-                    Número de Identidad
+                    Número de Empleado
                 </InputGroupText>
-                <MaskedInput maxLength={15} value={state.docenteId} inputMaskChange={inputFunction} name="docenteId" mask="DNI" id="docenteId" placeholder={maskDNI(PlaceHolder.dni)} />
+                <MaskedInput maxLength={15} value={state.docenteId} inputMaskChange={inputFunction} name="docenteId" mask="employee" id="docenteId" placeholder={maskDNI(PlaceHolder.employee)} />
             </InputGroup>
             <InputGroup>
                 <InputGroupText>
@@ -159,8 +157,7 @@ export default function CrearDocente() {
                     id="facultadId"
                     name="facultadId"
                     type="select"
-                    value={state.facultadId} onChange={selectedChange} defaultValue={"default"}>
-                    <option key="defaultValue" value="default">Seleccione la Facultad</option>
+                    value={state.facultadId} onChange={selectedChange}>
                     {facultades && facultades.map((facultad) => (
                         <option key={facultad.facultadId} value={facultad.facultadId}>{facultad.facultadId} - {facultad.nombreFacultad}</option>
                     ))}
@@ -178,7 +175,7 @@ export default function CrearDocente() {
                 </InputGroupText>
                 <MaskedInput maxLength={15} value={state.telefono} inputMaskChange={inputFunction} name="telefono" mask="phone" id="telefono" placeholder={maskPhone(PlaceHolder.phone)} />
             </InputGroup>
-            <ButtonSecondary onClick={handleSaveDocente} disabled={!validateForm()}>Guardar Datos</ButtonSecondary>
+            <ButtonSecondary className="w-50" onClick={handleSaveDocente} disabled={!validateForm()}>Guardar Datos</ButtonSecondary>
         </div>
     );
 
