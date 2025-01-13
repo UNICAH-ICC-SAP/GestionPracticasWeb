@@ -140,7 +140,6 @@ export default function Step2() {
             }
         })
         const coordinador = currentDetalleTernas.filter(detalle => detalle.coordina === 'Si')
-        console.log(state, hasChange, hasCoor, coordinador)
         if (coordinador.length === 0) {
             setHasChange(false);
             setHasCoor(false);
@@ -192,7 +191,7 @@ export default function Step2() {
             <Label check for="coordina">&nbsp;Es coordinador</Label>
         </InputGroup>
         <Alert isOpen={!hasChange} color="dark">Recuerde selecionar al menos un coordinador</Alert>
-        <ButtonSecondary className="mb-4" onClick={handleClick} disabled={enableButton} >Agregar Docente</ButtonSecondary>
+        <ButtonSecondary className="w-50 mb-4" onClick={handleClick} disabled={enableButton} >Agregar Docente</ButtonSecondary>
         {docentesInfo.length > 0 && <Tables data={docentesInfo.map(item => ({
             ...item,
             actions: renderActions(item.docenteId)

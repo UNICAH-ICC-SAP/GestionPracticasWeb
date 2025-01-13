@@ -21,6 +21,7 @@ type AlumnoInfo = {
     facultad: string;
     email: string;
     telefono: string;
+    estadoTerna: string;
 };
 
 export default function VerTernas() {
@@ -86,6 +87,7 @@ export default function VerTernas() {
                         facultad: terna.alumno.facultadId,
                         email: terna.alumno.email,
                         telefono: terna.alumno.telefono,
+                        estadoTerna: getEstadoTerna(parseInt(terna.idEstadoTerna, 10))
                     };
                     alumnosMapped.push(data);
                 }
@@ -107,6 +109,16 @@ export default function VerTernas() {
     )
     );
 
+    function getEstadoTerna(idEstadoTerna: number) {
+        switch (idEstadoTerna) {
+            case 1:
+                return 'Inactiva';
+            case 2:
+                return 'En Curso';
+            case 3:
+                return 'Finalizada';
+        }
+    }
     return (
         <Container>
             <h4>Ternas</h4>
@@ -123,7 +135,7 @@ export default function VerTernas() {
                             </Button>
                         ),
                     }))}
-                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']}
+                    headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Estado de la Terna', 'Acciones']}
                     firstColumnIndex={0}
                     paginated={true}
                 />

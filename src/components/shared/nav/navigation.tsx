@@ -12,6 +12,8 @@ import { ButtonTransparent } from '../buttons';
 import { useDispatch } from 'react-redux';
 import React from 'react';
 import { MenuItems } from './menu';
+import Img from '../Img';
+import { Image } from "../../../Api";
 
 type PROPS = {
     roleId: number;
@@ -29,7 +31,14 @@ export function Navigation(props: Props<PROPS, typeof DEF>) {
     const toggle = () => setIsOpen(!isOpen);
     const clases = (!userData.nombre) ? 'w-100 text-center' : '';
     return <Navbar expand='md' container color='primary' dark={true}>
-        <NavbarBrand href="/" className={clases}>Gestion de Practicas</NavbarBrand>
+        <NavbarBrand href="/" className={clases}>
+            {userData.nombre &&
+                <Img style={{
+                    height: '5rem',
+                    width: '5rem',
+                }} src={Image["logo:main-blanco"]} />}
+            Gestion de Practicas
+        </NavbarBrand>
         <NavbarToggler onClick={toggle} />
         <Collapse isOpen={isOpen} navbar>
             <Nav className="me-auto" navbar>
@@ -38,17 +47,6 @@ export function Navigation(props: Props<PROPS, typeof DEF>) {
                         <NavLink className='nav-link py-1' to={item.pathTo}>{item.title}</NavLink>
                     </NavItem>
                 })}
-                {/* <UncontrolledDropdown nav inNavbar>
-                    <DropdownToggle nav caret>
-                        Options
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                        <DropdownItem>Option 1</DropdownItem>
-                        <DropdownItem>Option 2</DropdownItem>
-                        <DropdownItem divider />
-                        <DropdownItem>Reset</DropdownItem>
-                    </DropdownMenu>
-                </UncontrolledDropdown> */}
             </Nav>
             {userData.nombre && <React.Fragment>
                 <NavbarText>{userData.nombre}</NavbarText>

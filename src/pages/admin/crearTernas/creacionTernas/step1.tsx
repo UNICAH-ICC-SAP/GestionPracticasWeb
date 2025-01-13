@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { InputGroup, InputGroupText, Input } from "reactstrap";
-import { INIT as InitState } from '../../../../store/slices/ternas';
+import { INIT as InitStateTernas } from '../../../../store/slices/ternas';
+import { INIT as InitStateAlumnos } from '../../../../store/slices/alumnos';
 import { Type as AlumnoType } from '../../../../store/slices/alumnos/_namespace'
 import { Type as TernaType } from '../../../../store/slices/ternas/_namespace'
 import { ButtonSecondary } from "../../../../components/shared/buttons";
 import MaskedInput from "../../../../components/shared/inputs";
 import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "../../../../store/slices/facultades"
-import { Action as ActionTernas, Selector as SelectorTernas } from "../../../../store/slices/ternas";
+import { Action as ActionTernas } from "../../../../store/slices/ternas";
 import { useDispatch, useSelector } from "../../../../store";
 import { TypeUtilities } from "../../../../utilities/TypeUtilities";
 import "../_ternas.css"
@@ -26,15 +27,13 @@ enum PlaceHolder {
 }
 
 export default function Step1() {
-    const formState = useSelector(SelectorTernas.getAlumo)
-    const [userState, setUserState] = React.useState<TernaType.UserCreation>(InitState.userToCreate);
+    const [userState, setUserState] = React.useState<TernaType.UserCreation>(InitStateTernas.userToCreate);
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
-    const [state, setState] = React.useState<AlumnoType.AlumnoInfo>(formState)
+    const [state, setState] = React.useState<AlumnoType.AlumnoInfo>(InitStateAlumnos.alumno)
     const [domain, setDomain] = React.useState('@unicah.edu')
     const [disableButton, setDisableButton] = useState(true);
     const dispatch = useDispatch();
     const inputFunction = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(state)
         setState({
             ...state,
             [e.currentTarget.name]: (e.currentTarget.name === 'nombre') ? e.currentTarget.value.toUpperCase() : e.currentTarget.value
