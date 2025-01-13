@@ -10,14 +10,15 @@ const CustomInput = styled(Input)`
 `
 
 interface Props extends InputProps {
-    mask: 'phone' | 'currency' | 'DNI';
+    mask: 'phone' | 'currency' | 'DNI' | 'employee';
     inputMaskChange: (text: React.ChangeEvent<HTMLInputElement>) => void;
     length?: number;
 }
 enum TypeInput {
     phone = 'phone',
     currency = 'currency',
-    dni = 'DNI'
+    dni = 'DNI',
+    employee = 'employee'
 }
 function MaskedInput({ mask, inputMaskChange, ...rest }: Props) {
     function handleChange(text: React.ChangeEvent<HTMLInputElement>) {
@@ -30,6 +31,10 @@ function MaskedInput({ mask, inputMaskChange, ...rest }: Props) {
             inputMaskChange(text);
         }
         if (mask === TypeInput.dni) {
+            text.currentTarget.value = maskDNI(text.currentTarget.value);
+            inputMaskChange(text);
+        }
+        if (mask === TypeInput.employee) {
             text.currentTarget.value = maskDNI(text.currentTarget.value);
             inputMaskChange(text);
         }
