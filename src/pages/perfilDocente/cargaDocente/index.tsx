@@ -3,7 +3,6 @@ import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstra
 import { Menu } from "../../../components/shared/nav/types";
 import Breadcrumbs from "../../../components/shared/breadcrumb/Breadcrumbs";
 import MostrarCarga from "./mostrarCarga/mostrarCarga";
-import EditorConfig from "./editor/editorConfig";
 
 const perfilDocente: Array<Menu> = [
     {
@@ -12,12 +11,6 @@ const perfilDocente: Array<Menu> = [
         pathTo: '/miCarga/mostrarCarga',
         component: <MostrarCarga />
     },
-    {
-        paneId: 'jornalizacion',
-        title: 'Jornalizaciones',
-        pathTo: '/miCarga/jornalizacion',
-        component: <EditorConfig />
-    }
 ]
 export default function CargaDocente() {
     const [activePane, setActivePane] = useState<string>(perfilDocente[0].paneId);
