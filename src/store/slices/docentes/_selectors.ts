@@ -12,6 +12,8 @@ export default function Selector(store: StoreState): StoreUser.State {
 Selector.getDocentes = CreateSelector(Selector, (state) => state.docentes);
 
 Selector.getError = CreateSelector(Selector, (state) => state.error);
+
+Selector.getDocenteUserCreated = CreateSelector(Selector, (state) => state.docenteUserCreated);
 /**Selector: fetching is loading */
 // Selector.fetching = CreateSelector(Selector, (state) => state.loading);
 

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Container, Button, Modal, ModalHeader, ModalBody, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
-import { TypeUtilities } from '../../../utilities/TypeUtilities';
-import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../store/slices/ternas';
-import { useDispatch, useSelector } from "../../../store";
+import { TypeUtilities } from '../../../../utilities/TypeUtilities';
+import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../../store/slices/ternas';
+import { useDispatch, useSelector } from "../../../../store/index";
 import { isEmpty } from "lodash";
-import { Selector as UserSelector } from '../../../store/slices/users';
-import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '../../../store/slices/docentes';
-import NotFound from "../../../components/shared/notFound";
-import { Tables } from "../../../components/commons/tables/tables";
+import { Selector as UserSelector } from '../../../../store/slices/users';
+import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '../../../../store/slices/docentes';
+import NotFound from "../../../../components/shared/notFound";
+import { Tables } from "../../../../components/commons/tables/tables";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+
 type TernaDetail = {
     detalleTernaId?: number;
     ternaId: number;
@@ -65,7 +68,7 @@ export default function Docentes() {
                         coordina: terna.coordina ? "Coordinador" : "Miembro",
                         docenteId: docentesData.docenteId,
                         docenteNombre: docentesData.nombre,
-                        docenteTelefono: docentesData.telefono,
+                        docenteTelefono: `https://wa.me/504${docentesData.telefono}`,
                         docenteEmail: docentesData.email,
                     };
                     if (!DetallesDocentes[terna.ternaId]) {
@@ -146,6 +149,7 @@ export default function Docentes() {
                         </Nav>
                     </Col>
                     <Col sm="12" md="10">
+                        <FontAwesomeIcon icon={faWhatsapp} />
                         <TabContent activeTab={tabSel}>
                             {tabs && tabs.map((item, index) => {
                                 return <TabPane key={index} tabId={index}>
@@ -185,8 +189,7 @@ export default function Docentes() {
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
                             <div key={docente.docenteId}>
-                                <p><strong>Nombre:</strong> {docente.docenteNombre}</p>
-                                <p><strong>Teléfono:</strong> {docente.docenteTelefono}</p>
+                                <p><strong>Nombre:</strong> {docente.docenteNombre} <a href={docente.docenteTelefono} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faWhatsapp} /> </a></p>
                                 <p><strong>Email:</strong> {docente.docenteEmail}</p>
                                 <p><strong>Coordina:</strong> {docente.coordina}</p>
                                 <hr />

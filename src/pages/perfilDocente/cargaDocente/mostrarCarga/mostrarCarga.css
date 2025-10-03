@@ -1,0 +1,14 @@
+.custom-card-header,
+.custom-card-body {
+    width: 100%;
+    height: fit-content;
+}
+
+.custom-card-header {
+    background-color: var(--main-brand-color) !important;
+    color: white !important;
+}
+
+.custom-card-header>h5 {
+    font-size: 1.2rem;
+}

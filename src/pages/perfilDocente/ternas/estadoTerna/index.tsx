@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Col, Container, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
-import { TypeUtilities } from '../../../utilities/TypeUtilities';
-import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../store/slices/ternas';
-import { useDispatch, useSelector } from "../../../store";
+import { TypeUtilities } from '../../../../utilities/TypeUtilities';
+import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../../store/slices/ternas';
+import { useDispatch, useSelector } from "../../../../store/index";
 import { isEmpty } from "lodash";
-import { Selector as UserSelector } from '../../../store/slices/users';
-import NotFound from "../../../components/shared/notFound";
-import { Tables } from "../../../components/commons/tables/tables";
+import { Selector as UserSelector } from '../../../../store/slices/users';
+import NotFound from "../../../../components/shared/notFound";
+import { Tables } from "../../../../components/commons/tables/tables";
 
 type AlumnoInfo = {
     ternaId: number;

@@ -22,4 +22,9 @@ export default CreateReducer(INIT, ({ addCase }) => {
         docenteAgregado: JSON.parse(JSON.stringify(payload.docente)),
         error: JSON.parse(JSON.stringify(payload.error),)
     }));
+    addCase(Fetcher.insertUserDocente.fulfilled, (state, { payload }) => ({
+        ...state,
+        docenteUserCreated: JSON.parse(JSON.stringify(payload.docenteUserCreated)),
+        error: JSON.parse(JSON.stringify(payload.error),)
+    }));
 });
