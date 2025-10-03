@@ -60,6 +60,7 @@ export default CreateFetchers(NAME, {
         return {
             docente: response?.data,
             error: response?.error,
+            docenteUserCreated: true,
         }
     },
 });

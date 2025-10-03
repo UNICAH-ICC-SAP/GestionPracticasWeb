@@ -4,7 +4,7 @@ import { Type as DocentesType } from '../../../../store/slices/docentes/_namespa
 import { ButtonSecondary } from "../../../../components/shared/buttons";
 import MaskedInput from "../../../../components/shared/inputs";
 import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "../../../../store/slices/facultades";
-import { Fetcher as FetcherDocentes } from "../../../../store/slices/docentes";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocente } from "../../../../store/slices/docentes";
 import { useDispatch, useSelector } from "../../../../store";
 import { TypeUtilities } from "../../../../utilities/TypeUtilities";
 import { maskDNI, maskPhone } from "../../../../components/shared/inputs/utils/index";
@@ -25,6 +25,7 @@ enum PlaceHolder {
 }
 
 export default function CrearDocente() {
+    const docenteuserCreated = useSelector(SelectorDocente.getDocenteUserCreated);
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
     const [state, setState] = React.useState<DocentesType.DocenteInfo>({
         docenteId: '',
@@ -104,19 +105,25 @@ export default function CrearDocente() {
             };
 
             try {
-                dispatch(FetcherDocentes.insertUserDocente(paramsUser));
-
-                dispatch(FetcherDocentes.insertDocente(paramsDocente));
-                dispatch(FetcherDocentes.getDocentes(utils));
-                Swal.fire({
-                    title: "¡Éxito!",
-                    text: "Docente guardado exitosamente, se acaba de enviar un correo con las credenciales de acceso",
-                    icon: "success",
+                dispatch(FetcherDocentes.insertUserDocente(paramsUser)).then(() => {
+                    if (docenteuserCreated) {
+                        dispatch(FetcherDocentes.insertDocente(paramsDocente));
+                        Swal.fire({
+                            title: "¡Éxito!",
+                            text: "Docente guardado exitosamente, se acaba de enviar un correo con las credenciales de acceso",
+                            icon: "success",
+                        });
+                    }
+                }).catch((error) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: `Hubo un error al guardar el docente o usuario.\n Error: ${error}`,
+                    });
                 });
+
+                dispatch(FetcherDocentes.getDocentes(utils));
                 clearForm();
-
-
-
             } catch (error) {
                 Swal.fire({
                     icon: "error",

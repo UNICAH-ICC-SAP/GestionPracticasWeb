@@ -19,6 +19,7 @@ export declare namespace StoreUser {
         docente: Type.DocenteInfo;
         docentes: Array<Type.DocenteInfo>;
         error: TypeModal.ModalError;
+        docenteUserCreated?: boolean;
     };
 }
 
@@ -42,4 +43,5 @@ export const INIT: StoreUser.State = {
         code: 0,
         message: ""
     },
+    docenteUserCreated: false,
 };

@@ -30,6 +30,7 @@ export default function MostrarPlantilla() {
     const [changePass, setChangePass] = useState<boolean>(false)
     const [modalOpen, setModalOpen] = useState(false);
     const [testEmail, setTestEmail] = useState("")
+    const [accionPlantilla, setAccionPlantilla] = useState("")
 
     const toggleModal = () => {
         setModalOpen(!modalOpen);
@@ -101,9 +102,9 @@ export default function MostrarPlantilla() {
         }
     };
 
-    const handleTestTemplate = (idPlantilla: number) => {
+    const handleTestTemplate = () => {
         const info: TypeUtilities = {
-            url: `/correo/enviarCorreo/${idPlantilla}`,
+            url: `/correo/enviarCorreo/${accionPlantilla}`,
             data: {
                 correoDestino: testEmail
             }
@@ -111,6 +112,7 @@ export default function MostrarPlantilla() {
         dispatch(FetcherCorreo.sendEmail(info));
         setModalOpen(false);
         setTestEmail("");
+        setAccionPlantilla("");
     }
 
     const handleOpenModal = (plantilla: PlantillaDetailPreview) => {
@@ -190,16 +192,24 @@ export default function MostrarPlantilla() {
                     <div className="mb-3">
                         <Label for="correo_origen" className="text-left">Correo Origen</Label>
                         <Input
+                            className="mb-3"
                             id="correo_origen"
                             type="email"
                             value={testEmail}
                             onChange={(e) => setTestEmail(e.currentTarget.value)}
                             placeholder="Email"
                         />
+                        <Input
+                            id="accion_plantilla"
+                            type="text"
+                            value={accionPlantilla}
+                            onChange={(e) => setAccionPlantilla(e.currentTarget.value)}
+                            placeholder="Accion de la plantilla"
+                        />
                     </div>
                 </ModalBody>
                 <ModalFooter className="d-flex justify-content-center">
-                    <Button color="primary" onClick={() => handleTestTemplate(selectedPlantilla.idPlantilla)} disabled={!isDisabled()}>Enviar</Button>
+                    <Button color="primary" onClick={handleTestTemplate} disabled={!isDisabled()}>Enviar</Button>
                     <Button color="secondary" onClick={toggleModal}>Cancelar</Button>
                 </ModalFooter>
             </Modal>}

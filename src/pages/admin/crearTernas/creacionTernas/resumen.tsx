@@ -123,8 +123,7 @@ export default function Resumen() {
             case "notificarDocente":
                 info.data = {
                     correoDestino: correoUsuario,
-                    userId: usuario,
-                    nombreUsuario: nombreUsuario,
+                    nombreAlumno: usuario,
                 }
                 dispatch(FetcherCorreo.sendEmail(info))
                 break;
