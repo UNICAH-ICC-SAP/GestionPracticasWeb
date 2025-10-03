@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.11...v0.0.13) (2025-10-03)
+
+
+### Bug Fixes
+
+* llamado a componentes en navegacion ([6245cae](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/6245cae5b13a4fb6e466651864d2807004f8b021))
+* Mejoras en envió de correo, creación docentes, ternas y navegación ([#52](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/52)) ([c61ede9](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/c61ede90f4a61cfd93d30cd6410694fef06631dd))
+* mejoras en envio de correos, navegacion, ternas y creacion de docentes ([4199e9e](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/4199e9e6fdf2b1cca08750b871bffc3f400aada7))
+* navegacion en perfil docente ([3f62728](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/3f62728d7242f09aef732deae823f4609661f107))
+
 ### [0.0.12](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.11...v0.0.12) (2025-10-03)
 
 
