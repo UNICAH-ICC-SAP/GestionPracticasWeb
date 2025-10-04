@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.16...v0.0.17) (2025-10-04)
+
+
+### Bug Fixes
+
+* cambios en nombres, navegacion y rutas ([#55](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/issues/55)) ([f6cbb88](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/f6cbb8850591b69d92d7e835e1b0b0f745bc41b7))
+
 ### [0.0.16](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.15...v0.0.16) (2025-10-04)
 
 
