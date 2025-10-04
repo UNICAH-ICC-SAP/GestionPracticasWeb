@@ -67,14 +67,14 @@ export default function Docentes() {
     const detalleCoordinador = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
-            terna.coordina &&
+            terna.rol &&
             terna.docenteId === Userdata.userId
         )
     );
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
-            !terna.coordina &&
+            !terna.rol &&
             terna.docenteId === Userdata.userId
         )
     );

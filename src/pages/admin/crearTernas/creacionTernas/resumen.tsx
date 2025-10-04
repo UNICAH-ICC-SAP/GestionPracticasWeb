@@ -17,7 +17,7 @@ import { ButtonSecondary, ButtonPrimary } from "../../../../components/shared/bu
 type Docente = {
     docenteId: string;
     nombre: string;
-    coordina: string;
+    rol: string;
     telefono: string;
 }
 
@@ -42,7 +42,7 @@ export default function Resumen() {
             const docentesData = docentesInfo.map(detalle => ({
                 ternaId: savedTerna.ternaId,
                 docenteId: detalle.docenteId,
-                coordina: detalle.coordina === 'Si',
+                rol: detalle.rol,
             }));
 
             const paramsDetalle: TypeUtilities = {
@@ -138,14 +138,14 @@ export default function Resumen() {
                     return {
                         docenteId: item.docenteId,
                         nombre: item.nombre,
-                        coordina: detalle.coordina,
+                        rol: detalle.rol,
                         telefono: item.telefono
                     }
                 } else {
                     return {
                         docenteId: '',
                         nombre: '',
-                        coordina: '',
+                        rol: '',
                         telefono: ''
                     }
                 }

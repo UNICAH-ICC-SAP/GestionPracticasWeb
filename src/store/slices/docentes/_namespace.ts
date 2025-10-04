@@ -5,12 +5,12 @@ export const NAME = "Docente";
 
 export declare namespace Type {
     export type DocenteInfo = {
-        docenteId: string;
+        docenteId?: string;
         email: string;
         nombre: string;
-        facultadId: string;
+        facultadId?: string;
         telefono: string;
-        coordina: boolean;
+        rol: string;
     }
 }
 
@@ -36,7 +36,7 @@ export const INIT: StoreUser.State = {
         telefono: '',
         email: '',
         facultadId: '',
-        coordina: false
+        rol: ''
     },
     docentes: [],
     error: {

@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Modal, ModalHeader, ModalBody, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
-import { TypeUtilities } from '../../../../utilities/TypeUtilities';
-import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../../store/slices/ternas';
-import { useDispatch, useSelector } from "../../../../store/index";
+import { Container, Button, Modal, ModalHeader, ModalBody, Col, Nav, NavItem, NavLink, Row, TabContent, TabPane, ButtonGroup } from "reactstrap";
+import { TypeUtilities } from '@utilities/TypeUtilities';
+import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '@store/slices/ternas';
+import { useDispatch, useSelector } from "@store/index";
 import { isEmpty } from "lodash";
-import { Selector as UserSelector } from '../../../../store/slices/users';
-import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '../../../../store/slices/docentes';
-import NotFound from "../../../../components/shared/notFound";
-import { Tables } from "../../../../components/commons/tables/tables";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import { Selector as UserSelector } from '@store/slices/users';
+import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '@store/slices/docentes';
+import NotFound from "@components/shared/notFound";
+import { Tables } from "@components/commons/tables/tables";
+import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
+import { WhatsappButton } from "@components/shared/buttons";
 
-type TernaDetail = {
-    detalleTernaId?: number;
-    ternaId: number;
-    docenteId: string;
-    docenteNombre: string;
-    docenteTelefono: string;
-    docenteEmail: string;
-    coordina: string
-};
 type AlumnoInfo = {
     ternaId: number;
     alumnoNombre: string;
@@ -30,10 +21,10 @@ type AlumnoInfo = {
 
 export default function Docentes() {
     const dispatch = useDispatch();
-    const [detalles, setDetalles] = useState<Record<number, TernaDetail[]>>({});
+    const [detalles, setDetalles] = useState<Record<number, DocenteInfoType[]>>({});
     const [alumnos, setAlumnos] = useState<AlumnoInfo[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedTernaDocentes, setSelectedTernaDocentes] = useState<TernaDetail[]>([]);
+    const [selectedTernaDocentes, setSelectedTernaDocentes] = useState<DocenteInfoType[]>([]);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const Userdata = useSelector(UserSelector.getUser);
@@ -59,16 +50,16 @@ export default function Docentes() {
 
     useEffect(() => {
         if (!isEmpty(ternasDetalle)) {
-            const DetallesDocentes: Record<number, TernaDetail[]> = {};
+            const DetallesDocentes: Record<number, DocenteInfoType[]> = {};
             ternasDetalle.forEach((terna) => {
                 const docentesData = docentes.find((docente) => docente.docenteId === terna.docenteId);
                 if (docentesData) {
-                    const ternaDetail: TernaDetail = {
+                    const ternaDetail: DocenteInfoType = {
                         ternaId: terna.ternaId,
-                        coordina: terna.coordina ? "Coordinador" : "Miembro",
+                        rol: terna.rol === 'coordina' ? 'Coordinador' : terna.rol === 'estilo' ? 'Revisor de Estilos' : 'Revisor Técnico',
                         docenteId: docentesData.docenteId,
                         docenteNombre: docentesData.nombre,
-                        docenteTelefono: `https://wa.me/504${docentesData.telefono}`,
+                        docenteTelefono: docentesData.telefono,
                         docenteEmail: docentesData.email,
                     };
                     if (!DetallesDocentes[terna.ternaId]) {
@@ -108,14 +99,14 @@ export default function Docentes() {
     const detalleCoordinador = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
-            terna.coordina &&
+            terna.rol === 'coordina' &&
             terna.docenteId === Userdata.userId
         )
     );
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
-            !terna.coordina &&
+            !terna.rol &&
             terna.docenteId === Userdata.userId
         )
     );
@@ -149,7 +140,6 @@ export default function Docentes() {
                         </Nav>
                     </Col>
                     <Col sm="12" md="10">
-                        <FontAwesomeIcon icon={faWhatsapp} />
                         <TabContent activeTab={tabSel}>
                             {tabs && tabs.map((item, index) => {
                                 return <TabPane key={index} tabId={index}>
@@ -160,11 +150,14 @@ export default function Docentes() {
                                                 data={item.data.map((alumno) => ({
                                                     ...alumno,
                                                     acciones: (
-                                                        <Button
-                                                            color="primary"
-                                                            onClick={() => VerDetalleTerna(alumno.ternaId)}>
-                                                            Ver más
-                                                        </Button>
+                                                        <ButtonGroup>
+                                                            <Button
+                                                                color="primary"
+                                                                onClick={() => VerDetalleTerna(alumno.ternaId)}>
+                                                                Detalle
+                                                            </Button>
+                                                            <WhatsappButton telefono={alumno.telefono} />
+                                                        </ButtonGroup>
                                                     ),
                                                 }))}
                                                 headers={item.headers}
@@ -188,12 +181,7 @@ export default function Docentes() {
                 <ModalBody className="modal-font-size">
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
-                            <div key={docente.docenteId}>
-                                <p><strong>Nombre:</strong> {docente.docenteNombre} <a href={docente.docenteTelefono} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faWhatsapp} /> </a></p>
-                                <p><strong>Email:</strong> {docente.docenteEmail}</p>
-                                <p><strong>Coordina:</strong> {docente.coordina}</p>
-                                <hr />
-                            </div>
+                            <DocenteInfo key={docente.docenteId} docente={docente} />
                         ))
                     ) : (
                         <NotFound />

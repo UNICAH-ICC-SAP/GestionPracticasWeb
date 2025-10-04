@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { InputGroup, InputGroupText, Input } from "reactstrap";
-import { INIT as InitStateTernas } from '../../../../store/slices/ternas';
-import { INIT as InitStateAlumnos } from '../../../../store/slices/alumnos';
-import { Type as AlumnoType } from '../../../../store/slices/alumnos/_namespace'
-import { Type as TernaType } from '../../../../store/slices/ternas/_namespace'
-import { ButtonSecondary } from "../../../../components/shared/buttons";
-import MaskedInput from "../../../../components/shared/inputs";
-import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "../../../../store/slices/facultades"
-import { Action as ActionTernas } from "../../../../store/slices/ternas";
-import { useDispatch, useSelector } from "../../../../store";
-import { TypeUtilities } from "../../../../utilities/TypeUtilities";
+import { INIT as InitStateTernas } from '@store/slices/ternas';
+import { INIT as InitStateAlumnos } from '@store/slices/alumnos';
+import { Type as AlumnoType } from '@store/slices/alumnos/_namespace'
+import { Type as TernaType } from '@store/slices/ternas/_namespace'
+import { ButtonSecondary } from "@components/shared/buttons";
+import MaskedInput from "@components/shared/inputs";
+import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "@store/slices/facultades"
+import { Action as ActionTernas, Selector as SelectorTernas } from "@store/slices/ternas";
+import { useDispatch, useSelector } from "@store/index";
+import { TypeUtilities } from "@utilities/TypeUtilities";
 import "../_ternas.css"
-import { maskDNI, maskPhone } from "../../../../components/shared/inputs/utils/index"
+import { maskDNI, maskPhone } from "@components/shared/inputs/utils/index"
 
 type ValidItems = {
     email: boolean;
@@ -27,9 +27,10 @@ enum PlaceHolder {
 }
 
 export default function Step1() {
+    const alumno = useSelector(SelectorTernas.getAlumo);
     const [userState, setUserState] = React.useState<TernaType.UserCreation>(InitStateTernas.userToCreate);
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
-    const [state, setState] = React.useState<AlumnoType.AlumnoInfo>(InitStateAlumnos.alumno)
+    const [state, setState] = React.useState<AlumnoType.AlumnoInfo>(alumno || InitStateAlumnos.alumno)
     const [domain, setDomain] = React.useState('@unicah.edu')
     const [disableButton, setDisableButton] = useState(true);
     const dispatch = useDispatch();
@@ -80,6 +81,12 @@ export default function Step1() {
         }
 
     }, [dispatch])
+
+    React.useEffect(() => {
+        almostOne();
+        validate(alumno.email);
+    }, [alumno]);
+
     const facultades = useSelector(SelectorFacultades.getFacultades)
     const handleButtonNext = () => {
         dispatch(ActionTernas.setDataAlumno(state));

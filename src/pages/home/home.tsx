@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Selector as SelectorUser } from '../../store/slices/users';
 
-import { MenuItems } from '../../components/shared/nav/menu';
+import { MenuItems } from '@components/shared/nav/menu';
 import { Link } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './home.css';
-import { useSelector } from '../../store';
+import { useSelector } from '@store/index';
 
 export const Home: React.FC = () => {
   const userInfo = useSelector(SelectorUser.getUser);

@@ -48,7 +48,6 @@ export default function MostrarCarga() {
     }, [dispatch, periodos])
 
     useEffect(() => {
-        console.log(periodoSeleccionado)
         if (periodos) {
             dispatch(FetcherSecciones.getSecciones({ url: `/clasesDocentes/get?docenteId=${userData.userId}&id_periodo=${periodoSeleccionado}` }));
         }

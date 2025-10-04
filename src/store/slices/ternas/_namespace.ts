@@ -15,7 +15,7 @@ export declare namespace Type {
         detalleTernaId: number;
         ternaId: number;
         docenteId: string;
-        coordina: string;
+        rol: string;
     }
 
     export type UserCreation = {

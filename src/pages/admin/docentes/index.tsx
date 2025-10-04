@@ -15,7 +15,7 @@ type TernaDetail = {
     ternaId?: number;
     docenteId: string;
     docenteNombre: string;
-    coordina: string;
+    rol: string;
     actionButton?: JSX.Element
 }
 
@@ -38,7 +38,7 @@ export default function Docetes() {
                 const terna: TernaDetail = {
                     docenteId: detalle.docenteId,
                     docenteNombre: currentDocente[0].nombre,
-                    coordina: detalle.coordina ? "Coordinador" : ''
+                    rol: detalle.rol === 'coordina' ? 'Coordinador' : detalle.rol === 'estilo' ? 'Revisor de Estilos' : 'Revisor Técnico'
                 };
                 const jsx = <td><ButtonGroup>
                     <Button color="success">
@@ -57,7 +57,7 @@ export default function Docetes() {
         }
     }, [docentes])
     return <Container>
-        {detalle.length > 0 && <Tables data={detalle} headers={['Docente Id', 'Nombre Docente', 'Coordina Terna']} firstColumnIndex={0} paginated={false} />}
+        {detalle.length > 0 && <Tables data={detalle} headers={['Docente Id', 'Nombre Docente', 'Rol']} firstColumnIndex={0} paginated={false} />}
         {detalle.length === 0 && <NotFound />}
     </Container>
 }

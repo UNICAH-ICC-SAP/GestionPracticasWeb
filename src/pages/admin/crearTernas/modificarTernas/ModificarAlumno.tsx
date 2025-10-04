@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label } from "reactstrap";
-import { useDispatch, useSelector } from "../../../../store";
-import { Fetcher as FetcherAlumno, Selector as SelectorAlumno } from '../../../../store/slices/alumnos';
-import { Tables } from "../../../../components/commons/tables/tables";
+import { useDispatch, useSelector } from "@store/index";
+import { Fetcher as FetcherAlumno, Selector as SelectorAlumno } from '@store/slices/alumnos';
+import { Tables } from "@components/commons/tables/tables";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import NotFound from "../../../../components/shared/notFound";
+import NotFound from "@components/shared/notFound";
 import Swal from 'sweetalert2';
 
 type AlumnoDetails = {
