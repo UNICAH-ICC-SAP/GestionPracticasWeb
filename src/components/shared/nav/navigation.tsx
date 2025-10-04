@@ -1,19 +1,19 @@
 import { useState } from 'react';
 
 import { Collapse, Nav, NavItem, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap'
-import { DEF, Props } from '../../../Api/typesProps';
-import { useSelector } from '../../../store';
-import { Selector as UserSelector, Action as ActionUser } from '../../../store/slices/users';
+import { DEF, Props } from '@root/Api/typesProps';
+import { useSelector } from '@store/index';
+import { Selector as UserSelector, Action as ActionUser } from '@store/slices/users';
 import { NavLink } from 'react-router-dom'
-import { LogOut } from '../../../utilities/Utilities';
+import { LogOut } from '@utilities/Utilities';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import { ButtonTransparent } from '../buttons';
+import { ButtonTransparent } from '@components/shared/buttons';
 import { useDispatch } from 'react-redux';
 import React from 'react';
 import { MenuItems } from './menu';
-import Img from '../Img';
-import { Image } from "../../../Api";
+import Img from '@components/shared/Img';
+import { Image } from "@root/Api";
 
 type PROPS = {
     roleId: number;

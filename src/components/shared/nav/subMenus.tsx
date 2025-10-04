@@ -1,19 +1,19 @@
 import React from "react";
-import CrearTernas from "../../../pages/admin/crearTernas";
-import CreacionDocente from "../../../pages/admin/docentePage/crearDocente/creacionDocente";
+import CrearTernas from "@pages/admin/crearTernas";
+import CreacionDocente from "@pages/admin/docentePage/crearDocente/creacionDocente";
 import { Menu } from "./types";
-import MostrarDocentes from "../../../pages/admin/docentes/MostrarDocentes";
-import ModificarDocentes from "../../../pages/admin/docentes/ModificarDocentes";
-import Carreras from "../../../pages/pensums/mostrarPensums/carreras";
-import Laboratorios from "../../../pages/pensums/mostrarPensums/laboratorios";
-import Coprogramaticas from "../../../pages/pensums/mostrarPensums/coprogramaticas";
-import NuevaCarga from "../../../pages/admin/cargas/NuevaCarga";
-import ModificarAlumnos from "../../../pages/admin/crearTernas/modificarTernas/ModificarAlumno";
-import VerTernas from "../../../pages/admin/crearTernas/modificarTernas/MostrarTernas";
-import CargasDocente from "../../../pages/admin/cargasPage/mostrarCargas/cargasDocentes";
-import MostrarPlantilla from "../../../pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
-import CrearPlantilla from "../../../pages/admin/configEmail/crearPlantilla/CrearPlantilla";
-import AccionesPlantillas from "../../../pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
+import MostrarDocentes from "@pages/admin/docentes/MostrarDocentes";
+import ModificarDocentes from "@pages/admin/docentes/ModificarDocentes";
+import Carreras from "@pages/admin/pensums/mostrarPensums/carreras";
+import Laboratorios from "@pages/admin/pensums/mostrarPensums/laboratorios";
+import Coprogramaticas from "@pages/admin/pensums/mostrarPensums/coprogramaticas";
+import NuevaCarga from "@pages/admin/cargas/NuevaCarga";
+import ModificarAlumnos from "@pages/admin/crearTernas/modificarTernas/ModificarAlumno";
+import VerTernas from "@pages/admin/crearTernas/modificarTernas/MostrarTernas";
+import CargasDocente from "@pages/admin/cargasPage/mostrarCargas/cargasDocentes";
+import MostrarPlantilla from "@pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
+import CrearPlantilla from "@pages/admin/configEmail/crearPlantilla/CrearPlantilla";
+import AccionesPlantillas from "@pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
 
 export const adminMenu: Array<Menu> = [
   {

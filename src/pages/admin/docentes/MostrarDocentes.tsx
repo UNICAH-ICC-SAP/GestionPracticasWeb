@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container } from "reactstrap";
-import { useDispatch, useSelector } from "../../../store";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
+import { useDispatch, useSelector } from "@store/index";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '@store/slices/docentes';
 import { Tables } from "../../../components/commons/tables/tables";
 import NotFound from "../../../components/shared/notFound";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";

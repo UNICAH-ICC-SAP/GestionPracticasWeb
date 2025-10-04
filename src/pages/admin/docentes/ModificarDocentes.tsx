@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, Modal, ModalHeader, ModalBody, ModalFooter, Input, Label } from "reactstrap";
-import { useDispatch, useSelector } from "../../../store";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
+import { useDispatch, useSelector } from "@store/index";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '@store/slices/docentes';
 import { Tables } from "../../../components/commons/tables/tables";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

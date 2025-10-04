@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "../../../store";
+import { useDispatch, useSelector } from "@store/index";
 
-import type { Type as TypePensums } from "../../../store/slices/pensums/_namespace";
-import type { Type as TypeSecciones } from "../../../store/slices/secciones/_namespace";
-import type { Type as TypeModals } from "../../../Api/namespaces/modals";
+import type { Type as TypePensums } from "@store/slices/pensums/_namespace";
+import type { Type as TypeSecciones } from "@store/slices/secciones/_namespace";
+import type { Type as TypeModals } from "@root/Api/namespaces/modals";
 
-import { Action as ActionPensum, Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
-import { Action as ActionSecciones, Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
-import { Selector as SelectorFacultad } from '../../../store/slices/facultades';
-import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from '../../../store/slices/periodo';
+import { Action as ActionPensum, Fetcher as FetcherPensum, Selector as SelectorPensum } from "@store/slices/pensums";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '@store/slices/docentes';
+import { Action as ActionSecciones, Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '@store/slices/secciones';
+import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "@store/slices/periodo";
+import { Fetcher as FetcherFacultad, Selector as SelectorFacultad } from "@store/slices/facultades";
 
 import { Container, Card, Row, Col, Button, CardHeader, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
-import NotFound from "../../../components/shared/notFound";
+import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
 
-import { days, MODALS_TYPES } from "../../../consts"
+import { days, MODALS_TYPES } from "@root/consts"
 
 type ClasesPorBloque = Record<number, TypePensums.ClaseInfo[]>;
 
@@ -41,7 +41,7 @@ const INITIAL_FORM_STATE: ClaseForm = {
     id_clase: '',
     nombre_clase: '',
     creditos: 0,
-    TipoClase: 3,
+    TipoClase: 1,
     facultadId: '',
     id_bloque: 1
 };
@@ -61,26 +61,26 @@ const INITIAL_MODAL_STATE: TypeModals.ModalState = {
     type: null
 };
 
-export default function Laboratorios() {
+export default function Carreras() {
     const dispatch = useDispatch();
     const [filtroClase, setFiltroClase] = useState<string>('');
     const [clasesFiltradas, setClasesFiltradas] = useState<ClasesPorBloque>({});
     const [clasesPorBloque, setClasesPorBloque] = useState<ClasesPorBloque>({});
+    const [facultadSeleccionada, setFacultadSeleccionada] = useState<string>('IG04001');
+    const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
     const [modal, setModal] = useState<TypeModals.ModalState>(INITIAL_MODAL_STATE);
     const [formData, setFormData] = useState<ClaseForm>(INITIAL_FORM_STATE);
     const [sectionForm, setSectionForm] = useState<SectionForm>(INITIAL_SECTION_FORM);
-    const [facultadSeleccionada, setFacultadSeleccionada] = useState<string>('IG04001');
-    const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
 
+    const isLoading = useSelector(SelectorPensum.getIsLoading);
+    const isUpdatePensum = useSelector(SelectorPensum.getIsUpdate);
+    const isUpdateSecciones = useSelector(SelectorSecciones.getIsUpdate);
     const clases = useSelector(SelectorPensum.getClases);
     const carreras = useSelector(SelectorPensum.getCarreras);
     const docentes = useSelector(SelectorDocentes.getDocentes);
     const secciones = useSelector(SelectorSecciones.getSecciones);
-    const facultades = useSelector(SelectorFacultad.getFacultades);
     const periodos = useSelector(SelectorPeriodos.getPeriodos);
-    const isLoading = useSelector(SelectorPensum.getIsLoading);
-    const isUpdatePensum = useSelector(SelectorPensum.getIsUpdate);
-    const isUpdateSecciones = useSelector(SelectorSecciones.getIsUpdate);
+    const facultades = useSelector(SelectorFacultad.getFacultades);
 
     useEffect(() => {
         if (clases && carreras && periodos && isLoading) {
@@ -90,10 +90,12 @@ export default function Laboratorios() {
         }
         if (clases === null && carreras === null && periodos === null && !isLoading) {
             dispatch(ActionPensum.setIsLoading(true));
-            dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=3" }));
+            dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" }));
+            dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }));
             dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
             dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
             dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
+            dispatch(FetcherFacultad.getFacultades({ url: "/facultad/getFacultades" }))
         }
     }, [dispatch, clases, carreras, periodos]);
 
@@ -280,12 +282,10 @@ export default function Laboratorios() {
         const nuevaFacultad = e.target.value;
         setFacultadSeleccionada(nuevaFacultad);
     };
-
     const handleChangePeriodo = (e: React.ChangeEvent<HTMLInputElement>) => {
         const periodo = e.target.value;
         setPeriodoSeleccionado(periodo);
     };
-
     return (
         <Container>
             <h4 className="mb-3">
@@ -354,7 +354,7 @@ export default function Laboratorios() {
                 </Row>
             </Form>
 
-            {isLoading ? (
+            {isLoading || isUpdatePensum || isUpdateSecciones ? (
                 <div className="text-center my-5">
                     <Spinner color="primary">
                         Loading...
@@ -397,7 +397,7 @@ export default function Laboratorios() {
                                                 </ButtonGroup>
                                             </CardHeader>
                                             <CardBody>
-                                                {secciones
+                                                {secciones.length > 0 && carreras && secciones
                                                     ?.filter(seccion => {
                                                         const carrera = carreras.find(c => c.id_clase === clase.id_clase);
                                                         return carrera && seccion.id_ccb === carrera.id_ccb;
@@ -578,12 +578,9 @@ export default function Laboratorios() {
                                         onChange={handleSectionInputChange}
                                         required
                                     >
-                                        <option value="1">Lunes</option>
-                                        <option value="2">Martes</option>
-                                        <option value="3">Miércoles</option>
-                                        <option value="4">Jueves</option>
-                                        <option value="5">Viernes</option>
-                                        <option value="6">Sábado</option>
+                                        {days && days.map((day, index) => {
+                                            return <option key={day + index + 1} value={index + 1}>{day}</option>
+                                        })}
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
@@ -596,12 +593,9 @@ export default function Laboratorios() {
                                         onChange={handleSectionInputChange}
                                         required
                                     >
-                                        <option value="1">Lunes</option>
-                                        <option value="2">Martes</option>
-                                        <option value="3">Miércoles</option>
-                                        <option value="4">Jueves</option>
-                                        <option value="5">Viernes</option>
-                                        <option value="6">Sábado</option>
+                                        {days && days.map((day, index) => {
+                                            return <option key={day + index + 2} value={index + 1}>{day}</option>
+                                        })}
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>

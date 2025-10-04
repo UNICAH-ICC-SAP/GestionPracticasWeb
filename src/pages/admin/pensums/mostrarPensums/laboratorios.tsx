@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "../../../store";
+import { useDispatch, useSelector } from "@store/index";
 
-import type { Type as TypePensums } from "../../../store/slices/pensums/_namespace";
-import type { Type as TypeSecciones } from "../../../store/slices/secciones/_namespace";
-import type { Type as TypeModals } from "../../../Api/namespaces/modals";
+import type { Type as TypePensums } from "@store/slices/pensums/_namespace";
+import type { Type as TypeSecciones } from "@store/slices/secciones/_namespace";
+import type { Type as TypeModals } from "@root/Api/namespaces/modals";
 
-import { Action as ActionPensum, Fetcher as FetcherPensum, Selector as SelectorPensum } from "../../../store/slices/pensums";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '../../../store/slices/docentes';
-import { Action as ActionSecciones, Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../store/slices/secciones';
-import { Selector as SelectorFacultad, Fetcher as FetcherFacultad } from '../../../store/slices/facultades';
-import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from '../../../store/slices/periodo';
+import { Action as ActionPensum, Fetcher as FetcherPensum, Selector as SelectorPensum } from "@store/slices/pensums";
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '@store/slices/docentes';
+import { Action as ActionSecciones, Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '@store/slices/secciones';
+import { Selector as SelectorFacultad } from '@store/slices/facultades';
+import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from '@store/slices/periodo';
 
 import { Container, Card, Row, Col, Button, CardHeader, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
-import NotFound from "../../../components/shared/notFound";
+import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
 
-import { days, MODALS_TYPES } from "../../../consts"
+import { days, MODALS_TYPES } from "@root/consts"
 
 type ClasesPorBloque = Record<number, TypePensums.ClaseInfo[]>;
 
@@ -41,7 +41,7 @@ const INITIAL_FORM_STATE: ClaseForm = {
     id_clase: '',
     nombre_clase: '',
     creditos: 0,
-    TipoClase: 1,
+    TipoClase: 3,
     facultadId: '',
     id_bloque: 1
 };
@@ -61,7 +61,7 @@ const INITIAL_MODAL_STATE: TypeModals.ModalState = {
     type: null
 };
 
-export default function Coprogramaticas() {
+export default function Laboratorios() {
     const dispatch = useDispatch();
     const [filtroClase, setFiltroClase] = useState<string>('');
     const [clasesFiltradas, setClasesFiltradas] = useState<ClasesPorBloque>({});
@@ -69,7 +69,7 @@ export default function Coprogramaticas() {
     const [modal, setModal] = useState<TypeModals.ModalState>(INITIAL_MODAL_STATE);
     const [formData, setFormData] = useState<ClaseForm>(INITIAL_FORM_STATE);
     const [sectionForm, setSectionForm] = useState<SectionForm>(INITIAL_SECTION_FORM);
-    const [facultadSeleccionada, setFacultadSeleccionada] = useState<string>('IDIN01001');
+    const [facultadSeleccionada, setFacultadSeleccionada] = useState<string>('IG04001');
     const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
 
     const clases = useSelector(SelectorPensum.getClases);
@@ -82,12 +82,7 @@ export default function Coprogramaticas() {
     const isUpdatePensum = useSelector(SelectorPensum.getIsUpdate);
     const isUpdateSecciones = useSelector(SelectorSecciones.getIsUpdate);
 
-    const getTipoClase = (facultadId: string) => {
-        return facultadId === 'IDIN01001' ? 2 : 4;
-    };
-
     useEffect(() => {
-        const tipoClase = getTipoClase(facultadSeleccionada);
         if (clases && carreras && periodos && isLoading) {
             dispatch(ActionPensum.setIsLoading(false));
             if (periodos.length > 0)
@@ -95,18 +90,15 @@ export default function Coprogramaticas() {
         }
         if (clases === null && carreras === null && periodos === null && !isLoading) {
             dispatch(ActionPensum.setIsLoading(true));
-            dispatch(FetcherPensum.getClases({ url: `/pensum/getPensum?TipoClase=${tipoClase}` }));
-            dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }));
+            dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=3" }));
             dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
             dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
             dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
-            dispatch(FetcherFacultad.getFacultades({ url: "/facultad/getFacultades" }))
         }
-    }, [dispatch, clases, carreras, periodos, facultadSeleccionada]);
+    }, [dispatch, clases, carreras, periodos]);
 
     useEffect(() => {
-        dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }));
-        dispatch(FetcherPensum.getClases({ url: `/pensum/getPensum?TipoClase=${getTipoClase(facultadSeleccionada)}` }));
+        dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }))
     }, [facultadSeleccionada, isUpdatePensum]);
 
     useEffect(() => {
@@ -118,24 +110,28 @@ export default function Coprogramaticas() {
 
         const clasesConBloque = clases.map(clase => ({
             ...clase,
-            bloque: carreras.find(c => c.id_clase === clase.id_clase)?.id_bloque || 1
+            bloque: carreras.find(c => c.id_clase === clase.id_clase)?.id_bloque
         }));
 
-        const todasLasClases: ClasesPorBloque = {
-            1: clasesConBloque
-        };
+        const porBloque = clasesConBloque.reduce<ClasesPorBloque>((acc, clase) => {
+            if (clase.bloque) {
+                if (!acc[clase.bloque]) {
+                    acc[clase.bloque] = [];
+                }
+                acc[clase.bloque].push(clase);
+            }
+            return acc;
+        }, {});
 
-        setClasesPorBloque(todasLasClases);
-        setClasesFiltradas(todasLasClases);
+        setClasesPorBloque(porBloque);
+        setClasesFiltradas(porBloque);
     }, [clases, carreras]);
-
 
     const getDayName = (day: number): string => {
         return days[day] || '';
     };
 
     const handleOpenModal = (type: TypeModals.ModalType, bloque?: number, clase?: TypePensums.ClaseInfo) => {
-        const tipoClase = getTipoClase(facultadSeleccionada);
         const newFormData = type === MODALS_TYPES.CREATE
             ? { ...INITIAL_FORM_STATE, id_bloque: bloque || 1, facultadId: facultadSeleccionada }
             : type === MODALS_TYPES.EDIT && clase
@@ -143,7 +139,7 @@ export default function Coprogramaticas() {
                     id_clase: clase.id_clase,
                     nombre_clase: clase.nombre_clase,
                     creditos: clase.creditos,
-                    TipoClase: tipoClase,
+                    TipoClase: clase.TipoClase,
                     facultadId: facultadSeleccionada,
                     id_bloque: clase.bloque || 1
                 }
@@ -289,6 +285,7 @@ export default function Coprogramaticas() {
         const periodo = e.target.value;
         setPeriodoSeleccionado(periodo);
     };
+
     return (
         <Container>
             <h4 className="mb-3">
@@ -524,15 +521,15 @@ export default function Coprogramaticas() {
                 </Form>
             </Modal>
 
-            <Modal isOpen={modal.isOpen && [MODALS_TYPES.CREATE_SECCION, MODALS_TYPES.EDIT_SECCION, 'deleteSeccion'].includes(modal.type || '')} toggle={handleCloseModal}>
+            <Modal isOpen={modal.isOpen && [MODALS_TYPES.CREATE_SECCION, MODALS_TYPES.EDIT_SECCION, MODALS_TYPES.DELETE_SECCION].includes(modal.type || '')} toggle={handleCloseModal}>
                 <ModalHeader toggle={handleCloseModal}>
                     {modal.type === MODALS_TYPES.CREATE_SECCION && `Agregar Sección - ${modal.currentClase?.nombre_clase}`}
                     {modal.type === MODALS_TYPES.EDIT_SECCION && `Editar Sección - ${modal.currentClase?.nombre_clase}`}
-                    {modal.type === 'deleteSeccion' && `Eliminar Sección - ${modal.currentClase?.nombre_clase}`}
+                    {modal.type === MODALS_TYPES.DELETE_SECCION && `Eliminar Sección - ${modal.currentClase?.nombre_clase}`}
                 </ModalHeader>
                 <Form onSubmit={handleSectionSubmit}>
                     <ModalBody>
-                        {modal.type === 'deleteSeccion' ? (
+                        {modal.type === MODALS_TYPES.DELETE_SECCION ? (
                             <div className="text-center">
                                 <h5>¿Está seguro que desea eliminar esta sección?</h5>
                                 <p className="mb-0">Sección: {sectionForm.seccion}</p>
@@ -651,7 +648,7 @@ export default function Coprogramaticas() {
                         {modal.type === MODALS_TYPES.EDIT_SECCION && (
                             <Button
                                 color="danger"
-                                onClick={() => setModal(prev => ({ ...prev, type: 'deleteSeccion' }))}
+                                onClick={() => setModal(prev => ({ ...prev, type: MODALS_TYPES.DELETE_SECCION as TypeModals.ModalType }))}
                             >
                                 Eliminar
                             </Button>
@@ -662,7 +659,7 @@ export default function Coprogramaticas() {
                         >
                             {modal.type === MODALS_TYPES.CREATE_SECCION && 'Agregar'}
                             {modal.type === MODALS_TYPES.EDIT_SECCION && 'Guardar'}
-                            {modal.type === 'deleteSeccion' && 'Eliminar'}
+                            {modal.type === MODALS_TYPES.DELETE_SECCION && 'Eliminar'}
                         </Button>
                     </ModalFooter>
                 </Form>

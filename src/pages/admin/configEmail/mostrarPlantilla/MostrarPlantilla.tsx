@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import { useDispatch, useSelector } from "../../../../store";
-import { Fetcher as FetcherPlantillas, Selector as SelectorPlantillas } from '../../../../store/slices/plantillas';
-import { Fetcher as FetcherCorreo } from "../../../../store/slices/plantillas";
-import { Tables } from "../../../../components/commons/tables/tables";
-import NotFound from "../../../../components/shared/notFound";
-import { TypeUtilities } from "../../../../utilities/TypeUtilities";
+import { useDispatch, useSelector } from "@store/index";
+import { Fetcher as FetcherPlantillas, Selector as SelectorPlantillas } from '@store/slices/plantillas';
+import { Fetcher as FetcherCorreo } from "@store/slices/plantillas";
+import { Tables } from "@components/commons/tables/tables";
+import NotFound from "@components/shared/notFound";
+import { TypeUtilities } from "@utilities/TypeUtilities";
 import { faEdit, faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";

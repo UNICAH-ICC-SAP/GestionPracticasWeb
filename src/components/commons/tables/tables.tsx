@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Pagination, PaginationItem, PaginationLink, Table } from "reactstrap"
-import { DEF, Props } from '../../../Api/typesProps';
+import { DEF, Props } from '@root/Api/typesProps';
 
 export type PropsTable = {
     headers: string[];

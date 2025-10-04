@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from "../../../store";
-import { Type as PeriodoType } from '../../../store/slices/periodo/_namespace';
-import { Fetcher as FetcherPeriodo } from '../../../store/slices/periodo';
-import Selector from '../../../store/slices/periodo/_selectors';
-import './NuevaCarga.css'; 
+import { useDispatch, useSelector } from "@store/index";
+import { Type as PeriodoType } from '@store/slices/periodo/_namespace';
+import { Fetcher as FetcherPeriodo } from '@store/slices/periodo';
+import Selector from '@store/slices/periodo/_selectors';
+import './NuevaCarga.css';
 import { TypeUtilities } from '../../../utilities/TypeUtilities';
 import Swal from 'sweetalert2';
 
@@ -19,7 +19,7 @@ const NuevaCarga = () => {
 
     const formatDate = (date: string) => {
         const parsedDate = new Date(date);
-        return parsedDate.toISOString().split('T')[0]; 
+        return parsedDate.toISOString().split('T')[0];
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -32,22 +32,22 @@ const NuevaCarga = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-    
-        const utilities: TypeUtilities = { 
-            url: '/periodo/insert', 
-            data:  state,
+
+        const utilities: TypeUtilities = {
+            url: '/periodo/insert',
+            data: state,
         };
-    
+
         dispatch(FetcherPeriodo.insertNuevaCarga(utilities))
 
         Swal.fire({
             title: "¡Éxito!",
             text: "Periodo insertado con éxito.",
             icon: "success",
-          });
-            
+        });
+
     };
-    
+
 
     return (
         <div className="nueva-carga">
@@ -61,7 +61,7 @@ const NuevaCarga = () => {
                         name="fecha_inicio"
                         value={state.fecha_inicio}
                         onChange={handleChange}
-                        onFocus={(e) => e.target.showPicker && e.target.showPicker()} 
+                        onFocus={(e) => e.target.showPicker && e.target.showPicker()}
                         required
                     />
                 </div>
@@ -73,7 +73,7 @@ const NuevaCarga = () => {
                         name="fecha_final"
                         value={state.fecha_final}
                         onChange={handleChange}
-                        onFocus={(e) => e.target.showPicker && e.target.showPicker()} 
+                        onFocus={(e) => e.target.showPicker && e.target.showPicker()}
                         required
                     />
                 </div>

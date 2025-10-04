@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 
-import type { Type as TypeDocente } from "../../../../store/slices/docentes/_namespace"
-import { useSelector, useDispatch } from "../../../../store";
-import { Selector as SelectorTernas } from "../../../../store/slices/ternas";
-import { Selector as SelectorDocentes } from "../../../../store/slices/docentes";
+import type { Type as TypeDocente } from "@store/slices/docentes/_namespace"
+import { useSelector, useDispatch } from "@store/index";
+import { Selector as SelectorTernas } from "@store/slices/ternas";
+import { Selector as SelectorDocentes } from "@store/slices/docentes";
 import { ButtonGroup, Card, CardBody, CardFooter, CardHeader, CardSubtitle, CardText, CardTitle, Container, Input, InputGroup, InputGroupText } from "reactstrap";
-import { Fetcher as FetcherAlumnos, Selector as SelectorAlumno, Action as ActionAlumno } from "../../../../store/slices/alumnos";
-import { Fetcher as FetcherTernas, Action as ActionTernas } from "../../../../store/slices/ternas";
-import { } from "../../../../store/slices/ternas";
-import { Fetcher as FetcherCorreo } from "../../../../store/slices/plantillas"
-import { TypeUtilities } from "../../../../utilities/TypeUtilities";
+import { Fetcher as FetcherAlumnos, Selector as SelectorAlumno, Action as ActionAlumno } from "@store/slices/alumnos";
+import { Fetcher as FetcherTernas, Action as ActionTernas } from "@store/slices/ternas";
+import { } from "@store/slices/ternas";
+import { Fetcher as FetcherCorreo } from "@store/slices/plantillas"
+import { TypeUtilities } from "@utilities/TypeUtilities";
 import Swal from 'sweetalert2';
-import { ButtonSecondary, ButtonPrimary } from "../../../../components/shared/buttons";
+import { ButtonSecondary, ButtonPrimary } from "@components/shared/buttons";
 
 
 type Docente = {
