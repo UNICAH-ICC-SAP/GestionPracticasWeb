@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.14...v0.0.15) (2025-10-04)
+
+
+### Bug Fixes
+
+* limpieza numero de telefono whatsapp ([ec94d95](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/ec94d9582dba310deaeee1e931a4b2806dfbeb2a))
+
 ### [0.0.14](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.11...v0.0.14) (2025-10-04)
 
 
