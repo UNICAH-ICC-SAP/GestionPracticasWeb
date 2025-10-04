@@ -10,8 +10,9 @@ import { Tables } from "@components/commons/tables/tables";
 import NotFound from '@components/shared/notFound'
 import { Type as DocenteType } from '@store/slices/docentes/_namespace';
 import { WhatsappButton } from "@components/shared/buttons";
+import Breadcrumbs from "@components/shared/breadcrumb/Breadcrumbs";
 
-export default function DocentesAsignados() {
+export default function TernaAlumno() {
     const dispatch = useDispatch();
     const [docentesAsignados, setDocentesAsignados] = useState<DocenteType.DocenteInfo[]>([]);
     const ternas = useSelector(SelectorTernas.ternasInfo);
@@ -45,8 +46,20 @@ export default function DocentesAsignados() {
             setDocentesAsignados(docentesData);
         }
     }, [ternas, docentes]);
+    const currenTab = "Mi Terna"
+    type TypeBreadcrumb = {
+        title: string;
+    }
+    const tabsBreadcrumb:
+        Array<TypeBreadcrumb> = [
+            { title: "Inicio" },
+            { title: "Docente" },
+            { title: currenTab || "" },
+        ]
     return (
         <Container>
+            <Breadcrumbs
+                items={tabsBreadcrumb} />
             {!isEmpty(docentesAsignados) ? (
                 <Tables
                     data={docentesAsignados.map((docente) => ({

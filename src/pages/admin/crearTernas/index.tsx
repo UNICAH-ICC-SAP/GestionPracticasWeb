@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useSelector } from "../../../store";
-import { Selector as SelectorTernas } from "../../../store/slices/ternas";
+import { useSelector } from "@store/index";
+import { Selector as SelectorTernas } from "@store/slices/ternas";
 import Step1 from "./creacionTernas/step1";
 import Step2 from "./creacionTernas/step2";
 import Resumen from "./creacionTernas/resumen";

@@ -1,5 +1,5 @@
 import React from "react";
-import { DEF, Props } from "../../../Api/typesProps";
+import { DEF, Props } from "@root/Api/typesProps";
 
 export type PROP = {
     style?: {

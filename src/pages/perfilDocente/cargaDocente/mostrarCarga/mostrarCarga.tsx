@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "../../../../store/index";
+import { useDispatch, useSelector } from "@store/index";
 
-import { Fetcher as FetcherPensum, Selector as SelectorPensum, Action as ActionPensum } from "../../../../store/slices/pensums";
-import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '../../../../store/slices/secciones';
-import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "../../../../store/slices/periodo";
-import { Selector as SelectorUser } from "../../../../store/slices/users"
+import { Fetcher as FetcherPensum, Selector as SelectorPensum, Action as ActionPensum } from "@store/slices/pensums";
+import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '@store/slices/secciones';
+import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "@store/slices/periodo";
+import { Selector as SelectorUser } from "@store/slices/users"
 
-import NotFound from "../../../../components/shared/notFound";
+import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
 import { Col, Container, Row, Card, CardHeader, CardBody, Spinner, Badge } from "reactstrap";
 

@@ -3,13 +3,13 @@ import { Menu } from './types';
 import Docentes from '@pages/admin/index';
 import DocenteMenu from '@pages/admin/docentePage/docenteIndex';
 import CargasMenu from '@pages/admin/cargasPage/cargasIndex';
-import Pensums from '@pages/pensums/';
+import Pensums from '@pages/admin/pensums';
 import { Home } from '@pages/home/home';
-import Alumno from '@pages/perfilAlumnos/alumno';
+import TernaAlumno from '@pages/perfilAlumnos/ternaAlumno';
+import Documentacion from '@pages/perfilAlumnos/documentacion';
 import DocentePerfil from "@pages/perfilDocente/ternas"
 import ConfigEmail from "@pages/admin/configEmail"
 import CargaDocente from '@pages/perfilDocente/cargaDocente';
-
 
 export const MenuItems: Array<Array<Menu>> = [
     [
@@ -47,9 +47,14 @@ export const MenuItems: Array<Array<Menu>> = [
     ],
     [
         {
-            'title': 'Mis Ternas',
+            'title': 'Home',
             'pathTo': '/',
-            'component': < DocentePerfil />
+            'component': <Home />
+        },
+        {
+            'title': 'Mis Ternas',
+            'pathTo': '/Ternas',
+            'component': <DocentePerfil />
         },
         {
             'title': 'Carga Asignada',
@@ -59,14 +64,19 @@ export const MenuItems: Array<Array<Menu>> = [
     ],
     [
         {
-            'title': 'Alumno',
+            'title': 'Home',
             'pathTo': '/',
-            'component': <Alumno />
+            'component': <Home />
+        },
+        {
+            'title': 'Mi Terna',
+            'pathTo': '/terna',
+            'component': <TernaAlumno />
         },
         {
             'title': 'Documentacion',
-            'pathTo': '/',
-            'component': <>Documentacion </>
+            'pathTo': '/documentacion',
+            'component': <Documentacion />
         },
     ]
 ]

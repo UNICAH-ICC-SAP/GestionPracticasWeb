@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Container, } from "reactstrap";
 import { TypeUtilities } from '../../../utilities/TypeUtilities';
-import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../store/slices/ternas'
-import { Selector as SelectorDocentes } from '../../../store/slices/docentes'
-import { useDispatch, useSelector } from "../../../store";
+import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '@store/slices/ternas'
+import { Selector as SelectorDocentes } from '@store/slices/docentes'
+import { useDispatch, useSelector } from "@store/index";
 import { Tables } from "../../../components/commons/tables/tables";
 import { isEmpty } from "lodash";
 import { faEdit, faEye, faTrash } from "@fortawesome/free-solid-svg-icons";

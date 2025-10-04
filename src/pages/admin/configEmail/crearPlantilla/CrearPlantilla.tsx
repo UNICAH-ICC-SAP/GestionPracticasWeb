@@ -1,12 +1,12 @@
 import React from "react";
-import { useDispatch, useSelector } from "../../../../store";
+import { useDispatch, useSelector } from "@store/index";
 
-import { Type as TypePlantillaEmail, INIT as INIT_PLANTILLA } from '../../../../store/slices/plantillas/_namespace';
+import { Type as TypePlantillaEmail, INIT as INIT_PLANTILLA } from '@store/slices/plantillas/_namespace';
 
 import { InputGroup, InputGroupText, Input, Container } from "reactstrap";
-import { ButtonSecondary } from "../../../../components/shared/buttons";
-import { Fetcher as FetcherPlantillas, Selector as SelectorPlantillas, Action as ActionPlantillas } from '../../../../store/slices/plantillas'
-import { TypeUtilities } from "../../../../utilities/TypeUtilities";
+import { ButtonSecondary } from "@components/shared/buttons";
+import { Fetcher as FetcherPlantillas, Selector as SelectorPlantillas, Action as ActionPlantillas } from '@store/slices/plantillas'
+import { TypeUtilities } from "@utilities/TypeUtilities";
 import { modules } from "../editorConfig";
 import Swal from 'sweetalert2';
 import ReactQuill from 'react-quill';

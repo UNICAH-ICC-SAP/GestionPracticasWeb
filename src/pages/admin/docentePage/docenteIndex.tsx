@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { docenteMenu } from "../../../components/shared/nav/subMenus";
 import Breadcrumbs from "../../../components/shared/breadcrumb/Breadcrumbs";
-import { useSelector } from "../../../store";
-import { Selector as SelectorUser } from "../../../store/slices/users";
+import { useSelector } from "@store/index";
+import { Selector as SelectorUser } from "@store/slices/users";
 
 export default function DocenteMenu() {
   const user = useSelector(SelectorUser.getUser);

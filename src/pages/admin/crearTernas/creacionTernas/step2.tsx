@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { InputGroup, InputGroupText, Input, ButtonGroup, Label, Alert } from "reactstrap";
-import { TypeUtilities } from "../../../../utilities/TypeUtilities";
-import { useDispatch, useSelector } from "../../../../store";
-import { Type as TernaType } from '../../../../store/slices/ternas/_namespace'
-import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from "../../../../store/slices/docentes";
-import { ButtonDanger, ButtonPrimary, ButtonSecondary } from "../../../../components/shared/buttons";
-import { Tables } from "../../../../components/commons/tables/tables";
-import { Action as ActionTernas, Selector as SelectorTerna } from "../../../../store/slices/ternas";
+import { TypeUtilities } from "@utilities/TypeUtilities";
+import { useDispatch, useSelector } from "@store/index";
+import { Type as TernaType } from '@store/slices/ternas/_namespace'
+import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from "@store/slices/docentes";
+import { ButtonDanger, ButtonPrimary, ButtonSecondary } from "@components/shared/buttons";
+import { Tables } from "@components/commons/tables/tables";
+import { Action as ActionTernas, Selector as SelectorTerna } from "@store/slices/ternas";
 import '../index'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
