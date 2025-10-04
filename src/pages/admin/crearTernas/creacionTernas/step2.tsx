@@ -14,20 +14,20 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 type Docente = {
     docenteId: string;
     nombre: string;
-    coordina: string;
+    rol: string;
 }
 
 const INITDocente: TernaType.DetalleTernaInfo = {
     detalleTernaId: 0,
     ternaId: 0,
     docenteId: '',
-    coordina: 'No'
+    rol: '',
 }
 
 export default function Step2() {
     const dispatch = useDispatch();
     const [enableButton, setEnableButton] = React.useState<boolean>(false)
-    const [hasChange, setHasChange] = React.useState<boolean>(false);
+    const [hasChange, setHasChange] = React.useState({ coordina: false, estilo: false, tecnico: false });
     const [hasCoor, setHasCoor] = React.useState<boolean>(false)
     const [state, setState] = React.useState<TernaType.DetalleTernaInfo>(INITDocente);
     const [noIsValid, setNoIsValid] = React.useState<boolean>(false);
@@ -45,9 +45,12 @@ export default function Step2() {
         if (e.currentTarget.value === "default" || e.currentTarget.value !== "") {
             setState({
                 ...state,
-                [e.target.name]: Boolean(e.target.value) === true ? "Si" : "No"
+                rol: e.target.name
             })
-            setHasChange(true)
+            setHasChange({
+                ...hasChange,
+                [e.target.name]: true
+            })
         }
     }
     React.useEffect(() => {
@@ -59,7 +62,7 @@ export default function Step2() {
     }, [dispatch])
 
     useEffect(() => {
-        const hasItem = detalleTernas.find(item => item.coordina === 'Si')
+        const hasItem = detalleTernas.find(item => item.rol === 'coordina');
         if (!hasItem && detalleTernas.length > 0) {
             setHasCoor(true);
             setTimeout(() => {
@@ -77,13 +80,13 @@ export default function Step2() {
                     return {
                         docenteId: item.docenteId,
                         nombre: item.nombre,
-                        coordina: detalle.coordina
+                        rol: detalle.rol,
                     }
                 } else {
                     return {
                         docenteId: '',
                         nombre: '',
-                        coordina: ''
+                        rol: ''
                     }
                 }
             });
@@ -102,7 +105,7 @@ export default function Step2() {
                         {
                             docenteId: itemDocente?.docenteId,
                             nombre: itemDocente?.nombre,
-                            coordina: state.coordina
+                            rol: state.rol,
                         }
                     ])
                 }
@@ -129,6 +132,7 @@ export default function Step2() {
         dispatch(ActionTernas.setResumen(true));
     }
     const handleDeleteDocente = (docenteId: string) => {
+        console.log(docentesInfo, detalleTernas);
         const currentDocentes = docentesInfo.filter(item => {
             if (item.docenteId !== docenteId) {
                 return item;
@@ -139,10 +143,11 @@ export default function Step2() {
                 return item;
             }
         })
-        const coordinador = currentDetalleTernas.filter(detalle => detalle.coordina === 'Si')
-        if (coordinador.length === 0) {
-            setHasChange(false);
-            setHasCoor(false);
+        console.log(currentDetalleTernas, docenteId);
+        const docente = currentDetalleTernas.filter(detalle => detalle.docenteId === docenteId)
+        if (docente.length === 0) {
+            setHasChange({ ...hasChange, [docente[0].rol]: false });
+            setHasCoor(!(docente[0].rol === 'coordina'));
         }
         if (!currentDetalleTernas) {
             dispatch(ActionTernas.setNoDroppedData([]));
@@ -181,21 +186,42 @@ export default function Step2() {
             </Input>
         </InputGroup>
         <InputGroup>
-            <Input disabled={hasChange}
+            <Input disabled={hasChange.coordina}
                 id="coordina"
                 name="coordina"
                 type="checkbox"
                 onChange={handleCheck}
-                checked={state.coordina === 'Si'}
+                checked={state.rol === 'coordina'}
             />
             <Label check for="coordina">&nbsp;Es coordinador</Label>
+        </InputGroup>
+        <InputGroup>
+            <Input disabled={hasChange.estilo}
+                id="estilo"
+                name="estilo"
+                type="checkbox"
+                onChange={handleCheck}
+                checked={state.rol === 'estilo'}
+            />
+            <Label check for="estilo">&nbsp;Es revisor de estilos</Label>
+        </InputGroup>
+        <InputGroup>
+            <Input disabled={hasChange.tecnico}
+                id="tecnico"
+                name="tecnico"
+                type="checkbox"
+                onChange={handleCheck}
+                checked={state.rol === 'tecnico'}
+            />
+            <Label check for="tecnico">&nbsp;Es es revisor técnico</Label>
         </InputGroup>
         <Alert isOpen={!hasChange} color="dark">Recuerde selecionar al menos un coordinador</Alert>
         <ButtonSecondary className="w-50 mb-4" onClick={handleClick} disabled={enableButton} >Agregar Docente</ButtonSecondary>
         {docentesInfo.length > 0 && <Tables data={docentesInfo.map(item => ({
             ...item,
+            rol: item.rol === 'coordina' ? 'Coordinador' : item.rol === 'estilo' ? 'Revisor de Estilos' : 'Revisor Técnico',
             actions: renderActions(item.docenteId)
-        }))} headers={["Id Docente", "Nombre", "Coordinador", "Acciones"]} firstColumnIndex={0} paginated={false} />}
+        }))} headers={["Id Docente", "Nombre", "Rol", "Acciones"]} firstColumnIndex={0} paginated={false} />}
         <ButtonGroup>
             <ButtonSecondary onClick={handleClickBack}>Atras</ButtonSecondary>
             <ButtonPrimary onClick={handleClickNext} disabled={!enableButton}>Siguiente</ButtonPrimary>

@@ -33,7 +33,7 @@ export default function CrearDocente() {
         nombre: '',
         facultadId: '',
         telefono: '504',
-        coordina: false
+        rol: ''
     });
     const dispatch = useDispatch();
 
@@ -62,7 +62,7 @@ export default function CrearDocente() {
             nombre: '',
             facultadId: '',
             telefono: '504',
-            coordina: false
+            rol: ''
         });
         setIsValidItem({ email: false });
     };

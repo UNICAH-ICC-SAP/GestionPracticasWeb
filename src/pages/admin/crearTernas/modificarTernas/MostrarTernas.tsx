@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Modal, ModalHeader, ModalBody } from "reactstrap";
-import { TypeUtilities } from '../../../../utilities/TypeUtilities';
-import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '../../../../store/slices/ternas';
-import { useDispatch, useSelector } from "../../../../store";
+import { Container, Button, Modal, ModalHeader, ModalBody, ButtonGroup } from "reactstrap";
+import { WhatsappButton } from "@components/shared/buttons";
+import { TypeUtilities } from '@utilities/TypeUtilities';
+import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '@store/slices/ternas';
+import { useDispatch, useSelector } from "@store/index";
 import { isEmpty } from "lodash";
-import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '../../../../store/slices/docentes';
-import { Tables } from "../../../../components/commons/tables/tables";
-
-type TernaDetail = {
-    ternaId: number;
-    docenteId: string;
-    docenteNombre: string;
-    docenteTelefono: string;
-    docenteEmail: string;
-};
+import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '@store/slices/docentes';
+import { Tables } from "@components/commons/tables/tables";
+import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
+import NotFound from "@components/shared/notFound";
 
 type AlumnoInfo = {
     ternaId: number;
@@ -26,11 +21,11 @@ type AlumnoInfo = {
 
 export default function VerTernas() {
     const dispatch = useDispatch();
-    const [detalle, setDetalle] = useState<Record<number, TernaDetail[]>>({});
+    const [detalle, setDetalle] = useState<Record<number, DocenteInfoType[]>>({});
     const [alumnos, setAlumnos] = useState<AlumnoInfo[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedTernaDocentes, setSelectedTernaDocentes] = useState<TernaDetail[]>([]);
-    const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
+    const [selectedTernaDocentes, setSelectedTernaDocentes] = useState<DocenteInfoType[]>([]);
+    const [selectedTernaAlumno, setSelectedTernaAlumno] = useState<string>('');
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const docentes = useSelector(DocenteSelector.getDocentes);
     const ternas = useSelector(SelectorTernas.ternasInfo);
@@ -55,16 +50,17 @@ export default function VerTernas() {
 
     useEffect(() => {
         if (!isEmpty(ternasDetalle)) {
-            const DetallesDocentes: Record<number, TernaDetail[]> = {};
+            const DetallesDocentes: Record<number, DocenteInfoType[]> = {};
             ternasDetalle.forEach((terna) => {
                 const docentesData = docentes.find((docente) => docente.docenteId === terna.docenteId);
                 if (docentesData) {
-                    const ternaDetail: TernaDetail = {
+                    const ternaDetail: DocenteInfoType = {
                         ternaId: terna.ternaId,
                         docenteId: docentesData.docenteId,
                         docenteNombre: docentesData.nombre,
                         docenteTelefono: docentesData.telefono,
                         docenteEmail: docentesData.email,
+                        rol: terna.rol === 'coordina' ? 'Coordinador' : terna.rol === 'estilo' ? 'Revisor de Estilos' : 'Revisor Técnico',
                     };
                     if (!DetallesDocentes[terna.ternaId]) {
                         DetallesDocentes[terna.ternaId] = [];
@@ -96,18 +92,16 @@ export default function VerTernas() {
         }
     }, [ternas]);
 
-    const VerDetalleTerna = (ternaId: number) => {
+    const VerDetalleTerna = (ternaId: number, alumnoNombre: string) => {
         const ternaDocentes = detalle[ternaId] || [];
         setSelectedTernaDocentes(ternaDocentes);
-        setSelectedTernaId(ternaId);
+        setSelectedTernaAlumno(alumnoNombre);
         toggleModal();
     };
 
     const detalleAllternas = alumnos.filter((alumno) => ternasDetalle.some((terna) =>
-        terna.ternaId === alumno.ternaId &&
-        !terna.coordina && terna.docenteId
-    )
-    );
+        terna.ternaId === alumno.ternaId && terna.docenteId
+    ));
 
     function getEstadoTerna(idEstadoTerna: number) {
         switch (idEstadoTerna) {
@@ -127,12 +121,15 @@ export default function VerTernas() {
                     data={detalleAllternas.map((alumno) => ({
                         ...alumno,
                         acciones: (
-                            <Button
-                                color="primary"
-                                onClick={() => VerDetalleTerna(alumno.ternaId)}
-                            >
-                                Detalles
-                            </Button>
+                            <ButtonGroup>
+                                <Button
+                                    color="primary"
+                                    onClick={() => VerDetalleTerna(alumno.ternaId, alumno.alumnoNombre)}
+                                >
+                                    Detalles
+                                </Button>
+                                <WhatsappButton telefono={alumno.telefono} />
+                            </ButtonGroup>
                         ),
                     }))}
                     headers={['Terna ID', 'Nombre del Alumno', 'Facultad', 'Email', 'Telefono', 'Estado de la Terna', 'Acciones']}
@@ -140,21 +137,16 @@ export default function VerTernas() {
                     paginated={true}
                 />
             ) : (
-                <p>No tienes ternas donde seas miembro.</p>
+                <NotFound />
             )}
             <Modal isOpen={modalOpen} toggle={toggleModal} style={{ maxWidth: '35%', width: '35%' }}>
                 <ModalHeader toggle={toggleModal}>
-                    {`Docentes en la terna ${selectedTernaId}`}
+                    {`Docentes en la terna del alumno ${selectedTernaAlumno}`}
                 </ModalHeader>
                 <ModalBody style={{ fontSize: '15px' }}>
                     {selectedTernaDocentes.length > 0 ? (
                         selectedTernaDocentes.map((docente) => (
-                            <div key={docente.docenteId}>
-                                <p><strong>Nombre:</strong> {docente.docenteNombre}</p>
-                                <p><strong>Teléfono:</strong> {docente.docenteTelefono}</p>
-                                <p><strong>Email:</strong> {docente.docenteEmail}</p>
-                                <hr />
-                            </div>
+                            <DocenteInfo key={docente.docenteId} docente={docente} />
                         ))
                     ) : (
                         <p>No se encontraron docentes para esta terna.</p>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { adminMenu } from "../../components/shared/nav/subMenus"; 
-import Breadcrumbs from "../../components/shared/breadcrumb/Breadcrumbs";
+import { adminMenu } from "@components/shared/nav/subMenus";
+import Breadcrumbs from "@components/shared/breadcrumb/Breadcrumbs";
 
 export default function Admin() {
   const [activePane, setActivePane] = useState<string>(adminMenu[0].paneId!);
