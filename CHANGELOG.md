@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.15...v0.0.16) (2025-10-04)
+
+
+### Features
+
+* adicion archivo redirects para evitar codigo 404 ([92d5ef7](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/92d5ef70aec55ae54f1c3bb301818c581fc89af8))
+
 ### [0.0.15](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.14...v0.0.15) (2025-10-04)
 
 
