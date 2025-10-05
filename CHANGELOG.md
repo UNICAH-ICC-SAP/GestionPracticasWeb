@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.17...v0.0.18) (2025-10-05)
+
+
+### Bug Fixes
+
+* se arreglan estilos del login y paleta de colores ([7552284](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/7552284dfeb5e2a47ce7e511eef81b6810f88338))
+
 ### [0.0.17](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.16...v0.0.17) (2025-10-04)
 
 
