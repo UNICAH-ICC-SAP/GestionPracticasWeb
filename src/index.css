@@ -45,22 +45,24 @@
     --default: #d7d0d0;
     /* RGB */
     --info-rgb: var(--dark-shades-color-rgb);
-    --success-rgb: rgb(60, 140, 92);
-    --warning-rgb: rgb(186, 123, 36);
-    --danger-rgb: rgb(244, 67, 54);
-    --default-rgb: rgb(215, 208, 208);
-    /* RGB */
+    --success-rgb: 60, 140, 92;
+    --warning-rgb: 186, 123, 36;
+    --danger-rgb: 244, 67, 54;
+    --default-rgb: 215, 208, 208;
+    /* RGBA */
     --info-rgba: var(--dark-shades-color-rgb, .25);
-    --success-rgba: rgb(60, 140, 92, .25);
-    --warning-rgba: rgb(186, 123, 36, .25);
-    --danger-rgba: rgb(244, 67, 54, .25);
-    --default-rgba: rgb(215, 208, 208, .25);
+    --success-rgba: 60, 140, 92, .25;
+    --warning-rgba: 186, 123, 36, .25;
+    --danger-rgba: 244, 67, 54, .25;
+    --default-rgba: 215, 208, 208, .25;
     /* Semantics shadow */
     --info-shadow: var(--main-brand-color-shadow);
     --success-shadow: #3c8c5c99;
     --warning-shadow: #ba7b2499;
     --danger-shadow: #f4433699;
     --default-shadow: #d7d0d099;
+    --primary-shadow: var(--main-brand-color-shadow);
+    --secondary-shadow: var(--dark-shades-color-shadow);
     /* Bootstrap */
     --bs-primary: var(--main-brand-color);
     --bs-secondary: var(--dark-shades-color);
@@ -102,6 +104,14 @@
     --bs-danger-rgb: var(--danger-rgb);
     --bs-default-rgb: var(--default-rgb);
     --bs-text-opacity: 0.5;
+    /* RGBA */
+    --bs-primary-rgba: var(--main-brand-color-rgb, .25);
+    --bs-secondary-rgba: var(--dark-shades-color-rgb, .25);
+    --bs-info-rgba: var(--info-rgba);
+    --bs-success-rgba: var(--success-rgba);
+    --bs-warning-rgba: var(--warning-rgba);
+    --bs-danger-rgba: var(--danger-rgba);
+    --bs-default-rgba: var(--default-rgba);
 }
 
 #root {

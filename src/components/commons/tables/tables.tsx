@@ -48,7 +48,7 @@ export function Tables(props: Props<PropsTable, typeof DEF>) {
 
     return (
         <React.Fragment>
-            <Table striped hover bordered>
+            <Table striped hover bordered responsive responsiveTag='div' size='sm'>
                 <thead>
                     <tr>
                         {headers && headers.map((item, index) => (
