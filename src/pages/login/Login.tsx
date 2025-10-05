@@ -116,9 +116,9 @@ function Login() {
   //   }
   // }, [isLogged]);
   return (
-    <Container className="container-login justify-content-center">
-      <Img style={{ width: "75%" }} src={Image["logo:main"]} />
-      <Form onSubmit={handleSubmit}>
+    <Container tag='div' className="d-flex flex-column align-items-center" fluid='md'>
+      <Img style={{ width: "20rem" }} src={Image["logo:main"]} />
+      <Form className="form" onSubmit={handleSubmit}>
         <InputGroup className="w-100">
           <InputGroupText htmlFor="userId">
             <FontAwesomeIcon icon={faUser} />
