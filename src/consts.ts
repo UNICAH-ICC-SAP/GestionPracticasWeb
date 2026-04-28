@@ -9,3 +9,17 @@ export const MODALS_TYPES = {
     DELETE_SECCION: "deleteSeccion"
 }
 
+export const DOCUMENTS_TYPE = {
+    GENERALS: "GENERALS",
+    MONOGRAPHY: "MONOGRAPHY",
+    ACCEPTANCE_LETTER: "ACCEPTANCE_LETTER",
+    STUDENT_ID: "STUDENT_ID",
+    WITNESS_1_ID: "WITNESS_1_ID",
+    WITNESS_2_ID: "WITNESS_2_ID"
+}
+
+export const DOCUMENTS_ESTATE = {
+    PENDING: "pending",
+    DELIVERED: "delivered",
+    CHANGE_REQUESTED: "change_requested"
+}

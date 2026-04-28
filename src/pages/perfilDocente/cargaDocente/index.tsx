@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { Menu } from "../../../components/shared/nav/types";
+import { NavigationItem } from "@components/shared/nav/types";
 import Breadcrumbs from "../../../components/shared/breadcrumb/Breadcrumbs";
 import MostrarCarga from "./mostrarCarga/mostrarCarga";
 
-const perfilDocente: Array<Menu> = [
+const perfilDocente: Array<NavigationItem> = [
     {
         paneId: 'mostrarCarga',
         title: 'Mi Carga',

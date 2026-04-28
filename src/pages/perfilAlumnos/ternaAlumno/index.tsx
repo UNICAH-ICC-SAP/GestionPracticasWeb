@@ -18,7 +18,7 @@ export default function TernaAlumno() {
     const ternas = useSelector(SelectorTernas.ternasInfo);
     const Userdata = useSelector(UserSelector.getUser);
     const docentes = useSelector(DocenteSelector.getDocentes);
-    console.log(Userdata)
+
     useEffect(() => {
         const utils: TypeUtilities = { url: `/ternas/getTernaBy?alumnoId=${Userdata.userId}` };
         dispatch(FetcherTernas.getTernasInfo(utils));
@@ -27,7 +27,6 @@ export default function TernaAlumno() {
     }, [dispatch, Userdata]);
 
     useEffect(() => {
-        console.log(ternas, docentes);
         if (!isEmpty(ternas) && !isEmpty(docentes)) {
             const docentesData: DocenteType.DocenteInfo[] = [];
             ternas.forEach((terna) => {

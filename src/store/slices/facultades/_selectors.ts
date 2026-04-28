@@ -1,5 +1,5 @@
 import { CreateSelector } from "../../../storeConfig";
-import type { StoreState } from "../..";
+import type { StoreState } from "@store/index";
 import type { StoreFacultad } from "./_namespace";
 
 import { NAME } from "./_namespace";

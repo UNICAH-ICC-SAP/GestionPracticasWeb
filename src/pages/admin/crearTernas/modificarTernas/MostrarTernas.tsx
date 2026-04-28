@@ -9,6 +9,7 @@ import { Selector as DocenteSelector, Fetcher as FetcherDocente } from '@store/s
 import { Tables } from "@components/commons/tables/tables";
 import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
 import NotFound from "@components/shared/notFound";
+import { StatusTerna } from "@root/abstracts";
 
 type AlumnoInfo = {
     ternaId: number;
@@ -104,14 +105,7 @@ export default function VerTernas() {
     ));
 
     function getEstadoTerna(idEstadoTerna: number) {
-        switch (idEstadoTerna) {
-            case 1:
-                return 'Inactiva';
-            case 2:
-                return 'En Curso';
-            case 3:
-                return 'Finalizada';
-        }
+        return StatusTerna[idEstadoTerna]
     }
     return (
         <Container>

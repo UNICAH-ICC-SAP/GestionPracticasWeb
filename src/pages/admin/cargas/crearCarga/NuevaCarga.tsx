@@ -4,7 +4,7 @@ import { Type as PeriodoType } from '@store/slices/periodo/_namespace';
 import { Fetcher as FetcherPeriodo } from '@store/slices/periodo';
 import Selector from '@store/slices/periodo/_selectors';
 import './NuevaCarga.css';
-import { TypeUtilities } from '../../../utilities/TypeUtilities';
+import { TypeUtilities } from '@utilities/TypeUtilities';
 import Swal from 'sweetalert2';
 
 const NuevaCarga = () => {

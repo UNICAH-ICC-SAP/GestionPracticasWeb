@@ -1,26 +1,25 @@
 import React, { useState } from "react";
-import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { Menu } from "@components/shared/nav/types";
-import UnderConstruction from "@components/shared/construction";
+import { Button, Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+import { NavigationItem } from "@components/shared/nav/types";
+import DocumentacionEntregada from "./delivered";
 import Breadcrumbs from "@components/shared/breadcrumb/Breadcrumbs";
+import DocumentacionPendiente from "./pending";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
 
-
-
-const perfilAlumno: Array<Menu> = [
-    {
-        paneId: 'documentacionEntregada',
-        title: 'Documentación Entregada',
-        pathTo: '/alumno/documentacion',
-        component: <UnderConstruction />
-    },
+const perfilAlumno: Array<NavigationItem> = [
     {
         paneId: 'documentacionFaltante',
         title: 'Documentación Faltante',
         pathTo: '/alumno/documentacion',
-        component: <UnderConstruction />
+        component: <DocumentacionPendiente />
+    },
+    {
+        paneId: 'documentacionEntregada',
+        title: 'Documentación Entregada',
+        pathTo: '/alumno/documentacion',
+        component: <DocumentacionEntregada />
     }
-
-
 ]
 
 export default function Documentacion() {
@@ -55,10 +54,11 @@ export default function Documentacion() {
                     </NavLink>
                 </NavItem>
             })}
-
         </Nav>
-
-        <TabContent className="justify-items-center mt-5" activeTab={activePane}>
+        <Container tag="div" className="d-flex justify-content-end">
+            <Button color="success" className="my-1" style={{ width: "5%" }}><FontAwesomeIcon size="2x" icon={faSave} /></Button>
+        </Container>
+        <TabContent className="justify-items-center" activeTab={activePane}>
             {perfilAlumno && perfilAlumno.map((item, index) => {
                 return <TabPane key={item.paneId! + (index + 1) + 'Pane'} tabId={item.paneId}>
                     <Container>

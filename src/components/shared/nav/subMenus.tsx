@@ -1,21 +1,21 @@
 import React from "react";
 import CrearTernas from "@pages/admin/crearTernas";
 import CreacionDocente from "@pages/admin/docentePage/crearDocente/creacionDocente";
-import { Menu } from "./types";
+import type { NavigationItem } from "./types";
 import MostrarDocentes from "@pages/admin/docentes/MostrarDocentes";
 import ModificarDocentes from "@pages/admin/docentes/ModificarDocentes";
 import Carreras from "@pages/admin/pensums/mostrarPensums/carreras";
 import Laboratorios from "@pages/admin/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "@pages/admin/pensums/mostrarPensums/coprogramaticas";
-import NuevaCarga from "@pages/admin/cargas/NuevaCarga";
+import NuevaCarga from "@pages/admin/cargas/crearCarga/NuevaCarga";
 import ModificarAlumnos from "@pages/admin/crearTernas/modificarTernas/ModificarAlumno";
 import VerTernas from "@pages/admin/crearTernas/modificarTernas/MostrarTernas";
-import CargasDocente from "@pages/admin/cargasPage/mostrarCargas/cargasDocentes";
+import CargasDocente from "@pages/admin/cargas/mostrarCargas/cargasDocentes";
 import MostrarPlantilla from "@pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
 import CrearPlantilla from "@pages/admin/configEmail/crearPlantilla/CrearPlantilla";
 import AccionesPlantillas from "@pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
 
-export const adminMenu: Array<Menu> = [
+export const adminMenu: Array<NavigationItem> = [
   {
     paneId: "CrearTernas",
     title: "Crear Ternas",
@@ -36,7 +36,7 @@ export const adminMenu: Array<Menu> = [
   },
 ];
 
-export const configEmail: Array<Menu> = [
+export const configEmail: Array<NavigationItem> = [
   {
     paneId: "VerPlantillas",
     title: "Ver Plantillas de Correo",
@@ -57,7 +57,7 @@ export const configEmail: Array<Menu> = [
   }
 ]
 
-export const cargasMenu: Array<Menu> = [
+export const cargasMenu: Array<NavigationItem> = [
   {
     paneId: "NuevaCarga",
     title: "Nueva Carga Académica",
@@ -72,7 +72,7 @@ export const cargasMenu: Array<Menu> = [
   },
 ];
 
-export const docenteMenu: Array<Menu> = [
+export const docenteMenu: Array<NavigationItem> = [
   {
     paneId: "CrearDocente",
     title: "Crear Docente",
@@ -93,7 +93,7 @@ export const docenteMenu: Array<Menu> = [
   },
 ];
 
-export const pensumMenu: Array<Menu> = [
+export const pensumMenu: Array<NavigationItem> = [
   {
     paneId: "Carreras",
     title: "Carreras",

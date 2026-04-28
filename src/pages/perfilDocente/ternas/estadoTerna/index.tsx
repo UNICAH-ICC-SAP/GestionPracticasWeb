@@ -7,6 +7,7 @@ import { isEmpty } from "lodash";
 import { Selector as UserSelector } from '@store/slices/users';
 import NotFound from "@components/shared/notFound";
 import { Tables } from "@components/commons/tables/tables";
+import { StatusTerna } from "@root/abstracts";
 
 type AlumnoInfo = {
     ternaId: number;
@@ -15,11 +16,6 @@ type AlumnoInfo = {
     email: string;
     telefono: string;
     estado: string;
-};
-const estados = {
-    1: "Inactiva",
-    2: "En curso",
-    3: "Finalizada"
 };
 
 export default function Docentes() {
@@ -56,7 +52,7 @@ export default function Docentes() {
                         facultadId: terna.alumno.facultadId,
                         email: terna.alumno.email,
                         telefono: terna.alumno.telefono,
-                        estado: estados[terna.idEstadoTerna],
+                        estado: StatusTerna[terna.idEstadoTerna],
                     };
                     alumnosMapped.push(data);
                 }
