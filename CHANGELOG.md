@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.19](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.18...v0.0.19) (2026-04-28)
+
+
+### Features
+
+* documentacion de alumno y control de sesion por rol y permiso ([aa298e4](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/aa298e47d0914cbdee168b56a0a699670087d521))
+
 ### [0.0.18](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.17...v0.0.18) (2025-10-05)
 
 
