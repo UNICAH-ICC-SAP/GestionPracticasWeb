@@ -10,11 +10,9 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.login.fulfilled, (state, { payload }) => ({
         ...state,
-        loginResponse: payload,
-        user: payload.logged ? JSON.parse(JSON.stringify(payload.user)) : INIT.user,
+        user: { ...state.user, ...payload.user },
         error: JSON.parse(JSON.stringify(payload.error)),
         logged: payload.logged,
-        passwordResetRequired: payload.passwordResetRequired
     }));
     addCase(Action.setIsLogged, (state, { payload }) => ({
         ...state,
@@ -47,4 +45,18 @@ export default CreateReducer(INIT, ({ addCase }) => {
             success: payload.success
         }
     }));
+    addCase(Fetcher.getRolesPermissionByUserRole.fulfilled, (state, { payload }) => ({
+        ...state,
+        user: {
+            ...state.user,
+            rolePermissions: payload?.roles || []
+        }
+    }))
+    addCase(Fetcher.getUserPermissionByUser.fulfilled, (state, { payload }) => ({
+        ...state,
+        user: {
+            ...state.user,
+            userPermissions: payload?.permissions || []
+        }
+    }))
 });

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { Menu } from "../../../components/shared/nav/types";
+import { NavigationItem } from "@components/shared/nav/types";
 import Ternas from "./terna"
 import EstadoTerna from './estadoTerna'
 import Breadcrumbs from "../../../components/shared/breadcrumb/Breadcrumbs";
 import UnderConstruction from '../../../components/shared/construction';
 
-const perfilDocente: Array<Menu> = [
+const perfilDocente: Array<NavigationItem> = [
     {
         paneId: 'Ver ternas',
         title: 'Mis ternas',

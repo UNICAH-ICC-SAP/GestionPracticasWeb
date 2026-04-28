@@ -109,12 +109,6 @@ function Login() {
     }
   }, [passwordRequired]);
 
-  // React.useEffect(() => {
-  //   if (!isLogged) {
-  //     dispatch(FetcherLogin.validateSession())
-  //     dispatch(FetcherLogin.checkUserLogged())
-  //   }
-  // }, [isLogged]);
   return (
     <Container tag='div' className="d-flex flex-column align-items-center" fluid='md'>
       <Img style={{ width: "20rem" }} src={Image["logo:main"]} />

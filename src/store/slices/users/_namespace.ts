@@ -10,7 +10,9 @@ export declare namespace Type {
         roleId: number;
         message: string;
         token: string;
-        passwordResetRequired: boolean;  
+        passwordResetRequired: boolean;
+        rolePermissions: RolePermission[];
+        userPermissions: UserPermission[];
     }
     export type UserInfo = {
         userInfo: string;
@@ -18,6 +20,15 @@ export declare namespace Type {
         nombre: string;
         facultadId: string;
         telefono: string;
+    }
+    export type RolePermission = {
+        permissionId: string;
+        permission: string;
+    }
+    export type UserPermission = {
+        permissionId: number;
+        permission: string;
+        permissionType: string;
     }
 }
 
@@ -28,7 +39,6 @@ export declare namespace StoreUser {
         error: TypeModal.ModalError;
         loading: boolean;
         logged: boolean;
-        passwordResetRequired: boolean;
     };
 }
 
@@ -48,7 +58,9 @@ export const INIT: StoreUser.State = {
         roleId: 0,
         message: '',
         token: '',
-        passwordResetRequired: true, 
+        passwordResetRequired: false,
+        rolePermissions: [],
+        userPermissions: [],
     },
     userInfo: {
         userInfo: '',
@@ -63,5 +75,4 @@ export const INIT: StoreUser.State = {
     },
     loading: false,
     logged: false,
-    passwordResetRequired: false,
 };

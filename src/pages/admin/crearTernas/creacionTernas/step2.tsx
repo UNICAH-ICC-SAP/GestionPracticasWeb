@@ -132,7 +132,6 @@ export default function Step2() {
         dispatch(ActionTernas.setResumen(true));
     }
     const handleDeleteDocente = (docenteId: string) => {
-        console.log(docentesInfo, detalleTernas);
         const currentDocentes = docentesInfo.filter(item => {
             if (item.docenteId !== docenteId) {
                 return item;
@@ -143,7 +142,6 @@ export default function Step2() {
                 return item;
             }
         })
-        console.log(currentDetalleTernas, docenteId);
         const docente = currentDetalleTernas.filter(detalle => detalle.docenteId === docenteId)
         if (docente.length === 0) {
             setHasChange({ ...hasChange, [docente[0].rol]: false });
