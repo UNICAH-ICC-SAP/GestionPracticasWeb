@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.19...v0.0.20) (2026-05-06)
+
+
+### Features
+
+* eliminacion de archivos innecesarios ([c0faa51](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/c0faa512b4e8eb440bd39fabadb19e18a294d052))
+* mejoras en codigo y adicion de funcionalidades para la gestion de aarchivos ([b9b9e41](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/b9b9e41ec68fd687e57363c9abed72cc10c3338d))
+* mejoras en codigo y cambios en nombre ([07ac345](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/07ac3458083ece2eacbd289ab56a912b795c699a))
+
 ### [0.0.19](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.18...v0.0.19) (2026-04-28)
 
 
