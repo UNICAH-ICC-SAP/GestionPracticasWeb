@@ -2,7 +2,7 @@ import { Type as TypeError } from '../../../Api/namespaces/modalError';
 import { CreateFetchers } from "../../../storeConfig";
 /**SingleSelectoAccount */
 import { NAME } from "./_namespace";
-import { getData, saveData, signUp, updateData } from "../../../utilities/Utilities";
+import { getData, Post, signUp, Put } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
@@ -23,7 +23,7 @@ export default CreateFetchers(NAME, {
     },
 
     async updateDocente(params: TypeUtilities) {
-        const response = await updateData(params);
+        const response = await Put(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 docente: response?.data,
@@ -37,7 +37,7 @@ export default CreateFetchers(NAME, {
     },
 
     async insertDocente(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 docente: response?.data,

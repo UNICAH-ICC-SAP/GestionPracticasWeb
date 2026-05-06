@@ -1,80 +1,102 @@
 import { Type as TypeError } from '@api/namespaces/modalError';
 import { CreateFetchers } from "@root/storeConfig";
 import { NAME } from "./_namespace";
-import { getData, saveData, updateData } from "@utilities/Utilities";
+import { Post, PatchData, uploadToGCP } from "@utilities/Utilities";
 import { TypeUtilities } from "@utilities/TypeUtilities";
 import { isError } from "@api/utilsError";
+import { InfoFile } from '@api/namespaces/files';
 
 export default CreateFetchers(NAME, {
     /** Fetcher: Obtener todos los alumnos */
     async getDocuments(params: TypeUtilities) {
-        const response = await getData(params);
+        const response = await Post(params);
+
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                documents: response?.data,
+                documents: null,
                 error: response?.error,
             };
         }
+
         return {
-            documents: response?.data,
+            documents: response?.data as unknown as InfoFile,
             error: response?.error,
         };
     },
-    /** Fetcher: Obtener datos de un alumno */
-    async getDocument(params: TypeUtilities) {
-        const response = await getData(params);
+
+    async createSignedUrl(params: TypeUtilities) {
+        const response = await Post(params);
+
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                document: response?.data,
+                signedUrl: null,
                 error: response?.error,
             };
         }
+
         return {
-            document: response?.data,
+            signedUrl: response?.data,
             error: response?.error,
         };
     },
-    async sendEmail(params: TypeUtilities) {
-        const response = await saveData(params);
+
+    async createUpdateSignedUrl(params: TypeUtilities) {
+        const response = await Post(params);
+
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                document: null,
+                signedUrl: null,
                 error: response?.error,
-                isSavedUser: false,
             };
         }
+
         return {
-            document: response?.data,
+            signedUrl: response?.data,
             error: response?.error,
-            isSavedUser: true,
         };
     },
-    async saveDocument(params: TypeUtilities) {
-        const response = await saveData(params);
+
+    async getDownloadSignedUrl(params: TypeUtilities) {
+        const response = await Post(params);
+
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
-                document: null,
+                downloadFile: null,
                 error: response?.error,
-                isSavedDocumentState: false,
             };
         }
+
         return {
-            document: response?.data,
+            downloadFile: response?.data,
             error: response?.error,
-            isSavedPlantillaState: true,
         };
     },
-    async updatealumno(params: TypeUtilities) {
-        const response = await updateData(params);
-        if (isError<TypeError.ModalError>(response?.error)) {
+
+    async updateStatus(params: TypeUtilities) {
+        const response = await PatchData(params);
+        if (!response) {
             return {
-                document: response?.data,
+                uploaded: false,
                 error: response?.error,
             };
         }
         return {
-            document: response?.data,
+            uploaded: true,
             error: response?.error,
+        };
+    },
+
+    async uploadDocument(params: TypeUtilities) {
+        const response = await uploadToGCP(params.url, params.data as File);
+        if (!response) {
+            return {
+                uploaded: false,
+                error: response,
+            };
+        }
+        return {
+            uploaded: true,
+            error: response,
         };
     },
 });

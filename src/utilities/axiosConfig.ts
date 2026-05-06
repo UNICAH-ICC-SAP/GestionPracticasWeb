@@ -8,4 +8,11 @@ const config: AxiosRequestConfig = {
     }
 }
 
-export { config };
+import axios from "axios";
+
+export const axiosGCP = axios.create({
+    baseURL: "", // ⚠️ importante: sin baseURL
+    headers: {}  // sin headers globales
+});
+
+export { config, axios };

@@ -5,7 +5,6 @@ export const NAME = 'User';
 
 export declare namespace Type {
     export type User = {
-        nombreUsuario: string;
         userId: string;
         roleId: number;
         message: string;
@@ -15,7 +14,6 @@ export declare namespace Type {
         userPermissions: UserPermission[];
     }
     export type UserInfo = {
-        userInfo: string;
         email: string;
         nombre: string;
         facultadId: string;
@@ -53,7 +51,6 @@ export const Action = CreateActions<{
 
 export const INIT: StoreUser.State = {
     user: {
-        nombreUsuario: '',
         userId: '',
         roleId: 0,
         message: '',
@@ -63,7 +60,6 @@ export const INIT: StoreUser.State = {
         userPermissions: [],
     },
     userInfo: {
-        userInfo: '',
         email: '',
         nombre: '',
         facultadId: '',

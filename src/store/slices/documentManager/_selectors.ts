@@ -7,11 +7,60 @@ export default function Selector(store: StoreState): StoreDocumentManager.State 
     return store[NAME];
 }
 
-Selector.getDocument = CreateSelector(Selector, (state) => state.document);
-Selector.getDocuments = CreateSelector(Selector, (state) => state.documents);
-Selector.getError = CreateSelector(Selector, (state) => state.error);
-Selector.getSavedDocument = CreateSelector(Selector, (state) => state.isSavedState);
+Selector.getSavedDocument = CreateSelector(
+    Selector,
+    (state) => state.isSavedState
+);
 
-/**Selector: fetching is loading */
-// Selector.fetching = CreateSelector(Selector, (state) => state.loading);
+Selector.getError = CreateSelector(
+    Selector,
+    (state) => state.error
+);
 
+Selector.getDocuments = CreateSelector(
+    Selector,
+    (state) => state.userFilesData
+);
+
+// Selector.getDocument = CreateSelector(
+//     Selector,
+//     (state) => state.document
+// );
+
+// Selector.getUserFiles = CreateSelector(
+//     Selector,
+//     (state) => state.selectedUser
+// );
+
+// Selector.getSelectedFile = CreateSelector(
+//     Selector,
+//     (state) => state.selectedFile
+// );
+
+Selector.getSignedUrl = CreateSelector(
+    Selector,
+    (state) => state.signedFilesUpload
+);
+
+// Selector.getDocumentsWithFiles = CreateSelector(
+//     Selector,
+//     (state) => {
+//         const files = state.selectedUser?.files ?? [];
+
+//         return state.documents.map((doc) => {
+//             const file = files.find(f => f.documentTypeId === doc.id);
+
+//             return {
+//                 ...doc,
+//                 file: file?.fileUrl || "",
+//                 status: file?.status || doc.status,
+//                 archivoId: file?.archivoId
+//             };
+//         });
+//     }
+// );
+
+Selector.getDownloadFile = CreateSelector(
+    Selector,
+    (state) => state.signedFilesDownload
+);
