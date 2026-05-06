@@ -3,31 +3,55 @@ import { INIT, Action } from "./_namespace";
 import Fetcher from "./_fetchers";
 
 export default CreateReducer(INIT, ({ addCase }) => {
-
     addCase(Action.cleanStore, () => ({
         ...INIT,
     }));
-    addCase(Action.cleanAlumno, (state) => ({
+    addCase(Action.cleanSignedFilesUpload, (state) => ({
         ...state,
-        document: INIT.document,
+        signedFilesUpload: INIT.signedFilesUpload,
     }));
+
+    addCase(Action.cleanSignedFilesDownload, (state) => ({
+        ...state,
+        signedFilesDownload: INIT.signedFilesDownload,
+    }));
+
     addCase(Fetcher.getDocuments.fulfilled, (state, { payload }) => ({
         ...state,
-        documents: JSON.parse(JSON.stringify(payload.documents)),
+        userFilesData: payload.documents?.data?.[0] ?? null,
+        error: payload.error
     }));
-    addCase(Fetcher.sendEmail.fulfilled, (state, { payload }) => ({
+
+    addCase(Fetcher.createSignedUrl.fulfilled, (state, { payload }) => ({
         ...state,
-        isSavedUser: payload.isSavedUser
+        signedFilesUpload: payload.signedUrl?.file ?? null,
+        isSavedState: false,
+        error: payload.error
     }));
-    addCase(Fetcher.saveDocument.fulfilled, (state, { payload }) => ({
+
+    addCase(Fetcher.createUpdateSignedUrl.fulfilled, (state, { payload }) => ({
         ...state,
-        saveDataAlumno: JSON.parse(JSON.stringify(payload.document)),
-        isSavedDocumentState: payload.isSavedDocumentState
+        signedFilesUpload: payload.signedUrl?.file ?? null,
+        isSavedState: false,
+        error: payload.error
     }));
-    addCase(Fetcher.updatealumno.fulfilled, (state, { payload }) => ({
+
+    addCase(Fetcher.updateStatus.fulfilled, (state, { payload }) => ({
         ...state,
-        alumnosActualizado: JSON.parse(JSON.stringify(payload.document)),
-        error: JSON.parse(JSON.stringify(payload.error))
+        isSavedState: payload.uploaded,
+        message: payload.uploaded ? null : state.message,
+        error: payload.error
     }));
+
+    addCase(Fetcher.getDownloadSignedUrl.fulfilled, (state, { payload }) => ({
+        ...state,
+        signedFilesDownload: payload.downloadFile ?? null,
+        error: payload.error
+    }));
+
+    addCase(Fetcher.uploadDocument.fulfilled, (state, { payload }) => ({
+        ...state,
+        isSavedState: payload.uploaded,
+    }))
 
 });

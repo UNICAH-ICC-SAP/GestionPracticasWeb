@@ -3,7 +3,7 @@ import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from './_namespace';
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
-import { getData, saveData } from "../../../utilities/Utilities";
+import { getData, Post } from "../../../utilities/Utilities";
 
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
@@ -38,7 +38,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async saveDetalleTernas(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 detalleTernas: response?.data,
@@ -55,7 +55,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async saveTernas(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 savedTerna: response?.data,

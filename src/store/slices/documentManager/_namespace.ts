@@ -1,51 +1,79 @@
-import { StatusDocument } from '@root/abstracts';
 import { Type as TypeModal } from '@api/namespaces/modalError';
 import { CreateActions } from "@root/storeConfig";
+import { DocumentStatus } from '@root/abstracts';
 
-
-export const NAME = "documentManager";
+export const NAME = "DocumentManager";
+export type ArchivoProvider = 'GCP';
 
 export declare namespace Type {
-    export type DocumentInfo = {
-        id: number;
-        title: string;
-        description: string;
-        file: string;
-        exampleDocument?: string;
-        status: string;
-        needsChange?: boolean;
-    }
+    export type TypeUserFiles = {
+        userId: string;
+        userName: string;
+        userFolder: string;
+        files: TypeFile[];
+    };
+
+    export type TypeFile = {
+        archivoId: number;
+        originalName: string;
+        storedName: string;
+        mimeType: string;
+        sizeBytes: number;
+        provider: ArchivoProvider;
+        bucketName: string;
+        fileUrl: string;
+        status: DocumentStatus;
+        fileStatus: string;
+        fileTypeId: number;
+    };
+
+    export type TypeCreatedSignedUrl = {
+        message: string;
+        file: TypeUploadSignedURL;
+    };
+
+    export type TypeUploadSignedURL = {
+        archivoId: number;
+        originalName: string;
+        storedName: string;
+        userFolder: string;
+        uploadUrl: string;
+        fileUrl: string;
+    };
+
+    export type TypeDownloadSignedUrlFile = {
+        archivoId: number;
+        originalName: string;
+        downloadUrl: string;
+    };
 }
 
 export declare namespace StoreDocumentManager {
     export type State = {
-        document: Type.DocumentInfo;
-        documents: Array<Type.DocumentInfo>;
+        userFilesData: Type.TypeUserFiles | null;
+        signedFilesUpload: Type.TypeUploadSignedURL | null;
+        signedFilesDownload: Type.TypeDownloadSignedUrlFile | null;
         error: TypeModal.ModalError;
-        isSavedState: boolean
+        isSavedState: boolean;
+        message: string;
     };
 }
 
 export const Action = CreateActions<{
-    cleanAlumno: void;
+    cleanSignedFilesUpload: void;
     cleanStore: void;
-}>(NAME, ["cleanAlumno", "cleanStore"]);
+    cleanSignedFilesDownload: void;
+}>(NAME, ["cleanSignedFilesUpload", "cleanStore", "cleanSignedFilesDownload"]);
 
 
 export const INIT: StoreDocumentManager.State = {
-    document: {
-        id: 0,
-        title: "",
-        description: "",
-        file: "",
-        exampleDocument: "",
-        status: StatusDocument.PENDING,
-        needsChange: false,
-    },
-    documents: [],
+    userFilesData: null,
+    signedFilesUpload: null,
+    signedFilesDownload: null,
     error: {
         code: 0,
         message: ""
     },
     isSavedState: false,
+    message: "",
 };

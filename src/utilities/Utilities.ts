@@ -1,6 +1,6 @@
 import { TypeUtilities, TypeGenericResponse, INIT } from "./TypeUtilities";
 import axios from "axios";
-import { config } from "./axiosConfig";
+import { config, axiosGCP } from "./axiosConfig";
 import { isEmpty } from "lodash";
 const api = axios.create(config);
 
@@ -63,7 +63,7 @@ async function getSingleData(props: TypeUtilities) {
     });
 };
 
-async function saveData(props: TypeUtilities) {
+async function Post(props: TypeUtilities) {
     const { data } = props;
     return await api.post(props.url, data)
         .then(response => {
@@ -88,7 +88,7 @@ async function saveData(props: TypeUtilities) {
         });
 }
 
-async function updateData(props: TypeUtilities) {
+async function Put(props: TypeUtilities) {
     if (config.headers) {
         config.headers['content-type'] = 'application/x-www-form-urlencoded'
     }
@@ -116,7 +116,7 @@ async function updateData(props: TypeUtilities) {
         });
 }
 
-async function deleteData(props: TypeUtilities) {
+async function Delete(props: TypeUtilities) {
     return await api.delete(props.url)
         .then(response => {
             if (response['status'] === 200) {
@@ -136,6 +136,29 @@ async function deleteData(props: TypeUtilities) {
             }
             responseData.error.code = 503;
             responseData.error.message = error["statusText"];
+            return responseData;
+        });
+}
+
+async function PatchData(props: TypeUtilities) {
+    const { data } = props;
+    return await api.patch(props.url, data)
+        .then(response => {
+            responseData.data = response.data;
+            responseData.status = response.status;
+            return responseData;
+        })
+        .catch(error => {
+            const response = error["response"];
+
+            if (response) {
+                responseData.error.code = parseInt(response["status"], 10);
+                responseData.error.message = response["statusText"];
+                return responseData;
+            }
+
+            responseData.error.code = 503;
+            responseData.error.message = "Servicio no disponible";
             return responseData;
         });
 }
@@ -227,6 +250,35 @@ async function checkUser() {
         })
 }
 
+async function uploadToGCP(uploadUrl: string, file: File) {
+    const response = await axiosGCP.put(uploadUrl, file, {
+        headers: {
+            "Content-Type": file.type
+        }
+    });
+
+    return response.status === 200 || response.status === 204;
+}
+
+async function downloadFromGCP(downloadUrl: string, fileName: string) {
+    const response = await axiosGCP.get(downloadUrl, {
+        responseType: "blob"
+    });
+
+    const blob = new Blob([response.data]);
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    return response;
+}
+
 function getToken() {
     const tokenStored = localStorage.getItem('SECURE');
     if (!isEmpty(tokenStored)) {
@@ -235,12 +287,17 @@ function getToken() {
         return false
     }
 }
+
+
 export {
     getData,
     getSingleData,
-    saveData,
-    deleteData,
-    updateData,
+    Post,
+    Delete,
+    Put,
+    PatchData,
+    uploadToGCP,
+    downloadFromGCP,
     LogIn,
     checkUser,
     getToken,

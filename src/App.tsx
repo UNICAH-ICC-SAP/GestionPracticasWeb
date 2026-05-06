@@ -16,7 +16,7 @@ function App() {
     const permissions = useSelector(UserSelector.getPermissions);
     const isPassChangeRequired = useSelector(UserSelector.getPasswordResetRequired);
     const dispatch = useDispatch();
-    const [menuItem, setMenuItems] = React.useState<NavigationItem[] | null>(null);
+    const [menuItem, setMenuItems] = React.useState<NavigationItem[]>([]);
 
     useEffect(() => {
         if (userData.roleId) {

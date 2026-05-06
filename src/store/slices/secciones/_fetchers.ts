@@ -1,7 +1,7 @@
 import { Type as TypeError } from "../../../Api/namespaces/modalError";
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./_namespace";
-import { deleteData, getData, saveData, updateData } from "../../../utilities/Utilities";
+import { Delete, getData, Post, Put } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
@@ -21,7 +21,7 @@ export default CreateFetchers(NAME, {
   },
 
   async insertSeccion(params: TypeUtilities) {
-    const response = await saveData(params);
+    const response = await Post(params);
     if (isError<TypeError.ModalError>(response?.error)) {
       return {
         secciones: response?.data,
@@ -37,7 +37,7 @@ export default CreateFetchers(NAME, {
   },
 
   async updateSeccion(params: TypeUtilities) {
-    const response = await updateData(params);
+    const response = await Put(params);
     if (isError<TypeError.ModalError>(response?.error)) {
       return {
         secciones: response?.data,
@@ -53,7 +53,7 @@ export default CreateFetchers(NAME, {
   },
 
   async deleteSection(params: TypeUtilities) {
-    const response = await deleteData(params);
+    const response = await Delete(params);
     if (isError<TypeError.ModalError>(response?.error)) {
       return {
         secciones: response?.data,

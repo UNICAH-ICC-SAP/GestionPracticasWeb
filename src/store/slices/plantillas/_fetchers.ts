@@ -1,7 +1,7 @@
 import { Type as TypeError } from '../../../Api/namespaces/modalError';
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./_namespace";
-import { getData, saveData, updateData } from "../../../utilities/Utilities";
+import { getData, Post, Put } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
@@ -35,7 +35,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async sendEmail(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 plantilla: null,
@@ -50,7 +50,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async savePlantilla(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 plantilla: null,
@@ -65,7 +65,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async updatealumno(params: TypeUtilities) {
-        const response = await updateData(params);
+        const response = await Put(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 plantilla: response?.data,

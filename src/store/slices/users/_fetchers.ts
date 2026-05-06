@@ -2,8 +2,8 @@ import { Type as TypeError } from './../../../Api/namespaces/errorService';
 import { CreateFetchers } from "../../../storeConfig";
 /**SingleSelectoAccount */
 import { NAME } from "./_namespace";
-import { LogIn, checkUser, getData, getToken, saveData, signUp, updateData } from "../../../utilities/Utilities";
-import { TypeUtilities } from "../../../utilities/TypeUtilities";
+import { LogIn, checkUser, getData, getToken, Post, signUp, Put } from "@utilities/Utilities";
+import { TypeUtilities } from "@utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 import { RolesTypeResponse, TypePermissionResponse } from "@api/namespaces/roles"
 import { TypeLoginResponse } from '@api/namespaces/user';
@@ -11,7 +11,7 @@ import { TypeLoginResponse } from '@api/namespaces/user';
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
     async getRolesPermissionByUserRole(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ErrorSchema>(response?.error)) {
             return {
                 roles: [],
@@ -34,7 +34,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async getUserPermissionByUser(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ErrorSchema>(response?.error)) {
             return {
                 permissions: [],
@@ -126,7 +126,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async updateData(params: TypeUtilities) {
-        const response = await updateData(params);
+        const response = await Put(params);
 
         if (isError<TypeError.ErrorSchema>(response?.error)) {
             return {

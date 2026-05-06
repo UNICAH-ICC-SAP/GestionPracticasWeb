@@ -2,7 +2,7 @@ import { Type as TypeError } from '../Api/namespaces/errorService';
 
 export type TypeUtilities = {
     url: string;
-    data?: Array<object> | object;
+    data?: Array<object> | object | File;
     key?: string;
 }
 

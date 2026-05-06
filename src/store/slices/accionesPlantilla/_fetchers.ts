@@ -1,7 +1,7 @@
 import { Type as TypeError } from '../../../Api/namespaces/modalError';
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./_namespace";
-import { getData, saveData, updateData } from "../../../utilities/Utilities";
+import { getData, Post, Put } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
@@ -20,7 +20,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async saveAccion(params: TypeUtilities) {
-        const response = await saveData(params);
+        const response = await Post(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 accione: null,
@@ -35,7 +35,7 @@ export default CreateFetchers(NAME, {
         };
     },
     async updateAccion(params: TypeUtilities) {
-        const response = await updateData(params);
+        const response = await Put(params);
         if (isError<TypeError.ModalError>(response?.error)) {
             return {
                 accion: response?.data,
