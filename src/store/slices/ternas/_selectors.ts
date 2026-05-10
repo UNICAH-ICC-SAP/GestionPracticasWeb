@@ -22,6 +22,7 @@ Selector.getError = CreateSelector(Selector, (state) => state.error);
 Selector.getSavedItem = CreateSelector(Selector, (state) => state.savedTernaInfo);
 Selector.getSavedTernaState = CreateSelector(Selector, (state) => state.ternaCreatedState);
 Selector.getSavedDetailState = CreateSelector(Selector, (state) => state.ternaDetailCreateState);
+Selector.getUpdatedStatusResult = CreateSelector(Selector, (state) => state.updateStatus);
 
 
 /**Selector: fetching is loading */

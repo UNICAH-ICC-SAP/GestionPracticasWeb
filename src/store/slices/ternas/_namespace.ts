@@ -38,6 +38,7 @@ export declare namespace StoreUser {
         step1: boolean;
         step2: boolean;
         resumen: boolean;
+        updateStatus: boolean;
     };
 }
 
@@ -51,8 +52,9 @@ export const Action = CreateActions<{
     setStep1: boolean;
     setStep2: boolean;
     setResumen: boolean;
+    setUpdatedStatus: boolean;
     setNoDroppedData: Type.DetalleTernaInfo[];
-}>(NAME, ["cleanUserData", "cleanStore", "setDataAlumno", "setStep1", "setStep2", "setResumen", "getAlumno", "setUserCreate", "setDetalleTerna", "setNoDroppedData"]);
+}>(NAME, ["cleanUserData", "cleanStore", "setDataAlumno", "setStep1", "setStep2", "setResumen", "getAlumno", "setUserCreate", "setDetalleTerna", "setNoDroppedData", "setUpdatedStatus"]);
 
 export const INIT: StoreUser.State = {
     ternaInfo: {
@@ -95,4 +97,5 @@ export const INIT: StoreUser.State = {
     resumen: false,
     ternaCreatedState: false,
     ternaDetailCreateState: false,
+    updateStatus: false,
 };

@@ -1,7 +1,7 @@
 export const StatusTerna = {
     1: "Inactiva",
     2: "En Curso",
-    3: "Revisión",
+    3: "Revisión Monografía",
     4: "Agendada",
     5: "Finalizada",
 }

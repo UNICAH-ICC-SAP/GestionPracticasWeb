@@ -33,7 +33,6 @@ export default CreateFetchers(NAME, {
                 error: response?.error,
             };
         }
-        console.log(response)
         return {
             signedUrl: response?.data,
             error: response?.error,
