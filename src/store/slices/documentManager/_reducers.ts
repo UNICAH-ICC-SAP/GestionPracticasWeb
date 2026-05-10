@@ -38,8 +38,8 @@ export default CreateReducer(INIT, ({ addCase }) => {
 
     addCase(Fetcher.updateStatus.fulfilled, (state, { payload }) => ({
         ...state,
-        isSavedState: payload.uploaded,
-        message: payload.uploaded ? null : state.message,
+        isUpdatedStates: payload.updated,
+        message: payload.updated ? null : state.message,
         error: payload.error
     }));
 
@@ -52,6 +52,18 @@ export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Fetcher.uploadDocument.fulfilled, (state, { payload }) => ({
         ...state,
         isSavedState: payload.uploaded,
+        message: payload.uploaded ? null : state.message,
+        error: payload.error,
+    }));
+
+    addCase(Action.setIsUpdate, (state, { payload }) => ({
+        ...state,
+        isUpdatedStates: payload,
+    }));
+
+    addCase(Action.setRequestedChangesByDocente, (state, { payload }) => ({
+        ...state,
+        isRequestedChangesByDocente: payload,
     }))
 
 });

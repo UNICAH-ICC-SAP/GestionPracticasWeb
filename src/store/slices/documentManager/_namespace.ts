@@ -55,6 +55,8 @@ export declare namespace StoreDocumentManager {
         signedFilesDownload: Type.TypeDownloadSignedUrlFile | null;
         error: TypeModal.ModalError;
         isSavedState: boolean;
+        isUpdatedStates: boolean;
+        isRequestedChangesByDocente: boolean;
         message: string;
     };
 }
@@ -63,7 +65,9 @@ export const Action = CreateActions<{
     cleanSignedFilesUpload: void;
     cleanStore: void;
     cleanSignedFilesDownload: void;
-}>(NAME, ["cleanSignedFilesUpload", "cleanStore", "cleanSignedFilesDownload"]);
+    setIsUpdate: boolean;
+    setRequestedChangesByDocente: boolean;
+}>(NAME, ["cleanSignedFilesUpload", "cleanStore", "cleanSignedFilesDownload", "setIsUpdate", "setRequestedChangesByDocente"]);
 
 
 export const INIT: StoreDocumentManager.State = {
@@ -75,5 +79,7 @@ export const INIT: StoreDocumentManager.State = {
         message: ""
     },
     isSavedState: false,
+    isUpdatedStates: true,
+    isRequestedChangesByDocente: false,
     message: "",
 };

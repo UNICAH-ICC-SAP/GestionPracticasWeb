@@ -7,9 +7,14 @@ export default function Selector(store: StoreState): StoreDocumentManager.State 
     return store[NAME];
 }
 
-Selector.getSavedDocument = CreateSelector(
+Selector.getIsSavedDocument = CreateSelector(
     Selector,
     (state) => state.isSavedState
+);
+
+Selector.getIsUpdated = CreateSelector(
+    Selector,
+    (state) => state.isUpdatedStates
 );
 
 Selector.getError = CreateSelector(
@@ -22,45 +27,16 @@ Selector.getDocuments = CreateSelector(
     (state) => state.userFilesData
 );
 
-// Selector.getDocument = CreateSelector(
-//     Selector,
-//     (state) => state.document
-// );
-
-// Selector.getUserFiles = CreateSelector(
-//     Selector,
-//     (state) => state.selectedUser
-// );
-
-// Selector.getSelectedFile = CreateSelector(
-//     Selector,
-//     (state) => state.selectedFile
-// );
-
-Selector.getSignedUrl = CreateSelector(
+Selector.getSignedUrlToUpload = CreateSelector(
     Selector,
     (state) => state.signedFilesUpload
 );
 
-// Selector.getDocumentsWithFiles = CreateSelector(
-//     Selector,
-//     (state) => {
-//         const files = state.selectedUser?.files ?? [];
-
-//         return state.documents.map((doc) => {
-//             const file = files.find(f => f.documentTypeId === doc.id);
-
-//             return {
-//                 ...doc,
-//                 file: file?.fileUrl || "",
-//                 status: file?.status || doc.status,
-//                 archivoId: file?.archivoId
-//             };
-//         });
-//     }
-// );
-
-Selector.getDownloadFile = CreateSelector(
+Selector.getSignedUrlToDownload = CreateSelector(
     Selector,
     (state) => state.signedFilesDownload
 );
+
+Selector.getIsRequestedChangesByDocente = CreateSelector(Selector,
+    (state) => state.isRequestedChangesByDocente
+)
