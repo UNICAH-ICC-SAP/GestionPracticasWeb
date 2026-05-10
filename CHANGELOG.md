@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.23](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.22...v0.0.23) (2026-05-10)
+
+
+### Bug Fixes
+
+* mejoras en flujos ([cbe3093](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/cbe3093b8183a30b682dc0610f77492143844a57))
+
 ### [0.0.22](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.21...v0.0.22) (2026-05-10)
 
 ### [0.0.21](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.20...v0.0.21) (2026-05-10)
