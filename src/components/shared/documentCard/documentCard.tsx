@@ -3,12 +3,11 @@ import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 import { faFolderClosed } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter, ButtonGroup, Button, Badge, CardDeck, CardHeader } from "reactstrap";
-import { ButtonPrimary, ButtonSecondary } from "../buttons";
+import { ButtonPrimary, ButtonSecondary, ButtonWarning } from "@components/shared/buttons";
 import { DEF, Props } from '@root/Api/typesProps';
 import type { Type as TypeUser } from "@store/slices/users/_namespace";
 import { DocumentStatus } from "@root/abstracts"
 import type { Document } from "./type"
-
 import { Fetcher as FetcherFiles, Selector as SelectorFiles, Action as ActionFiles } from "@store/slices/documentManager"
 import { useDispatch, useSelector } from "@store/index";
 import type { TypeUtilities } from "@utilities/TypeUtilities";
@@ -17,14 +16,15 @@ import { downloadFromGCP } from "@utilities/Utilities";
 type DocumentCardProps = {
     document: Document;
     user: TypeUser.User;
-    onClick: () => void;
+    onClickDeliverButton: () => void;
 }
 
 export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>) {
-    const { document, user, onClick } = prop;
+    const { document, user, onClickDeliverButton } = prop;
     const dispatch = useDispatch();
-    const downloadFile = useSelector(SelectorFiles.getDownloadFile);
     const [donwload, setDownload] = React.useState(false);
+    const downloadFile = useSelector(SelectorFiles.getSignedUrlToDownload);
+    const isRequestedChangesByDocente = useSelector(SelectorFiles.getIsRequestedChangesByDocente)
 
     React.useEffect(() => {
         if (downloadFile !== null && donwload) {
@@ -34,7 +34,7 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
         }
     }, [downloadFile]);
 
-    return (<Card key={document.id} style={{ width: '20rem', marginBottom: '1rem' }}>
+    return (<Card style={{ width: '20rem', marginBottom: '1rem' }}>
         <CardHeader className="d-flex justify-content-around align-items-center w-100" style={{ height: "4rem" }}>
             <CardTitle tag="h5">
                 {document.title}
@@ -58,7 +58,7 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
             {document.fileStatus === DocumentStatus.PENDING ? <ButtonGroup>
                 <Button color="success" href="./" onClick={(e) => {
                     e.preventDefault();
-                    onClick();
+                    onClickDeliverButton();
                 }}>
                     Entregar
                 </Button>
@@ -69,7 +69,7 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                 <ButtonGroup>
                     {user.roleId === 3 && document.fileStatus === DocumentStatus.CHANGE_REQUESTED ? <ButtonSecondary href="./" onClick={(e) => {
                         e.preventDefault();
-                        onClick();
+                        onClickDeliverButton();
                     }} rel="noopener noreferrer">
                         Actualizar
                     </ButtonSecondary> : user.roleId === 1 ? <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
@@ -87,6 +87,11 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                     }}>
                         Visualizar
                     </ButtonPrimary>
+                    {isRequestedChangesByDocente && <ButtonWarning onClick={(e) => {
+                        e.preventDefault();
+                        onClickDeliverButton();
+                    }}>
+                        Solicitar Cambios</ButtonWarning>}
                 </ButtonGroup>
             }
         </CardFooter>

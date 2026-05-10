@@ -10,15 +10,7 @@ import { Tables } from "@components/commons/tables/tables";
 import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
 import NotFound from "@components/shared/notFound";
 import { StatusTerna } from "@root/abstracts";
-
-type AlumnoInfo = {
-    ternaId: number;
-    alumnoNombre: string;
-    facultad: string;
-    email: string;
-    telefono: string;
-    estadoTerna: string;
-};
+import { AlumnoInfo } from "@api/namespaces/alumno";
 
 export default function VerTernas() {
     const dispatch = useDispatch();
@@ -80,8 +72,9 @@ export default function VerTernas() {
                 if (terna.alumno) {
                     const data: AlumnoInfo = {
                         ternaId: terna.ternaId,
+                        alumnoId: terna.alumno.alumnoId,
                         alumnoNombre: terna.alumno.nombre || "Sin nombre",
-                        facultad: terna.alumno.facultadId,
+                        facultadId: terna.alumno.facultadId,
                         email: terna.alumno.email,
                         telefono: terna.alumno.telefono,
                         estadoTerna: getEstadoTerna(parseInt(terna.idEstadoTerna, 10))

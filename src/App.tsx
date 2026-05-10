@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Navigation } from './components/shared/nav/navigation';
 import { Login } from './pages/login/Login';
-import { useSelector, useDispatch } from './store';
+import { useSelector, useDispatch } from '@store/index';
 import { Selector as UserSelector, Fetcher as FetcherUser } from './store/slices/users';
 import { TypeUtilities } from './utilities/TypeUtilities';
 import { Route, Routes } from 'react-router-dom';

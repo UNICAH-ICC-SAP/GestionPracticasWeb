@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Collapse, Nav, NavItem, Navbar, NavbarBrand, NavbarText, NavbarToggler } from 'reactstrap'
 import { useSelector, useDispatch } from '@store/index';
-import { Selector as UserSelector, Action as ActionUser } from '@store/slices/users';
+import { Selector as UserSelector, Action as UserAction } from '@store/slices/users';
 import { NavLink } from 'react-router-dom'
 import { LogOut } from '@utilities/Utilities';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,7 +16,7 @@ import React from 'react';
 import { navigation } from './menu';
 import Img from '@components/shared/Img';
 import { Image } from "@root/Api";
-import type { NavigationItem } from '@components/shared/nav/types';
+import { ClearAppState, type NavigationItem } from '@components/shared/nav/types';
 
 export function Navigation() {
     const dispatch = useDispatch()
@@ -32,8 +32,11 @@ export function Navigation() {
     const handleLogOut = () => {
         LogOut();
         setMenuItems(null);
-        dispatch(ActionUser.cleanStore());
+        dispatch(UserAction.cleanStore());
     }
+    React.useEffect(() => {
+        ClearAppState(dispatch);
+    }, [])
 
     React.useEffect(() => {
         if (roles && roles.length > 0) {
