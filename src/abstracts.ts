@@ -18,12 +18,24 @@ export enum DocumentStatus {
     CHANGE_REQUESTED = 'CHANGE_REQUESTED'
 };
 
-export enum DocumentType {
+export enum TernaRolDocente {
+    COORDINA = 'coordina',
+    ESTILO = 'estilo',
+    TECNICO = 'tecnico'
+}
+
+export enum DocumentTypeAlumnos {
     DATOS_GENERALES = 1,
     CARTA_ACEPTACION = 2,
     DNI_ALUMNO = 3,
     DNI_TESTIGO_1 = 4,
     DNI_TESTIGO_2 = 5,
+    MONOGRAFIA = 6,
+    SOLICITUD_PRACTICA = 7,
+    CONSTANCIA_TERMINACION = 8
+}
+
+export enum DocumentTypeDocentes {
     MONOGRAFIA = 6,
     SOLICITUD_PRACTICA = 7,
     CONSTANCIA_TERMINACION = 8
