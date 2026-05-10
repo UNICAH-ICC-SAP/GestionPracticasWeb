@@ -3,7 +3,7 @@ import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from './_namespace';
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
-import { getData, Post } from "../../../utilities/Utilities";
+import { getData, PatchData, Post } from "../../../utilities/Utilities";
 
 export default CreateFetchers(NAME, {
     /**Fetcher: Get singleSelectAccount service */
@@ -71,4 +71,17 @@ export default CreateFetchers(NAME, {
             savedTernaState: true,
         };
     },
+    async updateTernaState(params: TypeUtilities) {
+        const response = await PatchData(params);
+        if (isError<TypeError.ModalError>(response?.error)) {
+            return {
+                updatedTernaState: false,
+                error: response?.error,
+            };
+        }
+        return {
+            updatedTernaState: true,
+            error: response?.error,
+        };
+    }
 });

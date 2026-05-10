@@ -78,4 +78,12 @@ export default CreateReducer(INIT, ({ addCase }) => {
         savedTernaInfo: JSON.parse(JSON.stringify(payload.savedTerna)),
         ternaCreatedState: payload.savedTernaState
     }));
+    addCase(Fetcher.updateTernaState.fulfilled, (state, { payload }) => ({
+        ...state,
+        updateStatus: payload.updatedTernaState
+    }));
+    addCase(Action.setUpdatedStatus, (state, { payload }) => ({
+        ...state,
+        updateStatus: payload,
+    }));
 });
