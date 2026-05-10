@@ -33,7 +33,7 @@ export default CreateFetchers(NAME, {
                 error: response?.error,
             };
         }
-
+        console.log(response)
         return {
             signedUrl: response?.data,
             error: response?.error,
@@ -76,12 +76,12 @@ export default CreateFetchers(NAME, {
         const response = await PatchData(params);
         if (!response) {
             return {
-                uploaded: false,
+                updated: false,
                 error: response?.error,
             };
         }
         return {
-            uploaded: true,
+            updated: true,
             error: response?.error,
         };
     },
@@ -91,12 +91,18 @@ export default CreateFetchers(NAME, {
         if (!response) {
             return {
                 uploaded: false,
-                error: response,
+                error: {
+                    code: 1,
+                    message: "No se pudo cargar el documento a GCP",
+                }
             };
         }
         return {
             uploaded: true,
-            error: response,
+            error: {
+                code: 0,
+                message: ""
+            },
         };
     },
 });
