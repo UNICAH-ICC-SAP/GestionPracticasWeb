@@ -33,6 +33,16 @@ export const ButtonDanger = styled(Button)`
         border-color: var(--danger-shadow);
     }
 `
+export const ButtonWarning = styled(Button)`
+    background-color: var(--bs-warning);
+    border-color: var(--bs-warning);
+
+    &:hover{
+        background-color: var(--warning-shadow);
+        border-color: var(--warning-shadow);
+    }
+`
+
 export const ButtonTransparent = styled(Button)`
     width: auto;
     background-color: transparent;

@@ -1,29 +1,33 @@
 import React from "react";
+import { useDispatch, useSelector } from "@store/index";
 import { faFolderOpen, faFolderClosed } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, CardBody, CardTitle, Badge, CardSubtitle, CardText, CardFooter, ButtonGroup, Input } from "reactstrap";
+import { Card, CardBody, CardTitle, Badge, CardSubtitle, CardText, CardFooter, ButtonGroup, Input, Spinner } from "reactstrap";
 import { ButtonPrimary, ButtonSecondary } from "../buttons";
+import { Fetcher as FetcherFiles, Selector as SelectorFiles } from "@store/slices/documentManager"
 import type { Type as TypeUser } from "@store/slices/users/_namespace";
+import type { Type as TypeAlumno } from "@store/slices/alumnos/_namespace";
+import type { Document } from "./type"
 import { DEF, Props } from '@root/Api/typesProps';
 import { DocumentStatus, DocumentUploadStatus } from "@root/abstracts"
-import type { Document } from "./type"
-import { Fetcher as FetcherFiles, Selector as SelectorFiles } from "@store/slices/documentManager"
-import { useDispatch, useSelector } from "@store/index";
 import { TypeUtilities } from "@utilities/TypeUtilities";
+import Swal from "sweetalert2";
 
 type DocumentCardProps = {
     document: Document;
     user: TypeUser.User;
-    userInfo: TypeUser.UserInfo;
-    onClick: () => void,
+    userInfo: TypeUser.UserInfo | TypeAlumno.AlumnoInfo;
+    onClickBack: () => void,
 }
 
 export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
-    const { document, onClick, user, userInfo } = prop;
+    const { document, onClickBack, user, userInfo } = prop;
     const dispatch = useDispatch()
     const [file, setFile] = React.useState<File | null>(null);
-    const signedUrl = useSelector(SelectorFiles.getSignedUrl);
-    const uploaded = useSelector(SelectorFiles.getSavedDocument)
+    const [loadingFile, setUploadingFile] = React.useState(false);
+    const signedUrl = useSelector(SelectorFiles.getSignedUrlToUpload);
+    const uploaded = useSelector(SelectorFiles.getIsSavedDocument);
+    const isRequestedChangesByDocente = useSelector(SelectorFiles.getIsRequestedChangesByDocente);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -40,32 +44,65 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
 
     React.useEffect(() => {
         if (uploaded) {
-            if (document.fileStatus === DocumentStatus.CHANGE_REQUESTED) {
+            if (isRequestedChangesByDocente) {
                 const utils: TypeUtilities = {
                     url: `/files/updateFileStatus`, data: {
-                        id: document.id,
-                        fileStatus: DocumentStatus.DELIVERED,
+                        id: signedUrl.archivoId,
                         status: DocumentUploadStatus.UPLOADED,
+                        fileStatus: DocumentStatus.CHANGE_REQUESTED,
+                    }
+                };
+                dispatch(FetcherFiles.updateStatus(utils))
+            } else if (document.fileStatus === DocumentStatus.CHANGE_REQUESTED) {
+                const utils: TypeUtilities = {
+                    url: `/files/updateFileStatus`, data: {
+                        id: signedUrl.archivoId,
+                        status: DocumentUploadStatus.UPLOADED,
+                        fileStatus: DocumentStatus.DELIVERED,
                     }
                 };
                 dispatch(FetcherFiles.updateStatus(utils))
             } else {
                 const utils: TypeUtilities = {
                     url: `/files/updateFileStatus`, data: {
-                        id: document.id,
+                        id: signedUrl.archivoId,
                         status: DocumentUploadStatus.UPLOADED,
                         fileStatus: DocumentStatus.DELIVERED,
                     }
                 };
                 dispatch(FetcherFiles.updateStatus(utils))
             }
-            onClick();
+            Swal.fire({
+                title: "¡Éxito!",
+                text: "Archivo subido con exito",
+                icon: "success",
+            });
+            onClickBack();
         }
     }, [uploaded]);
 
     const handleUpload = async () => {
         if (!file) return;
-        if (document.fileStatus === DocumentStatus.CHANGE_REQUESTED) {
+        if (isRequestedChangesByDocente) {
+            const userId = "alumnoId" in userInfo
+                ? userInfo.alumnoId
+                : user.userId;
+            const utils: TypeUtilities = {
+                url: "/files/update-signed-urls", data: {
+                    userId: userId,
+                    userName: userInfo.nombre,
+                    file: {
+                        file: file.name,
+                        size: file.size,
+                        contentType: file.type
+                    },
+                    fileTypeId: document.fileTypeId,
+                    customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`,
+                    archivoId: document.archivoId,
+                }
+            };
+            dispatch(FetcherFiles.createUpdateSignedUrl(utils));
+        } else if (document.fileStatus === DocumentStatus.CHANGE_REQUESTED) {
             const utils: TypeUtilities = {
                 url: "/files/update-signed-urls", data: {
                     userId: user.userId,
@@ -75,7 +112,7 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
                         size: file.size,
                         contentType: file.type
                     },
-                    fileTypeId: document.id,
+                    fileTypeId: document.fileTypeId,
                     customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`,
                     archivoId: document.archivoId,
                 }
@@ -91,15 +128,16 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
                         size: file.size,
                         contentType: file.type
                     },
-                    fileTypeId: document.id,
+                    fileTypeId: document.fileTypeId,
                     customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`
                 }
             };
             dispatch(FetcherFiles.createSignedUrl(utils));
         }
+        setUploadingFile(true);
     };
 
-    return (<Card className="w-50" key={document.id} style={{ width: '20rem', marginBottom: '1rem' }}>
+    return (<Card className="w-50" style={{ width: '20rem', marginBottom: '1rem' }}>
         <FontAwesomeIcon className="mt-2" size="6x" icon={document.fileStatus === DocumentStatus.PENDING ? faFolderOpen : faFolderClosed} />
         <CardBody className="align-items-center">
             <CardTitle tag="h5">
@@ -112,8 +150,8 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
                 tag="h6"
             >
             </CardSubtitle>
-            <CardText>
-                <p className="mb-md-4 mb-5" style={{ height: '2rem', fontSize: '0.875rem' }}>{document.description}</p>
+            <CardText className="mb-md-4 mb-5" style={{ height: '2rem', fontSize: '0.875rem' }}>
+                {document.description}
             </CardText>
             <CardFooter>
                 <Input className="mt-md-4 mb-md-2 mb-5" type="file" accept=".pdf" onChange={handleFileChange} />
@@ -122,10 +160,17 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
                         handleUpload();
                     }}>Upload</ButtonPrimary>
                     <ButtonSecondary onClick={() => {
-                        onClick();
+                        onClickBack();
                     }}>Regresar</ButtonSecondary>
                 </ButtonGroup>
             </CardFooter>
         </CardBody>
+        {loadingFile &&
+            <div className="text-center my-5">
+                <Spinner color="primary">
+                    Loading...
+                </Spinner>
+            </div>
+        }
     </Card>)
 }
