@@ -4,19 +4,26 @@ import { Documents } from "./data";
 import type { Document } from "@components/shared/documentCard/type";
 import DocumentCard from "@components/shared/documentCard/documentCard";
 import { Selector as userSelector } from "@store/slices/users";
-import { Selector as FileSelector, Fetcher as FetcherFiles, Action as ActionFile } from "@store/slices/documentManager"
+import { Selector as fileSelector, Fetcher as FetcherFiles } from "@store/slices/documentManager"
 import { useDispatch, useSelector } from "@store/index";
 import UploadCard from "@components/shared/documentCard/uploadDocumentCard";
 import { TypeUtilities } from "@utilities/TypeUtilities";
 import { DocumentStatus } from "@root/abstracts";
+import { AlumnoInfo } from "@api/namespaces/alumno";
+import { DEF, Props } from "@api/typesProps";
 
-export default function Documentos() {
+export type PropsDocumentacion = {
+    alumno: AlumnoInfo
+};
+
+export default function Documentos(props: Props<PropsDocumentacion, typeof DEF>) {
+    const { alumno } = props;
     const dispatch = useDispatch();
     const [showCards, setShowCards] = React.useState(true);
     const [selectedDoc, setSelectedDoc] = React.useState<Document | null>()
-    const [documentsArray, setDocumentosArray] = React.useState<Document[] | null>(null)
-    const updateFiles = useSelector(FileSelector.getIsUpdated);
-    const userFiles = useSelector(FileSelector.getDocuments);
+    const [documentsArray, setDocumentosArray] = React.useState<Document[]>(null)
+    const [updateFiles, setUpdateFiles] = React.useState(true)
+    const userFiles = useSelector(fileSelector.getDocuments);
     const user = useSelector(userSelector.getUser);
     const userInfo = useSelector(userSelector.getUserInfo);
 
@@ -24,19 +31,18 @@ export default function Documentos() {
         if (updateFiles) {
             const utils: TypeUtilities = {
                 url: "/files/list", data: {
-                    userId: user.userId
+                    userId: alumno.alumnoId
                 }
             };
             dispatch(FetcherFiles.getDocuments(utils));
-            dispatch(ActionFile.setIsUpdate(false))
+            setDocumentosArray(null);
+            setUpdateFiles(false);
         }
     }, [updateFiles]);
 
     React.useEffect(() => {
-        if (userFiles === null && documentsArray === null) {
-            const documentsObjectValue = Object.values(Documents);
-            setDocumentosArray(documentsObjectValue)
-        }
+        const documentsObjectValue = Object.values(Documents);
+        setDocumentosArray(documentsObjectValue)
     }, [])
 
     React.useEffect(() => {
@@ -44,14 +50,14 @@ export default function Documentos() {
             const fileMap = new Map(
                 userFiles.files.map(f => [f.fileTypeId, f])
             );
+
             const mergedDocuments = Object.values(Documents).map(doc => {
                 const file = fileMap.get(doc.fileTypeId);
                 return {
                     ...doc,
                     fileStatus: file?.fileStatus ?? DocumentStatus.PENDING,
                     exampleDocument: file?.fileUrl ?? doc.exampleDocument,
-                    archivoId: file?.archivoId ?? doc.archivoId,
-                    fileTypeId: file?.fileTypeId ?? doc.fileTypeId,
+                    archivoId: file?.archivoId ?? doc.archivoId
                 };
             });
             setDocumentosArray(mergedDocuments);
@@ -74,7 +80,7 @@ export default function Documentos() {
             {selectedDoc && <UploadCard document={selectedDoc} user={user} userInfo={userInfo} onClickBack={() => {
                 setShowCards(true);
                 setSelectedDoc(null);
-                dispatch(ActionFile.cleanStore());
+                setUpdateFiles(true);
             }} />}
         </Container>
     );

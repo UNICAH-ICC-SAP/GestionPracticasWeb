@@ -26,7 +26,7 @@ export default function CargaDocente() {
         { title: "Carga Docente" },
         { title: currenTab?.title || "" },
     ]
-    return <div className='align-self-center w-100 px-5'>
+    return <Container className='align-self-center w-100'>
         <Breadcrumbs
             items={tabsBreadcrumb} />
         <Nav className="mt-5" justified tabs>
@@ -49,7 +49,7 @@ export default function CargaDocente() {
                 </TabPane>
             })}
         </TabContent>
-    </div>
+    </Container>
 }
 
 
