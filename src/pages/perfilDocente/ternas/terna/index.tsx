@@ -24,7 +24,6 @@ export default function Docentes() {
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
     const [showDocumentacion, setShowDocumentacion] = useState(false);
     const [tabSel, setTabSel] = useState(0);
-    const [selectedAlumno, setSelectedAlumno] = useState<AlumnoInfo | undefined>()
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const userLogged = useSelector(UserSelector.getUser);
     const docentes = useSelector(DocenteSelector.getDocentes);
@@ -158,13 +157,12 @@ export default function Docentes() {
                                             Detalle
                                         </Button>
                                         <Button onClick={() => {
-                                            console.log(alumno)
                                             dispatch(ActionFiles.cleanStore());
                                             if (userLogged.roleId === 2) {
                                                 dispatch(ActionFiles.setRequestedChangesByDocente(true))
+                                                dispatch(ActionFiles.setSelectedAlumno(alumno))
                                             }
                                             setShowDocumentacion(true);
-                                            setSelectedAlumno(alumno);
                                         }}>Documentación</Button>
                                         <WhatsappButton telefono={alumno.telefono} />
                                     </ButtonGroup>
@@ -194,10 +192,11 @@ export default function Docentes() {
                 )}
             </ModalBody>
         </Modal>
-    </Container> : <Documentacion alumno={selectedAlumno} onClick={() => {
+    </Container> : <Documentacion onClick={() => {
         dispatch(ActionFiles.cleanStore());
         setShowDocumentacion(false);
         dispatch(ActionFiles.setRequestedChangesByDocente(false));
+        dispatch(ActionFiles.cleanSelectedAlumno);
     }} />
     );
 }

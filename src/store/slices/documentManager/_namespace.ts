@@ -1,4 +1,5 @@
 import { Type as TypeModal } from '@api/namespaces/modalError';
+import { AlumnoInfo } from "@api/namespaces/alumno";
 import { CreateActions } from "@root/storeConfig";
 import { DocumentStatus } from '@root/abstracts';
 
@@ -50,6 +51,7 @@ export declare namespace Type {
 
 export declare namespace StoreDocumentManager {
     export type State = {
+        selectedAlumno: AlumnoInfo | undefined;
         userFilesData: Type.TypeUserFiles | null;
         signedFilesUpload: Type.TypeUploadSignedURL | null;
         signedFilesDownload: Type.TypeDownloadSignedUrlFile | null;
@@ -65,12 +67,15 @@ export const Action = CreateActions<{
     cleanSignedFilesUpload: void;
     cleanStore: void;
     cleanSignedFilesDownload: void;
+    cleanSelectedAlumno: void;
     setIsUpdate: boolean;
     setRequestedChangesByDocente: boolean;
-}>(NAME, ["cleanSignedFilesUpload", "cleanStore", "cleanSignedFilesDownload", "setIsUpdate", "setRequestedChangesByDocente"]);
+    setSelectedAlumno: AlumnoInfo;
+}>(NAME, ["cleanSignedFilesUpload", "cleanStore", "cleanSignedFilesDownload", "setIsUpdate", "setRequestedChangesByDocente", "setSelectedAlumno", "cleanSelectedAlumno"]);
 
 
 export const INIT: StoreDocumentManager.State = {
+    selectedAlumno: undefined,
     userFilesData: null,
     signedFilesUpload: null,
     signedFilesDownload: null,
