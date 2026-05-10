@@ -6,12 +6,13 @@ import { Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter, ButtonGr
 import { ButtonPrimary, ButtonSecondary, ButtonWarning } from "@components/shared/buttons";
 import { DEF, Props } from '@root/Api/typesProps';
 import type { Type as TypeUser } from "@store/slices/users/_namespace";
-import { DocumentStatus } from "@root/abstracts"
+import { DocumentStatus, DocumentUploadStatus } from "@root/abstracts"
 import type { Document } from "./type"
 import { Fetcher as FetcherFiles, Selector as SelectorFiles, Action as ActionFiles } from "@store/slices/documentManager"
 import { useDispatch, useSelector } from "@store/index";
 import type { TypeUtilities } from "@utilities/TypeUtilities";
 import { downloadFromGCP } from "@utilities/Utilities";
+import Swal from "sweetalert2";
 
 type DocumentCardProps = {
     document: Document;
@@ -85,11 +86,33 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                         dispatch(FetcherFiles.getDownloadSignedUrl(utils));
                         setDownload(true);
                     }}>
-                        Visualizar
+                        Descargar
                     </ButtonPrimary>
-                    {isRequestedChangesByDocente && <ButtonWarning onClick={(e) => {
+                    {isRequestedChangesByDocente && document.fileStatus === DocumentStatus.DELIVERED && <ButtonWarning onClick={(e) => {
                         e.preventDefault();
-                        onClickDeliverButton();
+                        Swal.fire({
+                            title: "Opciones",
+                            text: "Como desea proceder",
+                            icon: "warning",
+                            confirmButtonText: "Subir Documento",
+                            cancelButtonText: "Solicitar cambios",
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                onClickDeliverButton();
+                            }
+                            if (result.isDismissed) {
+                                const utils: TypeUtilities = {
+                                    url: `/files/updateFileStatus`, data: {
+                                        id: document.archivoId,
+                                        status: DocumentUploadStatus.UPLOADED,
+                                        fileStatus: DocumentStatus.CHANGE_REQUESTED,
+                                    }
+                                };
+                                dispatch(FetcherFiles.updateStatus(utils))
+                            }
+                        });
                     }}>
                         Solicitar Cambios</ButtonWarning>}
                 </ButtonGroup>

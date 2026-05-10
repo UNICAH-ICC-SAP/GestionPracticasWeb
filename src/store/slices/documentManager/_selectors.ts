@@ -39,4 +39,8 @@ Selector.getSignedUrlToDownload = CreateSelector(
 
 Selector.getIsRequestedChangesByDocente = CreateSelector(Selector,
     (state) => state.isRequestedChangesByDocente
-)
+);
+
+Selector.getSelectedAlumno = CreateSelector(Selector,
+    (state) => state.selectedAlumno
+);

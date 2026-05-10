@@ -9,15 +9,8 @@ import { useDispatch, useSelector } from "@store/index";
 import UploadCard from "@components/shared/documentCard/uploadDocumentCard";
 import { TypeUtilities } from "@utilities/TypeUtilities";
 import { DocumentStatus } from "@root/abstracts";
-import { AlumnoInfo } from "@api/namespaces/alumno";
-import { DEF, Props } from "@api/typesProps";
 
-export type PropsDocumentacion = {
-    alumno: AlumnoInfo
-};
-
-export default function Documentos(props: Props<PropsDocumentacion, typeof DEF>) {
-    const { alumno } = props;
+export default function Documentos() {
     const dispatch = useDispatch();
     const [showCards, setShowCards] = React.useState(true);
     const [selectedDoc, setSelectedDoc] = React.useState<Document | null>()
@@ -26,6 +19,7 @@ export default function Documentos(props: Props<PropsDocumentacion, typeof DEF>)
     const userFiles = useSelector(fileSelector.getDocuments);
     const user = useSelector(userSelector.getUser);
     const userInfo = useSelector(userSelector.getUserInfo);
+    const alumno = useSelector(fileSelector.getSelectedAlumno);
 
     React.useEffect(() => {
         if (updateFiles) {

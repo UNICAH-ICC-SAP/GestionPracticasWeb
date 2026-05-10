@@ -28,6 +28,7 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
     const signedUrl = useSelector(SelectorFiles.getSignedUrlToUpload);
     const uploaded = useSelector(SelectorFiles.getIsSavedDocument);
     const isRequestedChangesByDocente = useSelector(SelectorFiles.getIsRequestedChangesByDocente);
+    const alumno = useSelector(SelectorFiles.getSelectedAlumno);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -44,7 +45,7 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
 
     React.useEffect(() => {
         if (uploaded) {
-            if (isRequestedChangesByDocente) {
+            if (isRequestedChangesByDocente && document.fileStatus == DocumentStatus.DELIVERED) {
                 const utils: TypeUtilities = {
                     url: `/files/updateFileStatus`, data: {
                         id: signedUrl.archivoId,
@@ -63,14 +64,25 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
                 };
                 dispatch(FetcherFiles.updateStatus(utils))
             } else {
-                const utils: TypeUtilities = {
-                    url: `/files/updateFileStatus`, data: {
-                        id: signedUrl.archivoId,
-                        status: DocumentUploadStatus.UPLOADED,
-                        fileStatus: DocumentStatus.DELIVERED,
-                    }
-                };
-                dispatch(FetcherFiles.updateStatus(utils))
+                if (user.roleId === 2) {
+                    const utils: TypeUtilities = {
+                        url: `/files/updateFileStatus`, data: {
+                            id: signedUrl.archivoId,
+                            status: DocumentUploadStatus.UPLOADED,
+                            fileStatus: DocumentStatus.DELIVERED,
+                        }
+                    };
+                    dispatch(FetcherFiles.updateStatus(utils))
+                } else {
+                    const utils: TypeUtilities = {
+                        url: `/files/updateFileStatus`, data: {
+                            id: signedUrl.archivoId,
+                            status: DocumentUploadStatus.UPLOADED,
+                            fileStatus: DocumentStatus.DELIVERED,
+                        }
+                    };
+                    dispatch(FetcherFiles.updateStatus(utils))
+                }
             }
             Swal.fire({
                 title: "¡Éxito!",
@@ -83,14 +95,11 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
 
     const handleUpload = async () => {
         if (!file) return;
-        if (isRequestedChangesByDocente) {
-            const userId = "alumnoId" in userInfo
-                ? userInfo.alumnoId
-                : user.userId;
+        if (isRequestedChangesByDocente && document.fileStatus == DocumentStatus.DELIVERED) {
             const utils: TypeUtilities = {
                 url: "/files/update-signed-urls", data: {
-                    userId: userId,
-                    userName: userInfo.nombre,
+                    userId: alumno.alumnoId,
+                    userName: alumno.alumnoNombre,
                     file: {
                         file: file.name,
                         size: file.size,
@@ -119,20 +128,37 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
             };
             dispatch(FetcherFiles.createUpdateSignedUrl(utils));
         } else {
-            const utils: TypeUtilities = {
-                url: "/files/signed-urls", data: {
-                    userId: user.userId,
-                    userName: userInfo.nombre,
-                    file: {
-                        file: file.name,
-                        size: file.size,
-                        contentType: file.type
-                    },
-                    fileTypeId: document.fileTypeId,
-                    customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`
-                }
-            };
-            dispatch(FetcherFiles.createSignedUrl(utils));
+            if (user.roleId === 2) {
+                const utils: TypeUtilities = {
+                    url: "/files/signed-urls", data: {
+                        userId: alumno.alumnoId,
+                        userName: alumno.alumnoNombre,
+                        file: {
+                            file: file.name,
+                            size: file.size,
+                            contentType: file.type
+                        },
+                        fileTypeId: document.fileTypeId,
+                        customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`
+                    }
+                };
+                dispatch(FetcherFiles.createSignedUrl(utils));
+            } else {
+                const utils: TypeUtilities = {
+                    url: "/files/signed-urls", data: {
+                        userId: user.userId,
+                        userName: userInfo.nombre,
+                        file: {
+                            file: file.name,
+                            size: file.size,
+                            contentType: file.type
+                        },
+                        fileTypeId: document.fileTypeId,
+                        customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`
+                    }
+                };
+                dispatch(FetcherFiles.createSignedUrl(utils));
+            }
         }
         setUploadingFile(true);
     };

@@ -64,6 +64,16 @@ export default CreateReducer(INIT, ({ addCase }) => {
     addCase(Action.setRequestedChangesByDocente, (state, { payload }) => ({
         ...state,
         isRequestedChangesByDocente: payload,
-    }))
+    }));
+
+    addCase(Action.setSelectedAlumno, (state, { payload }) => ({
+        ...state,
+        selectedAlumno: payload,
+    }));
+
+    addCase(Action.cleanSelectedAlumno, (state) => ({
+        ...state,
+        selectedAlumno: INIT.selectedAlumno,
+    }));
 
 });
