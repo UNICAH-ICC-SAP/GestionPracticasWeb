@@ -63,9 +63,23 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                 }}>
                     Entregar
                 </Button>
-                <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
-                    Ver ejemplo
-                </ButtonSecondary>
+                {[7, 8].includes(document.fileTypeId) && user.roleId !== 3 ?
+                    <ButtonSecondary href="./" target="_blank" rel="noopener noreferrer" onClick={(e) => {
+                        e.preventDefault();
+                        const utils: TypeUtilities = {
+                            url: "/files/download-url", data: {
+                                archivoId: document.fileTypeId === 7 ? 1 : 2
+                            }
+                        };
+                        dispatch(FetcherFiles.getDownloadSignedUrl(utils));
+                        setDownload(true);
+                    }}>
+                        Descargar Plantilla
+                    </ButtonSecondary> : [1, 2, 3, 4, 5].includes(document.fileTypeId) ?
+                        <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
+                            Ver ejemplo
+                        </ButtonSecondary> : null
+                }
             </ButtonGroup> :
                 <ButtonGroup>
                     {user.roleId === 3 && document.fileStatus === DocumentStatus.CHANGE_REQUESTED ? <ButtonSecondary href="./" onClick={(e) => {
@@ -91,8 +105,8 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                     {isRequestedChangesByDocente && document.fileStatus === DocumentStatus.DELIVERED && <ButtonWarning onClick={(e) => {
                         e.preventDefault();
                         Swal.fire({
-                            title: "Opciones",
-                            text: "Como desea proceder",
+                            title: "Solicitud de Cambios",
+                            text: "Para proceder tiene dos opciones, por favor elija una.",
                             icon: "warning",
                             confirmButtonText: "Subir Documento",
                             cancelButtonText: "Solicitar cambios",
