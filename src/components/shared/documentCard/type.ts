@@ -1,12 +1,12 @@
 import { DocumentStatus } from "@root/abstracts";
 
 export type Document = {
-    id: number;
+    archivoId: number;
     title: string;
     description: string;
     exampleDocument?: string;
     fileStatus: DocumentStatus | string;
-    archivoId: number;
+    fileTypeId: number;
 }
 
 export type DocumentConfig = {
