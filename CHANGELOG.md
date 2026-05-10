@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.21](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.20...v0.0.21) (2026-05-10)
+
+
+### Features
+
+* documentacion en perfil docentes ([7847945](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/7847945638e97f4c868dbcd2b125352f4ef134f4))
+
+
+### Bug Fixes
+
+* mejoras en componentes compartido, navegacion y app ([f0fa327](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/f0fa327b361f37baa71b30640e41bc4db37f5cea))
+* mejoras en redux y store ([1206f22](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/1206f223862e7aca03cbb05ce7121c38d4027a38))
+* mejoras en types ([e894838](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/e894838fc1c65fea02e61a28891382e5bf0c8866))
+
 ### [0.0.20](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.19...v0.0.20) (2026-05-06)
 
 
