@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.27](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.26...v0.0.27) (2026-05-11)
+
+
+### Bug Fixes
+
+* navegación menu docentes ([4cd81bf](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/4cd81bf45fee09942e906fdc571057f1d45e0bd3))
+
 ### [0.0.26](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.25...v0.0.26) (2026-05-10)
 
 ### [0.0.25](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.24...v0.0.25) (2026-05-10)
