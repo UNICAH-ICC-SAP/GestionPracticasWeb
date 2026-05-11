@@ -51,10 +51,10 @@ const NuevaCarga = () => {
 
     return (
         <div className="nueva-carga">
-            <h2>Crear Nuevo Periodo</h2>
+            <h2>Crear Nuevo Periodo de Asignacion de Clases</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Fecha de Inicio</label>
+                    <label>Fecha de Inicio de Periodo</label>
                     <input
                         className="custom-input"
                         type="date"
@@ -66,7 +66,7 @@ const NuevaCarga = () => {
                     />
                 </div>
                 <div>
-                    <label>Fecha Final</label>
+                    <label>Fecha Final de Periodo</label>
                     <input
                         className="custom-input"
                         type="date"

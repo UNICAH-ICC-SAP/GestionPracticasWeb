@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { docenteMenu } from "../../../components/shared/nav/subMenus";
-import Breadcrumbs from "../../../components/shared/breadcrumb/Breadcrumbs";
-import { useSelector } from "@store/index";
-import { Selector as SelectorUser } from "@store/slices/users";
+import { docenteMenu } from "@components/shared/nav/subMenus";
+import Breadcrumbs from "@components/shared/breadcrumb/Breadcrumbs";
 
 export default function DocenteMenu() {
-  const user = useSelector(SelectorUser.getUser);
 
-  const [activePane, setActivePane] = useState<string>(docenteMenu[1 - user.roleId].paneId!);
+  const [activePane, setActivePane] = useState<string>("CrearDocente");
 
   function onChangeTab(e: React.MouseEvent<HTMLAnchorElement>) {
     setActivePane(e.currentTarget.name);
