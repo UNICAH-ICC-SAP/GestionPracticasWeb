@@ -77,13 +77,13 @@ async function Post(props: TypeUtilities) {
         })
         .catch(error => {
             const response = error["response"];
-            if (response["status"] === 401 || response["status"] === 404) {
+            if (response) {
                 responseData.error.code = parseInt(response["status"], 10);
-                responseData.error.message = response["statusText"];
+                responseData.error.message = response["data"]?.message || response["statusText"];
                 return responseData;
             }
             responseData.error.code = 503;
-            responseData.error.message = error["statusText"];
+            responseData.error.message = error["message"] || "Error de conexión";
             return responseData;
         });
 }
@@ -105,13 +105,13 @@ async function Put(props: TypeUtilities) {
         })
         .catch(error => {
             const response = error["response"];
-            if (response["status"] === 401 || response["status"] === 404) {
+            if (response) {
                 responseData.error.code = parseInt(response["status"], 10);
-                responseData.error.message = response["statusText"];
+                responseData.error.message = response["data"]?.message || response["statusText"];
                 return responseData;
             }
             responseData.error.code = 503;
-            responseData.error.message = error["statusText"];
+            responseData.error.message = error["message"] || "Error de conexión";
             return responseData;
         });
 }
