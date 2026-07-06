@@ -9,6 +9,7 @@ import Documentacion from '@pages/perfilAlumnos/documentacion';
 import DocentePerfil from "@pages/perfilDocente/ternas"
 import ConfigEmail from "@pages/admin/configEmail"
 import CargaDocente from '@pages/perfilDocente/cargaDocente';
+import MiHorario from '@pages/perfilDocente/horarioPersonalizado/horarioPersonalizado';
 
 export enum Permissions {
     VIEW_HOME = 'VIEW_HOME',
@@ -22,6 +23,7 @@ export enum Permissions {
 
     VIEW_MIS_TERNAS = 'VIEW_MIS_TERNAS',
     VIEW_CARGA_ASIGNADA = 'VIEW_CARGA_ASIGNADA',
+    VIEW_MI_HORARIO = 'VIEW_MI_HORARIO',
 
     VIEW_MI_TERNA = 'VIEW_MI_TERNA',
     VIEW_DOCUMENTACION = 'VIEW_DOCUMENTACION',
@@ -45,6 +47,8 @@ export const navigation = [
     { title: 'Mis Ternas', pathTo: '/ternas', component: <DocentePerfil />, permission: Permissions.VIEW_MIS_TERNAS },
 
     { title: 'Carga Asignada', pathTo: '/cargaAsignada', component: <CargaDocente />, permission: Permissions.VIEW_CARGA_ASIGNADA },
+
+    { title: 'Mi Horario Personalizado', pathTo: '/miHorario', component: <MiHorario />, permission: Permissions.VIEW_MI_HORARIO },
 
     { title: 'Mi Terna', pathTo: '/terna', component: <TernaAlumno />, permission: Permissions.VIEW_MI_TERNA },
 
