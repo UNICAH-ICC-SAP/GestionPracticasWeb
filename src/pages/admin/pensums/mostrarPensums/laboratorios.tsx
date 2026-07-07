@@ -549,7 +549,7 @@ export default function Laboratorios() {
                                         required
                                     >
                                         <option value="">Seleccione un docente</option>
-                                        {docentes?.map(docente => (
+                                        {docentes?.filter(docente => docente.facultadId === facultadSeleccionada).map(docente => (
                                             <option key={docente.docenteId} value={docente.docenteId}>
                                                 {docente.nombre}
                                             </option>
