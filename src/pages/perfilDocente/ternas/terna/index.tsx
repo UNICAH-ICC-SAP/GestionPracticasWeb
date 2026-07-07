@@ -123,6 +123,7 @@ export default function Docentes() {
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
             terna.rol === 'coordina' &&
+            (terna.rol === TernaRolDocente.COORDINA || terna.rol === 'Coordinador') &&
             terna.docenteId === userLogged.userId
         )
     );
@@ -130,7 +131,7 @@ export default function Docentes() {
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
-            !terna.rol &&
+            (terna.rol !== TernaRolDocente.COORDINA && terna.rol !== 'Coordinador') &&
             terna.docenteId === userLogged.userId
         )
     );
@@ -242,8 +243,7 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     }
     return <Modal isOpen={showModal} toggle={toggleModal} className="modal-size">
         <ModalHeader toggle={toggleModal}>
-            {`Docentes en la terna - Estado: ${selectedTernaStatus}`}
-        </ModalHeader>
+            {`Detalle de Defensa Programada - Estado: ${selectedTernaStatus}`}        </ModalHeader>
         <ModalBody className="modal-font-size">
             {selectedTernaDocentes.length > 0 ? (
                 selectedTernaDocentes.map((docente) => (
