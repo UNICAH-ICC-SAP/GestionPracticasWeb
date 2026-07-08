@@ -1,14 +1,12 @@
 import { CreateSelector } from "../../../storeConfig";
 import type { StoreState } from "@store/index";
-import type { StoreUser } from "./_namespace";
-
+import type { StoreUser, Type } from "./_namespace";
 import { NAME } from "./_namespace";
 
 export default function Selector(store: StoreState): StoreUser.State {
     return store[NAME];
 }
 
-/**Selector: get accountDetails data */
 Selector.ternaInfo = CreateSelector(Selector, (state) => state.ternaInfo);
 Selector.ternasInfo = CreateSelector(Selector, (state) => state.ternasInfo);
 Selector.getStep1 = CreateSelector(Selector, (state) => state.step1);
@@ -23,8 +21,4 @@ Selector.getSavedItem = CreateSelector(Selector, (state) => state.savedTernaInfo
 Selector.getSavedTernaState = CreateSelector(Selector, (state) => state.ternaCreatedState);
 Selector.getSavedDetailState = CreateSelector(Selector, (state) => state.ternaDetailCreateState);
 Selector.getUpdatedStatusResult = CreateSelector(Selector, (state) => state.updateStatus);
-
-
-/**Selector: fetching is loading */
-// Selector.fetching = CreateSelector(Selector, (state) => state.loading);
-
+Selector.getMonografiaCompleta = CreateSelector(Selector, (state): Type.MonografiaCompleta => state.monografiaCompleta);

@@ -6,7 +6,6 @@ import { isError } from "../../../Api/utilsError";
 import { getData, PatchData, Post } from "../../../utilities/Utilities";
 
 export default CreateFetchers(NAME, {
-    /**Fetcher: Get singleSelectAccount service */
     async getDetalleTernas(params: TypeUtilities) {
         const response = await getData(params);
         if (isError<TypeError.ModalError>(response?.error)) {
@@ -82,6 +81,21 @@ export default CreateFetchers(NAME, {
         return {
             updatedTernaState: true,
             error: response?.error,
+        };
+    },
+    async getMonografiaCompleta(params: TypeUtilities) {
+        const response = await getData(params);
+        if (isError<TypeError.ModalError>(response?.error)) {
+            return {
+                monografiaCompleta: null,
+                error: response?.error,
+                logged: false
+            };
+        }
+        return {
+            monografiaCompleta: response?.data,
+            error: response?.error,
+            logged: true
         };
     }
 });
