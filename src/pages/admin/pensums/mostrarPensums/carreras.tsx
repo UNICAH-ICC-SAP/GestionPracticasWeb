@@ -256,6 +256,7 @@ export default function Carreras() {
         }
 
         if (result?.payload?.error?.message) {
+            dispatch(ActionSecciones.setIsUpdate(false));
             Swal.fire({
                 icon: "error",
                 title: "Error de Colisión",
