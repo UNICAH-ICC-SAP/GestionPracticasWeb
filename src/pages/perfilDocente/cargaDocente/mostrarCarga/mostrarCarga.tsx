@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "@store/index";
 
-import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '@store/slices/secciones';
-import type { Type as TypeSecciones } from '@store/slices/secciones/_namespace';
 import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "@store/slices/periodo";
 import { Selector as SelectorUser } from "@store/slices/users"
+import { getData } from "@utilities/Utilities";
 
 import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
-import { Col, Container, Row, Card, CardHeader, CardBody, Spinner, Badge } from "reactstrap";
+import { Col, Container, Row, Card, CardHeader, CardBody, Spinner, Badge, Input, Label, Button } from "reactstrap";
+import Swal from "sweetalert2";
+import { PatchData } from "@utilities/Utilities";
 
 import { days } from "../../../../consts";
 
@@ -25,13 +26,17 @@ type SeccionDetail = {
     TipoClase?: number;
     facultadId?: string;
     id_bloque?: number;
+    id_detalle?: number;
+    observacion?: string;
 };
 
 export default function MostrarCarga() {
     const dispatch = useDispatch();
     const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
     const [cargandoDatos, setCargandoDatos] = useState(false);
-    const secciones = useSelector(SelectorSecciones.getSecciones);
+    const [guardandoObs, setGuardandoObs] = useState<Record<number, boolean>>({});
+    const [obsValues, setObsValues] = useState<Record<number, string>>({});
+    const [seccionesData, setSeccionesData] = useState<SeccionDetail[]>([]);
     const periodos = useSelector(SelectorPeriodos.getPeriodos);
     const userData = useSelector(SelectorUser.getUser);
 
@@ -48,40 +53,66 @@ export default function MostrarCarga() {
     }, [periodos, periodoSeleccionado])
 
     useEffect(() => {
-        if (periodoSeleccionado && userData?.userId) {
-            setCargandoDatos(true);
-            dispatch(FetcherSecciones.getSecciones({
-                url: `/secciones/getSections?id_periodo=${periodoSeleccionado}&docenteId=${userData.userId}`
-            })).finally(() => setCargandoDatos(false));
-        }
+        if (!periodoSeleccionado || !userData?.userId) return;
+
+        setCargandoDatos(true);
+        getData({
+            url: `/secciones/getSections?id_periodo=${periodoSeleccionado}&docenteId=${userData.userId}`
+        }).then(response => {
+            if (Array.isArray(response.data)) {
+                const mapped: SeccionDetail[] = [];
+                response.data.forEach((seccion: Record<string, unknown>) => {
+                    const ccb = seccion.ccb as Record<string, unknown> | undefined;
+                    const clase = ccb?.clase as Record<string, unknown> | undefined;
+                    if (clase) {
+                        mapped.push({
+                            nombre_clase: clase.nombre_clase as string,
+                            creditos: clase.creditos as number,
+                            seccion: seccion.seccion as string,
+                            hora_inicio: seccion.hora_inicio as string,
+                            hora_final: seccion.hora_final as string,
+                            dia_inicio: seccion.dia_inicio as number,
+                            dia_final: seccion.dia_final as number,
+                            TipoClase: clase.TipoClase as number,
+                            facultadId: ccb.facultadId as string,
+                            id_bloque: ccb.id_bloque as number,
+                            id_detalle: seccion.id_detalle as number,
+                            observacion: seccion.observacion as string
+                        });
+                    }
+                });
+                setSeccionesData(mapped);
+            }
+        }).finally(() => setCargandoDatos(false));
     }, [periodoSeleccionado, userData?.userId, dispatch]);
 
     const getDayName = (day: number): string => {
         return days[day] || '';
     };
 
-    const seccionesPorClase = secciones?.reduce<Record<string, SeccionDetail>>((acc, seccion: TypeSecciones.SeccionInfo) => {
-        const ccb = seccion.ccb;
-        const clase = ccb?.clase;
-        if (clase) {
-            const key = `${clase.id_clase}_${seccion.seccion}`;
-            acc[key] = {
-                nombre_clase: clase.nombre_clase,
-                creditos: clase.creditos,
-                seccion: seccion.seccion,
-                hora_inicio: seccion.hora_inicio,
-                hora_final: seccion.hora_final,
-                dia_inicio: seccion.dia_inicio,
-                dia_final: seccion.dia_final,
-                TipoClase: clase.TipoClase,
-                facultadId: ccb.facultadId,
-                id_bloque: ccb.id_bloque
-            };
+    const handleGuardarObservacion = useCallback(async (id_detalle: number, observacion: string) => {
+        setGuardandoObs(prev => ({ ...prev, [id_detalle]: true }));
+        try {
+            const response = await PatchData({
+                url: "/secciones/updateObservacion",
+                data: { id_detalle, observacion }
+            });
+            if (response.error.code !== 0) {
+                Swal.fire("Error", response.error.message || "No se pudo guardar la observación.", "error");
+            } else {
+                setSeccionesData(prev => prev.map(s =>
+                    s.id_detalle === id_detalle ? { ...s, observacion } : s
+                ));
+                Swal.fire("Éxito", "Observación guardada correctamente.", "success");
+            }
+        } catch {
+            Swal.fire("Error", "No se pudo guardar la observación.", "error");
+        } finally {
+            setGuardandoObs(prev => ({ ...prev, [id_detalle]: false }));
         }
-        return acc;
-    }, {});
+    }, []);
 
-    const totalClases = seccionesPorClase ? Object.keys(seccionesPorClase).length : 0;
+    const totalClases = seccionesData.length;
     const periodoActivo = periodos?.find(p => p.id_periodo === periodoSeleccionado);
 
     return (
@@ -103,12 +134,12 @@ export default function MostrarCarga() {
                         Cargando...
                     </Spinner>
                 </div>
-            ) : isEmpty(seccionesPorClase) ? (
+            ) : isEmpty(seccionesData) ? (
                 <NotFound />
             ) : (
                 <Row>
-                    {Object.entries(seccionesPorClase).map(([key, clase]) =>
-                        <Col key={key} md={4} className="mb-4">
+                    {seccionesData.map((clase) =>
+                        <Col key={`${clase.nombre_clase}_${clase.seccion}`} md={4} className="mb-4">
                             <Card>
                                 <CardHeader className="d-flex flex-column custom-card-header">
                                     <h5 className="text-center">{clase.nombre_clase}</h5>
@@ -130,6 +161,31 @@ export default function MostrarCarga() {
                                         </p>
                                     )}
                                     <Badge color="primary">Sección: {clase.seccion}</Badge>
+                                    {clase.id_detalle && (
+                                        <div className="mt-3">
+                                            <Label for={`obs-${clase.id_detalle}`} className="mb-1">
+                                                <small><strong>Observación / Caso especial:</strong></small>
+                                            </Label>
+                                            <Input
+                                                id={`obs-${clase.id_detalle}`}
+                                                type="textarea"
+                                                rows={2}
+                                                value={obsValues[clase.id_detalle] ?? clase.observacion ?? ''}
+                                                placeholder="Restricciones o casos especiales..."
+                                                onChange={(e) => setObsValues(prev => ({ ...prev, [clase.id_detalle!]: e.target.value }))}
+                                                disabled={guardandoObs[clase.id_detalle]}
+                                            />
+                                            <Button
+                                                color="primary"
+                                                size="sm"
+                                                className="mt-2"
+                                                disabled={guardandoObs[clase.id_detalle]}
+                                                onClick={() => handleGuardarObservacion(clase.id_detalle!, obsValues[clase.id_detalle] ?? '')}
+                                            >
+                                                {guardandoObs[clase.id_detalle] ? <Spinner size="sm">Guardando...</Spinner> : "Guardar Observación"}
+                                            </Button>
+                                        </div>
+                                    )}
                                 </CardBody>
                             </Card>
                         </Col>
