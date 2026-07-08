@@ -11,6 +11,7 @@ export declare namespace Type {
     franja_inicio: string;
     franja_fin: string;
     disponible: boolean;
+    tipo?: string;
   };
 }
 

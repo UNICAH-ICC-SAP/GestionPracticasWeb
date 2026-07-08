@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "@store/index";
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from "@store/slices/docentes";
-import { Fetcher as FetcherHorario, Selector as SelectorHorario } from "@store/slices/horario";
 import { Selector as SelectorUser } from "@store/slices/users";
-import type { Type } from "@store/slices/horario/_namespace";
+import { getData, Post } from "@utilities/Utilities";
 import { Container, FormGroup, Label, Input, Button, Spinner } from "reactstrap";
 import Swal from "sweetalert2";
-import { TypeUtilities } from "@utilities/TypeUtilities";
 import "./horarioGrid.css";
 
 const FRANJAS = [
@@ -38,21 +36,20 @@ const DIAS = [
 
 interface HorarioGridProps {
   modoAdmin?: boolean;
+  tipo?: string;
 }
 
-export default function HorarioGrid({ modoAdmin = false }: HorarioGridProps) {
+export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: HorarioGridProps) {
   const dispatch = useDispatch();
   const [docenteSeleccionado, setDocenteSeleccionado] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [guardando, setGuardando] = useState(false);
+  const [grid, setGrid] = useState<Record<string, boolean>>({});
 
   const docentes = useSelector(SelectorDocentes.getDocentes);
-  const disponibilidades = useSelector(SelectorHorario.getDisponibilidades);
   const userData = useSelector(SelectorUser.getUser);
 
   const docenteId = modoAdmin ? docenteSeleccionado : userData?.userId;
-
-  const [grid, setGrid] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (modoAdmin && docentes.length === 0) {
@@ -67,44 +64,37 @@ export default function HorarioGrid({ modoAdmin = false }: HorarioGridProps) {
   }, [docentes, docenteSeleccionado, modoAdmin]);
 
   useEffect(() => {
-    if (docenteId) {
-      setIsLoading(true);
-      dispatch(FetcherHorario.getHorario({
-        url: `/horario/get?docenteId=${docenteId}&_t=${Date.now()}`
-      })).finally(() => setIsLoading(false));
-    }
-  }, [docenteId, dispatch]);
+    if (!docenteId) return;
 
-  useEffect(() => {
-    const newGrid: Record<string, boolean> = {};
-    FRANJAS.forEach(franja => {
-      DIAS.forEach(dia => {
-        const key = `${dia.id}_${franja.inicio}_${franja.fin}`;
-        newGrid[key] = false;
-      });
-    });
+    setIsLoading(true);
+    getData({ url: `/horario/get?docenteId=${docenteId}&tipo=${tipo}&_t=${Date.now()}` })
+      .then(response => {
+        const newGrid: Record<string, boolean> = {};
+        FRANJAS.forEach(franja => {
+          DIAS.forEach(dia => {
+            newGrid[`${dia.id}_${franja.inicio}_${franja.fin}`] = false;
+          });
+        });
 
-    if (Array.isArray(disponibilidades)) {
-      disponibilidades.forEach((disp: Type.HorarioDisponibilidad) => {
-        const inicio = disp.franja_inicio?.substring(0, 5);
-        const fin = disp.franja_fin?.substring(0, 5);
-        const franja = FRANJAS.find(f => f.inicio === inicio && f.fin === fin);
-        if (franja) {
-          const key = `${disp.dia}_${franja.inicio}_${franja.fin}`;
-          newGrid[key] = true;
+        if (Array.isArray(response.data)) {
+          response.data.forEach((disp: { dia: number; franja_inicio: string; franja_fin: string }) => {
+            const inicio = disp.franja_inicio?.substring(0, 5);
+            const fin = disp.franja_fin?.substring(0, 5);
+            const franja = FRANJAS.find(f => f.inicio === inicio && f.fin === fin);
+            if (franja) {
+              newGrid[`${disp.dia}_${franja.inicio}_${franja.fin}`] = true;
+            }
+          });
         }
-      });
-    }
 
-    setGrid(newGrid);
-  }, [disponibilidades]);
+        setGrid(newGrid);
+      })
+      .finally(() => setIsLoading(false));
+  }, [docenteId, tipo]);
 
   const toggleCelda = useCallback((key: string) => {
     if (modoAdmin) return;
-    setGrid(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
+    setGrid(prev => ({ ...prev, [key]: !prev[key] }));
   }, [modoAdmin]);
 
   const handleGuardar = async () => {
@@ -115,29 +105,46 @@ export default function HorarioGrid({ modoAdmin = false }: HorarioGridProps) {
 
     setGuardando(true);
 
-    const disponibilidadesAGuardar: Type.HorarioDisponibilidad[] = [];
-    for (const key of Object.keys(grid)) {
+    const disponibilidadesAGuardar = Object.keys(grid).map(key => {
       const partes = key.split("_");
-      const dia = parseInt(partes[0]);
-      const inicio = partes[1];
-      const fin = partes[2];
-      disponibilidadesAGuardar.push({
+      return {
         docenteId,
-        dia,
-        franja_inicio: inicio,
-        franja_fin: fin,
+        dia: parseInt(partes[0]),
+        franja_inicio: partes[1],
+        franja_fin: partes[2],
         disponible: grid[key]
-      });
-    }
-
-    const utils: TypeUtilities = {
-      url: "/horario/upsert",
-      data: { docenteId, disponibilidades: disponibilidadesAGuardar }
-    };
+      };
+    });
 
     try {
-      await dispatch(FetcherHorario.saveHorario(utils));
-      await dispatch(FetcherHorario.getHorario({ url: `/horario/get?docenteId=${docenteId}&_t=${Date.now()}` }));
+      await Post({
+        url: "/horario/upsert",
+        data: { docenteId, disponibilidades: disponibilidadesAGuardar, tipo }
+      });
+
+      const response = await getData({
+        url: `/horario/get?docenteId=${docenteId}&tipo=${tipo}&_t=${Date.now()}`
+      });
+
+      const newGrid: Record<string, boolean> = {};
+      FRANJAS.forEach(franja => {
+        DIAS.forEach(dia => {
+          newGrid[`${dia.id}_${franja.inicio}_${franja.fin}`] = false;
+        });
+      });
+
+      if (Array.isArray(response.data)) {
+        response.data.forEach((disp: { dia: number; franja_inicio: string; franja_fin: string }) => {
+          const inicio = disp.franja_inicio?.substring(0, 5);
+          const fin = disp.franja_fin?.substring(0, 5);
+          const franja = FRANJAS.find(f => f.inicio === inicio && f.fin === fin);
+          if (franja) {
+            newGrid[`${disp.dia}_${franja.inicio}_${franja.fin}`] = true;
+          }
+        });
+      }
+
+      setGrid(newGrid);
       Swal.fire("Éxito", "Tu horario de disponibilidad ha sido guardado correctamente.", "success");
     } catch {
       Swal.fire("Error", "Hubo un error al guardar.", "error");
@@ -150,11 +157,13 @@ export default function HorarioGrid({ modoAdmin = false }: HorarioGridProps) {
     setDocenteSeleccionado(e.target.value);
   };
 
+  const tituloPorTipo = tipo === "clase" ? "Horario de Clase" : "Horario para Defensa";
+
   return (
     <Container fluid>
       <div className="horario-grid-wrapper">
         <div className="horario-grid-header">
-          <h4>{modoAdmin ? "Ver Horario de Disponibilidad del Docente" : "Mi Horario de Disponibilidad"}</h4>
+          <h4>{modoAdmin ? `Ver ${tituloPorTipo} del Docente` : `Mi ${tituloPorTipo}`}</h4>
         </div>
 
         {modoAdmin && (
