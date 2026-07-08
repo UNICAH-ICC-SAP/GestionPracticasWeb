@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from "@store/index";
 
 import { Fetcher as FetcherPensum, Selector as SelectorPensum } from "@store/slices/pensums";
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '@store/slices/docentes';
-import { Fetcher as FetcherSecciones, Selector as SelectorSecciones } from '@store/slices/secciones';
-import type { Type as TypeSecciones } from '@store/slices/secciones/_namespace';
 import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "@store/slices/periodo";
+import { getData } from "@utilities/Utilities";
 
 import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
@@ -23,6 +22,8 @@ type SeccionDetail = {
     dia_final: number;
     facultadId?: string;
     id_bloque?: number;
+    id_detalle?: number;
+    observacion?: string;
 };
 
 export default function CargasDocente() {
@@ -30,9 +31,9 @@ export default function CargasDocente() {
     const [docenteSeleccionado, setDocenteSeleccionado] = useState<string>('');
     const [periodoSeleccionado, setPeriodoSeleccionado] = useState<string>('');
     const [cargandoDatos, setCargandoDatos] = useState(false);
+    const [seccionesData, setSeccionesData] = useState<SeccionDetail[]>([]);
     const clases = useSelector(SelectorPensum.getClases);
     const docentes = useSelector(SelectorDocentes.getDocentes);
-    const secciones = useSelector(SelectorSecciones.getSecciones);
     const periodos = useSelector(SelectorPeriodos.getPeriodos);
 
     useEffect(() => {
@@ -61,12 +62,36 @@ export default function CargasDocente() {
     }, [dispatch, clases, docentes])
 
     useEffect(() => {
-        if (docenteSeleccionado && periodoSeleccionado) {
-            setCargandoDatos(true);
-            dispatch(FetcherSecciones.getSecciones({
-                url: `/secciones/getSections?id_periodo=${periodoSeleccionado}&docenteId=${docenteSeleccionado}`
-            })).finally(() => setCargandoDatos(false));
-        }
+        if (!docenteSeleccionado || !periodoSeleccionado) return;
+
+        setCargandoDatos(true);
+        getData({
+            url: `/secciones/getSections?id_periodo=${periodoSeleccionado}&docenteId=${docenteSeleccionado}`
+        }).then(response => {
+            if (Array.isArray(response.data)) {
+                const mapped: SeccionDetail[] = [];
+                response.data.forEach((seccion: Record<string, unknown>) => {
+                    const ccb = seccion.ccb as Record<string, unknown> | undefined;
+                    const clase = ccb?.clase as Record<string, unknown> | undefined;
+                    if (clase) {
+                        mapped.push({
+                            nombre_clase: clase.nombre_clase as string,
+                            creditos: clase.creditos as number,
+                            seccion: seccion.seccion as string,
+                            hora_inicio: seccion.hora_inicio as string,
+                            hora_final: seccion.hora_final as string,
+                            dia_inicio: seccion.dia_inicio as number,
+                            dia_final: seccion.dia_final as number,
+                            facultadId: ccb.facultadId as string,
+                            id_bloque: ccb.id_bloque as number,
+                            id_detalle: seccion.id_detalle as number,
+                            observacion: seccion.observacion as string
+                        });
+                    }
+                });
+                setSeccionesData(mapped);
+            }
+        }).finally(() => setCargandoDatos(false));
     }, [docenteSeleccionado, periodoSeleccionado, dispatch]);
 
     const handleDocenteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,31 +102,11 @@ export default function CargasDocente() {
         return days[day] || '';
     };
 
-    const seccionesPorClase = secciones?.reduce<Record<string, SeccionDetail>>((acc, seccion: TypeSecciones.SeccionInfo) => {
-        const ccb = seccion.ccb;
-        const clase = ccb?.clase;
-        if (clase) {
-            const key = `${clase.id_clase}_${seccion.seccion}`;
-            acc[key] = {
-                nombre_clase: clase.nombre_clase,
-                creditos: clase.creditos,
-                seccion: seccion.seccion,
-                hora_inicio: seccion.hora_inicio,
-                hora_final: seccion.hora_final,
-                dia_inicio: seccion.dia_inicio,
-                dia_final: seccion.dia_final,
-                facultadId: ccb.facultadId,
-                id_bloque: ccb.id_bloque
-            };
-        }
-        return acc;
-    }, {});
-
     const handleChangePeriodo = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPeriodoSeleccionado(e.target.value);
     };
 
-    const totalClases = seccionesPorClase ? Object.keys(seccionesPorClase).length : 0;
+    const totalClases = seccionesData.length;
     const periodoActivo = periodos?.find(p => p.id_periodo === periodoSeleccionado);
 
     return (
@@ -165,12 +170,12 @@ export default function CargasDocente() {
                         Cargando...
                     </Spinner>
                 </div>
-            ) : isEmpty(seccionesPorClase) ? (
+            ) : isEmpty(seccionesData) ? (
                 <NotFound />
             ) : (
                 <Row>
-                    {Object.entries(seccionesPorClase).map(([key, clase]) =>
-                        <Col key={key} md={4} className="mb-4">
+                    {seccionesData.map((clase) =>
+                        <Col key={`${clase.nombre_clase}_${clase.seccion}`} md={4} className="mb-4">
                             <Card>
                                 <CardHeader className="d-flex justify-content-between align-items-center">
                                     <div>
@@ -190,6 +195,22 @@ export default function CargasDocente() {
                                         <p className="mb-0">
                                             <small className="text-muted">Facultad: {clase.facultadId} | Bloque: {clase.id_bloque}</small>
                                         </p>
+                                    )}
+                                    {clase.id_detalle && (
+                                        <div className="mt-3">
+                                            <Label for={`obs-${clase.id_detalle}`} className="mb-1">
+                                                <small><strong>Observación / Caso especial:</strong></small>
+                                            </Label>
+                                            <Input
+                                                id={`obs-${clase.id_detalle}`}
+                                                type="textarea"
+                                                rows={2}
+                                                defaultValue={clase.observacion || ''}
+                                                placeholder="Sin observaciones"
+                                                readOnly
+                                                disabled
+                                            />
+                                        </div>
                                     )}
                                 </CardBody>
                             </Card>

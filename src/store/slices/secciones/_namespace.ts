@@ -30,6 +30,7 @@ export declare namespace Type {
     dia_final: number;
     hora_final: string;
     horario_especial?: boolean;
+    observacion?: string;
     ccb?: CcbData;
   };
 }
