@@ -2,8 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader, Col, Row, Spinner } from "reactstrap";
 import { axios, config } from "../../../utilities/axiosConfig";
 
+type ResumenReportes = {
+  docentes: number;
+  clases: number;
+  ternas: number;
+  secciones: number;
+};
+
 export default function Reportes() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ResumenReportes | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

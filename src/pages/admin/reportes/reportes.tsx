@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Card, CardBody, CardTitle, Col, Container, Input, Label, Row } from "reactstrap";
-import NotFound from "../../../components/shared/notFound";
 import { axios, config } from "../../../utilities/axiosConfig";
 
 type Reporte = {
