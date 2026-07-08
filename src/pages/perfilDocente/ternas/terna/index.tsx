@@ -15,6 +15,7 @@ import { Action as ActionFiles } from '@store/slices/documentManager';
 import { isEmpty } from "lodash";
 import { StatusTerna, TernaRolDocente } from "@root/abstracts";
 import Documentacion from "./documentacion";
+import VerMonografia from "./VerMonografia";
 import Swal from "sweetalert2";
 
 export default function Docentes() {
@@ -26,6 +27,8 @@ export default function Docentes() {
     const [selectedTernaStatus, setSelectedTernaStatus] = useState<string | null>(null);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
     const [showDocumentacion, setShowDocumentacion] = useState(false);
+    const [showMonografia, setShowMonografia] = useState(false);
+    const [ternaIdMonografia, setTernaIdMonografia] = useState<number | null>(null);
     const [tabSel, setTabSel] = useState(0);
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const userLogged = useSelector(UserSelector.getUser);
@@ -146,6 +149,14 @@ export default function Docentes() {
             headers: ['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']
         },
     ]
+
+    if (showMonografia && ternaIdMonografia !== null) {
+        return <VerMonografia ternaId={ternaIdMonografia} onBack={() => {
+            setShowMonografia(false);
+            setTernaIdMonografia(null);
+        }} />;
+    }
+
     return (showDocumentacion === false ? <Container className='align-self-center w-100'>
         <Nav className="mt-5" justified tabs>
             {tabs && tabs.map((item, index) => {
@@ -186,6 +197,16 @@ export default function Docentes() {
                                             }
                                             setShowDocumentacion(true);
                                         }}>Documentación</Button>
+                                        <Button
+                                            color="warning"
+                                            outline
+                                            onClick={() => {
+                                                setTernaIdMonografia(alumno.ternaId);
+                                                setShowMonografia(true);
+                                            }}
+                                        >
+                                            Ver Monografía
+                                        </Button>
                                         <WhatsappButton telefono={alumno.telefono} />
                                     </ButtonGroup>
                                 ),
@@ -243,40 +264,28 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         dispatch(FetcherTernas.updateTernaState(utils));
         setItemSelected("Seleccione el estado");
     }
-    const ejecutarCancelacionAPI = async () => {
-    try {
-        const response = await fetch('/api/ternas/cancelarTerna', { // Ajusta la ruta según tu configuración en app.js
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idTerna: idTerna })
-        });
 
-        if (response.ok) {
-            Swal.fire("Cancelado", "La defensa ha sido cancelada.", "success");
-            toggleModal(); // Cierra el modal tras cancelar
-            // Opcional: Despacha un action para refrescar la lista de ternas
-        } else {
-            throw new Error("Error en el servidor");
-        }
-    } catch (error) {
-        Swal.fire("Error", "No se pudo cancelar la defensa.", "error");
-    }
-};
     const handleCancelarDefensa = () => {
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Esta acción cancelará la defensa y no se puede deshacer.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, cancelar defensa'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            ejecutarCancelacionAPI();
-        }
-    });
-};
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción cancelará la defensa y no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cancelar defensa'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const utils: TypeUtilities = {
+                    url: "/ternas/cancelarTerna",
+                    data: { idTerna }
+                };
+                dispatch(FetcherTernas.updateTernaState(utils));
+                Swal.fire("Cancelado", "La defensa ha sido cancelada.", "success");
+                toggleModal();
+            }
+        });
+    };
 
     const handleAgregarComentario = (e: React.FormEvent) => {
         e.preventDefault();
@@ -336,8 +345,8 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         </ModalBody>
        {selectedTernaDocentes.length > 0 &&
             <ModalFooter className="d-flex justify-content-center bg-light">
-                <Button 
-                    color="danger" 
+                <Button
+                    color="danger"
                     onClick={handleCancelarDefensa}
                     className="me-2"
                 >
