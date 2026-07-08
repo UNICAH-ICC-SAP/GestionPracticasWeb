@@ -224,6 +224,8 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const [newStatus, setNewStatus] = useState(undefined);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
+    const [comentarioTexto, setComentarioTexto] = useState("");
+    const [comentarios, setComentarios] = useState<any[]>([]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {
@@ -241,9 +243,23 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         dispatch(FetcherTernas.updateTernaState(utils));
         setItemSelected("Seleccione el estado");
     }
-    return <Modal isOpen={showModal} toggle={toggleModal} className="modal-size">
+
+    const handleAgregarComentario = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!comentarioTexto.trim()) return;
+        const nuevoComentario = {
+            autor: "Tú (Docente)",
+            fecha: new Date().toISOString(),
+            texto: comentarioTexto
+        };
+        setComentarios([...comentarios, nuevoComentario]);
+        setComentarioTexto('');
+    };
+
+    return <Modal isOpen={showModal} toggle={toggleModal} className="modal-lg">
         <ModalHeader toggle={toggleModal}>
-            {`Detalle de Defensa Programada - Estado: ${selectedTernaStatus}`}        </ModalHeader>
+            {`Detalle de Defensa Programada - Estado: ${selectedTernaStatus}`}
+        </ModalHeader>
         <ModalBody className="modal-font-size">
             {selectedTernaDocentes.length > 0 ? (
                 selectedTernaDocentes.map((docente) => (
@@ -252,9 +268,40 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
             ) : (
                 <NotFound />
             )}
+
+            <div className="mt-4 pt-3 border-top text-start">
+                <h6 className="text-primary mb-3">Comentarios y Observaciones</h6>
+                <div className="mb-3 p-2 border rounded bg-light" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                    {comentarios.length === 0 ? (
+                        <p className="text-muted small italic mb-0 text-center">No hay observaciones registradas todavía.</p>
+                    ) : (
+                        comentarios.map((com, idx) => (
+                            <div key={idx} className="p-2 mb-2 bg-white rounded border-start border-primary border-3 shadow-sm">
+                                <div className="d-flex justify-content-between mb-1">
+                                    <strong className="small text-dark">{com.autor}</strong>
+                                    <span className="text-muted" style={{fontSize: '0.75rem'}}>{new Date(com.fecha).toLocaleDateString()}</span>
+                                </div>
+                                <p className="mb-0 small text-secondary">{com.texto}</p>
+                            </div>
+                        ))
+                    )}
+                </div>
+                <form onSubmit={handleAgregarComentario} className="d-flex gap-2">
+                    <input 
+                        type="text" 
+                        className="form-control form-control-sm" 
+                        placeholder="Escriba una observación..." 
+                        value={comentarioTexto}
+                        onChange={(e) => setComentarioTexto(e.target.value)}
+                    />
+                    <Button color="primary" size="sm" type="submit" className="px-3">
+                        Comentar
+                    </Button>
+                </form>
+            </div>
         </ModalBody>
         {selectedTernaDocentes.length > 0 &&
-            <ModalFooter className="d-flex justify-content-center">
+            <ModalFooter className="d-flex justify-content-center bg-light">
                 <Dropdown color="primary" isOpen={dropdownOpen} toggle={toggle}>
                     <DropdownToggle caret>{itemSelected}</DropdownToggle>
                     <DropdownMenu>
