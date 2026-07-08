@@ -85,25 +85,7 @@ export default function MostrarCarga() {
                 <NotFound />
             ) : (
                 <Row>
-                    {Object.entries(seccionesPorClase).map(([id_clase, clase]) =>
-                        <Col key={id_clase} md={4} className="mb-4">
-                            <Card>
-                                <CardHeader className="d-flex flex-column custom-card-header">
-                                    <h5 className="text-center">{clase.nombre_clase}</h5>
-                                    <h6>Créditos: {clase.creditos}</h6>
-                                </CardHeader>
-                                <CardBody className="custom-card-body">
-                                    <p className="text-start mb-0">
-                                        <strong>Días:</strong> {getDayName(clase.dia_inicio)} - {getDayName(clase.dia_final)}
-                                    </p>
-                                    <p className="text-start mb-1">
-                                        <strong>Horario:</strong> {clase.hora_inicio} - {clase.hora_final}
-                                    </p>
-                                    <Badge color="primary">Sección: {clase.seccion}</Badge>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    )}
+                   
                 </Row>
             )}
         </Container>
