@@ -1,3 +1,4 @@
+import Reportes from "@pages/admin/reportes";
 import React from "react";
 import CrearTernas from "@pages/admin/crearTernas";
 import CreacionDocente from "@pages/admin/docentePage/crearDocente/creacionDocente";
@@ -16,6 +17,7 @@ import CrearPlantilla from "@pages/admin/configEmail/crearPlantilla/CrearPlantil
 import AccionesPlantillas from "@pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
 
 export const adminMenu: Array<NavigationItem> = [
+
   {
     paneId: "CrearTernas",
     title: "Crear Ternas",
@@ -27,6 +29,12 @@ export const adminMenu: Array<NavigationItem> = [
     title: "Ver Ternas",
     pathTo: "/ternas/modificarTernas",
     component: <VerTernas />,
+  },
+   {//para mostrar la funcion ques e me pidio que agregara "Reportes"//
+    paneId: "reportes",
+    title: "Reportes",
+    pathTo: "/reportes",
+    component: <Reportes />,
   },
   {
     paneId: "ModificarAlumnos",
