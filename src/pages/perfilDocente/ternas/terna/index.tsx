@@ -243,6 +243,40 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         dispatch(FetcherTernas.updateTernaState(utils));
         setItemSelected("Seleccione el estado");
     }
+    const ejecutarCancelacionAPI = async () => {
+    try {
+        const response = await fetch('/api/ternas/cancelarTerna', { // Ajusta la ruta según tu configuración en app.js
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idTerna: idTerna })
+        });
+
+        if (response.ok) {
+            Swal.fire("Cancelado", "La defensa ha sido cancelada.", "success");
+            toggleModal(); // Cierra el modal tras cancelar
+            // Opcional: Despacha un action para refrescar la lista de ternas
+        } else {
+            throw new Error("Error en el servidor");
+        }
+    } catch (error) {
+        Swal.fire("Error", "No se pudo cancelar la defensa.", "error");
+    }
+};
+    const handleCancelarDefensa = () => {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción cancelará la defensa y no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, cancelar defensa'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            ejecutarCancelacionAPI();
+        }
+    });
+};
 
     const handleAgregarComentario = (e: React.FormEvent) => {
         e.preventDefault();
@@ -279,7 +313,7 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                             <div key={idx} className="p-2 mb-2 bg-white rounded border-start border-primary border-3 shadow-sm">
                                 <div className="d-flex justify-content-between mb-1">
                                     <strong className="small text-dark">{com.autor}</strong>
-                                    <span className="text-muted" style={{fontSize: '0.75rem'}}>{new Date(com.fecha).toLocaleDateString()}</span>
+                                    <span className="text-muted" style={{ fontSize: '0.75rem' }}>{new Date(com.fecha).toLocaleDateString()}</span>
                                 </div>
                                 <p className="mb-0 small text-secondary">{com.texto}</p>
                             </div>
@@ -287,10 +321,10 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                     )}
                 </div>
                 <form onSubmit={handleAgregarComentario} className="d-flex gap-2">
-                    <input 
-                        type="text" 
-                        className="form-control form-control-sm" 
-                        placeholder="Escriba una observación..." 
+                    <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Escriba una observación..."
                         value={comentarioTexto}
                         onChange={(e) => setComentarioTexto(e.target.value)}
                     />
@@ -300,8 +334,16 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                 </form>
             </div>
         </ModalBody>
-        {selectedTernaDocentes.length > 0 &&
+       {selectedTernaDocentes.length > 0 &&
             <ModalFooter className="d-flex justify-content-center bg-light">
+                <Button 
+                    color="danger" 
+                    onClick={handleCancelarDefensa}
+                    className="me-2"
+                >
+                    Cancelar Defensa
+                </Button>
+
                 <Dropdown color="primary" isOpen={dropdownOpen} toggle={toggle}>
                     <DropdownToggle caret>{itemSelected}</DropdownToggle>
                     <DropdownMenu>
@@ -312,7 +354,8 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                         })}
                     </DropdownMenu>
                 </Dropdown>
-                <ButtonPrimary onClick={handleUpdateTerna}>
+
+                <ButtonPrimary onClick={handleUpdateTerna} className="ms-2">
                     Actualizar Terna
                 </ButtonPrimary>
             </ModalFooter>
