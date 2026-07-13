@@ -21,8 +21,13 @@ type TernaDetail = {
 export default function Docetes() {
     const dispatch = useDispatch();
     const [modalOpen, setModalOpen] = useState(false);
+    interface Comentario {
+        autor: string;
+        fecha: string;
+        texto: string;
+    }
     const [comentarioTexto, setComentarioTexto] = useState("");
-    const [comentarios, setComentarios] = useState<any[]>([]);
+    const [comentarios, setComentarios] = useState<Comentario[]>([]);
     const [selectedDocente, setSelectedDocente] = useState<TernaDetail | null>(null);
     const [detalle, setDetalle] = useState<Array<TernaDetail>>([])
     const utils: TypeUtilities = {

@@ -245,8 +245,13 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const [newStatus, setNewStatus] = useState(undefined);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
+    interface Comentario {
+        autor: string;
+        fecha: string;
+        texto: string;
+    }
     const [comentarioTexto, setComentarioTexto] = useState("");
-    const [comentarios, setComentarios] = useState<any[]>([]);
+    const [comentarios, setComentarios] = useState<Comentario[]>([]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {
