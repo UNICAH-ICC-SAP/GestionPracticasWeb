@@ -15,7 +15,6 @@ import { Action as ActionFiles } from '@store/slices/documentManager';
 import { isEmpty } from "lodash";
 import { StatusTerna, TernaRolDocente } from "@root/abstracts";
 import Documentacion from "./documentacion";
-import VerMonografia from "./VerMonografia";
 import Swal from "sweetalert2";
 
 export default function Docentes() {
@@ -27,8 +26,6 @@ export default function Docentes() {
     const [selectedTernaStatus, setSelectedTernaStatus] = useState<string | null>(null);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
     const [showDocumentacion, setShowDocumentacion] = useState(false);
-    const [showMonografia, setShowMonografia] = useState(false);
-    const [ternaIdMonografia, setTernaIdMonografia] = useState<number | null>(null);
     const [tabSel, setTabSel] = useState(0);
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const userLogged = useSelector(UserSelector.getUser);
@@ -150,13 +147,6 @@ export default function Docentes() {
         },
     ]
 
-    if (showMonografia && ternaIdMonografia !== null) {
-        return <VerMonografia ternaId={ternaIdMonografia} onBack={() => {
-            setShowMonografia(false);
-            setTernaIdMonografia(null);
-        }} />;
-    }
-
     return (showDocumentacion === false ? <Container className='align-self-center w-100'>
         <Nav className="mt-5" justified tabs>
             {tabs && tabs.map((item, index) => {
@@ -197,16 +187,6 @@ export default function Docentes() {
                                             }
                                             setShowDocumentacion(true);
                                         }}>Documentación</Button>
-                                        <Button
-                                            color="warning"
-                                            outline
-                                            onClick={() => {
-                                                setTernaIdMonografia(alumno.ternaId);
-                                                setShowMonografia(true);
-                                            }}
-                                        >
-                                            Ver Monografía
-                                        </Button>
                                         <WhatsappButton telefono={alumno.telefono} />
                                     </ButtonGroup>
                                 ),
