@@ -62,6 +62,12 @@ function getDiaSemana(anio: number, mes: number, dia: number): number {
   return d === 0 ? 7 : d;
 }
 
+function formatoFecha(anio: number, mes: number, dia: number): string {
+  const m = String(mes + 1).padStart(2, "0");
+  const d = String(dia).padStart(2, "0");
+  return `${anio}-${m}-${d}`;
+}
+
 interface HorarioGridProps {
   modoAdmin?: boolean;
   tipo?: string;
@@ -75,8 +81,7 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
   const [isLoading, setIsLoading] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [grid, setGrid] = useState<Record<string, boolean>>({});
-  const [diaSeleccionado, setDiaSeleccionado] = useState<number | null>(null);
-  const [fechaSeleccionada, setFechaSeleccionada] = useState<{ anio: number; mes: number; dia: number } | null>(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const docentes = useSelector(SelectorDocentes.getDocentes);
@@ -106,19 +111,14 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
     getData({ url: `/horario/get?docenteId=${docenteId}&tipo=${tipo}&_t=${Date.now()}` })
       .then(response => {
         const newGrid: Record<string, boolean> = {};
-        FRANJAS.forEach(franja => {
-          DIAS.forEach(dia => {
-            newGrid[`${dia.id}_${franja.inicio}_${franja.fin}`] = false;
-          });
-        });
 
         if (Array.isArray(response.data)) {
-          response.data.forEach((disp: { dia: number; franja_inicio: string; franja_fin: string }) => {
+          response.data.forEach((disp: { fecha?: string; dia?: number; franja_inicio: string; franja_fin: string }) => {
             const inicio = disp.franja_inicio?.substring(0, 5);
             const fin = disp.franja_fin?.substring(0, 5);
             const franja = FRANJAS.find(f => f.inicio === inicio && f.fin === fin);
-            if (franja) {
-              newGrid[`${disp.dia}_${franja.inicio}_${franja.fin}`] = true;
+            if (franja && disp.fecha) {
+              newGrid[`${disp.fecha}_${franja.inicio}_${franja.fin}`] = true;
             }
           });
         }
@@ -138,12 +138,12 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const diasConDisponibilidad = useMemo(() => {
-    const conjunto = new Set<number>();
+  const fechasConDisponibilidad = useMemo(() => {
+    const conjunto = new Set<string>();
     Object.keys(grid).forEach(key => {
       if (grid[key]) {
-        const diaId = parseInt(key.split("_")[0]);
-        conjunto.add(diaId);
+        const fecha = key.split("_")[0];
+        conjunto.add(fecha);
       }
     });
     return conjunto;
@@ -174,7 +174,8 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
       const partes = key.split("_");
       return {
         docenteId,
-        dia: parseInt(partes[0]),
+        fecha: partes[0],
+        dia: new Date(partes[0]).getDay(),
         franja_inicio: partes[1],
         franja_fin: partes[2],
         disponible: grid[key]
@@ -192,19 +193,14 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
       });
 
       const newGrid: Record<string, boolean> = {};
-      FRANJAS.forEach(franja => {
-        DIAS.forEach(dia => {
-          newGrid[`${dia.id}_${franja.inicio}_${franja.fin}`] = false;
-        });
-      });
 
       if (Array.isArray(response.data)) {
-        response.data.forEach((disp: { dia: number; franja_inicio: string; franja_fin: string }) => {
+        response.data.forEach((disp: { fecha?: string; dia?: number; franja_inicio: string; franja_fin: string }) => {
           const inicio = disp.franja_inicio?.substring(0, 5);
           const fin = disp.franja_fin?.substring(0, 5);
           const franja = FRANJAS.find(f => f.inicio === inicio && f.fin === fin);
-          if (franja) {
-            newGrid[`${disp.dia}_${franja.inicio}_${franja.fin}`] = true;
+          if (franja && disp.fecha) {
+            newGrid[`${disp.fecha}_${franja.inicio}_${franja.fin}`] = true;
           }
         });
       }
@@ -221,13 +217,11 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
   const handleSeleccionarFecha = (anio: number, mes: number, dia: number) => {
     const diaSemana = getDiaSemana(anio, mes, dia);
     if (diaSemana >= 1 && diaSemana <= 6) {
-      setFechaSeleccionada({ anio, mes, dia });
-      setDiaSeleccionado(diaSemana);
+      setFechaSeleccionada(formatoFecha(anio, mes, dia));
     }
   };
 
   const handleVolverAlCalendario = () => {
-    setDiaSeleccionado(null);
     setFechaSeleccionada(null);
   };
 
@@ -238,6 +232,11 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
   };
 
   const tituloPorTipo = tipo === "clase" ? "Calendario de Clase" : "Calendario de Defensa";
+
+  const parseFecha = (fechaStr: string) => {
+    const [anio, mes, dia] = fechaStr.split("-").map(Number);
+    return { anio, mes: mes - 1, dia };
+  };
 
   const renderCalendario = () => {
     return (
@@ -262,11 +261,9 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
                 {dias.map(dia => {
                   const diaSemana = getDiaSemana(anioActual, mesIndex, dia);
                   const esDianDeSemana = diaSemana >= 1 && diaSemana <= 6;
-                  const tieneDisponibilidad = esDianDeSemana && diasConDisponibilidad.has(diaSemana);
-                  const esSeleccionado = fechaSeleccionada &&
-                    fechaSeleccionada.anio === anioActual &&
-                    fechaSeleccionada.mes === mesIndex &&
-                    fechaSeleccionada.dia === dia;
+                  const fechaStr = formatoFecha(anioActual, mesIndex, dia);
+                  const tieneDisponibilidad = fechasConDisponibilidad.has(fechaStr);
+                  const esSeleccionado = fechaSeleccionada === fechaStr;
 
                   return (
                     <div
@@ -287,17 +284,19 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
   };
 
   const renderVistaSemanal = () => {
+    const fechaParsed = fechaSeleccionada ? parseFecha(fechaSeleccionada) : null;
+    const diaSemana = fechaParsed ? getDiaSemana(fechaParsed.anio, fechaParsed.mes, fechaParsed.dia) : null;
+    const nombreDia = diaSemana ? DIAS[diaSemana - 1]?.nombre : "";
+
     return (
       <div className="vista-semanal">
         <div className="vista-semanal-header">
           <button className="btn-volver" onClick={handleVolverAlCalendario}>
             <FontAwesomeIcon icon={faArrowLeft} /> Volver al Calendario
           </button>
-          {diaSeleccionado && (
+          {fechaParsed && (
             <h5 className="dia-seleccionado-titulo">
-              {fechaSeleccionada
-                ? `${DIAS[diaSeleccionado - 1].nombre} ${fechaSeleccionada.dia} de ${MESES[fechaSeleccionada.mes]} ${fechaSeleccionada.anio}`
-                : `Todos los ${DIAS[diaSeleccionado - 1].nombre}s`}
+              {nombreDia} {fechaParsed.dia} de {MESES[fechaParsed.mes]} {fechaParsed.anio}
             </h5>
           )}
         </div>
@@ -313,12 +312,12 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
                 <thead>
                   <tr>
                     <th className="franja-header">Franja</th>
-                    <th>{diaSeleccionado ? DIAS[diaSeleccionado - 1].nombre : ""}</th>
+                    <th>{nombreDia}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {FRANJAS.map(franja => {
-                    const key = `${diaSeleccionado}_${franja.inicio}_${franja.fin}`;
+                    const key = `${fechaSeleccionada}_${franja.inicio}_${franja.fin}`;
                     const isDisponible = grid[key] || false;
                     return (
                       <tr key={`${franja.inicio}_${franja.fin}`}>
@@ -413,7 +412,7 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
           <div className="text-center my-5">
             <p className="text-muted">Busque y seleccione un docente para ver su calendario.</p>
           </div>
-        ) : diaSeleccionado ? (
+        ) : fechaSeleccionada ? (
           renderVistaSemanal()
         ) : (
           <>
@@ -424,7 +423,7 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
             ) : (
               <>
                 <div className="calendario-semana-legend">
-                  <span className="text-muted">Días con disponibilidad resaltados en verde. Haga clic en un día para ver el calendario.</span>
+                  <span className="text-muted">Días con disponibilidad resaltados en verde. Haga clic en un día para ver o editar su disponibilidad.</span>
                 </div>
                 {renderCalendario()}
                 <div className="horario-legend mt-3">
