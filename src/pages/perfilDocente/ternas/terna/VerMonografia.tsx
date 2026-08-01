@@ -43,8 +43,14 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
         dispatch(FetcherTernas.getMonografiaCompleta(utils))
             .unwrap()
             .then(() => setLoading(false))
-            .catch((err: Error) => {
-                setError(err?.message || 'Error al cargar la monografía');
+            .catch((err: unknown) => {
+                let message = 'Error al cargar la monografía';
+                if (err instanceof Error) {
+                    message = err.message;
+                } else if (typeof err === 'string') {
+                    message = err;
+                }
+                setError(message);
                 setLoading(false);
             });
     }, [dispatch, ternaId]);
