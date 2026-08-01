@@ -293,13 +293,13 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
             )}
 
             <div className="mt-4 pt-3 border-top text-start">
-                <h6 className="text-primary mb-3">Comentarios y Observaciones</h6>
-                <div className="mb-3 p-2 border rounded bg-light" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                <h6 className="fw-bold mb-3" style={{ color: 'var(--main-brand-color, #183979)' }}>Comentarios y Observaciones</h6>
+                <div className="mb-3 p-3 border rounded bg-light" style={{ maxHeight: '180px', overflowY: 'auto' }}>
                     {comentarios.length === 0 ? (
                         <p className="text-muted small italic mb-0 text-center">No hay observaciones registradas todavía.</p>
                     ) : (
                         comentarios.map((com, idx) => (
-                            <div key={idx} className="p-2 mb-2 bg-white rounded border-start border-primary border-3 shadow-sm">
+                            <div key={idx} className="p-3 mb-2 bg-white rounded border-start border-3 shadow-sm" style={{ borderLeftColor: 'var(--main-brand-color, #183979)' }}>
                                 <div className="d-flex justify-content-between mb-1">
                                     <strong className="small text-dark">{com.autor}</strong>
                                     <span className="text-muted" style={{ fontSize: '0.75rem' }}>{new Date(com.fecha).toLocaleDateString()}</span>
@@ -312,42 +312,48 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                 <form onSubmit={handleAgregarComentario} className="d-flex gap-2">
                     <input
                         type="text"
-                        className="form-control form-control-sm"
+                        className="form-control"
                         placeholder="Escriba una observación..."
                         value={comentarioTexto}
                         onChange={(e) => setComentarioTexto(e.target.value)}
                     />
-                    <Button color="primary" size="sm" type="submit" className="px-3">
+                    <ButtonPrimary type="submit" className="px-4 fw-semibold text-nowrap">
                         Comentar
-                    </Button>
+                    </ButtonPrimary>
                 </form>
             </div>
         </ModalBody>
-       {selectedTernaDocentes.length > 0 &&
-            <ModalFooter className="d-flex justify-content-center bg-light">
+        {selectedTernaDocentes.length > 0 && (
+            <ModalFooter className="d-flex justify-content-end align-items-center gap-2 bg-light px-4 py-3 border-top">
                 <Button
                     color="danger"
+                    outline
                     onClick={handleCancelarDefensa}
-                    className="me-2"
+                    className="fw-semibold px-3 text-nowrap"
+                    style={{ width: 'auto' }}
                 >
                     Cancelar Defensa
                 </Button>
 
-                <Dropdown color="primary" isOpen={dropdownOpen} toggle={toggle}>
-                    <DropdownToggle caret>{itemSelected}</DropdownToggle>
+                <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+                    <DropdownToggle color="secondary" caret className="fw-semibold text-nowrap" style={{ width: 'auto' }}>
+                        {itemSelected}
+                    </DropdownToggle>
                     <DropdownMenu>
                         {Object.entries(StatusTerna).map(([idTerna, estado]) => {
-                            return <DropdownItem key={idTerna} onClick={() => handleChangeDropdown(Number(idTerna), estado)}>
-                                {estado}
-                            </DropdownItem>
+                            return (
+                                <DropdownItem key={idTerna} onClick={() => handleChangeDropdown(Number(idTerna), estado)}>
+                                    {estado}
+                                </DropdownItem>
+                            );
                         })}
                     </DropdownMenu>
                 </Dropdown>
 
-                <ButtonPrimary onClick={handleUpdateTerna} className="ms-2">
+                <ButtonPrimary onClick={handleUpdateTerna} className="px-4 fw-semibold text-nowrap" style={{ width: 'auto' }}>
                     Actualizar Terna
                 </ButtonPrimary>
             </ModalFooter>
-        }
-    </Modal>
+        )}
+    </Modal>;
 }
