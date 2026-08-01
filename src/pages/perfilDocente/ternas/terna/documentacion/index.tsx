@@ -27,21 +27,11 @@ export default function Documentacion(props: Props<PropsDocumentacion, typeof DE
                     {alumno?.ternaId && <small className="text-muted">Terna #{alumno.ternaId}</small>}
                 </div>
                 <div className="d-flex gap-2">
-                    {alumno?.ternaId && (
-                        <Button color="warning" outline onClick={() => setShowMonografia(true)}>
-                            Ver Monografía
-                        </Button>
-                    )}
                     <Button color="secondary" onClick={onClick}>Regresar a Ternas</Button>
                 </div>
             </div>
             <Documentos />
             <div className="mt-4 pt-3 border-top d-flex gap-2">
-                {alumno?.ternaId && (
-                    <Button color="warning" outline onClick={() => setShowMonografia(true)}>
-                        Ver Monografía
-                    </Button>
-                )}
                 <Button color="secondary" onClick={onClick}>Regresar a Ternas</Button>
             </div>
         </Container>
