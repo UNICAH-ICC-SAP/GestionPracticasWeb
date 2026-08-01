@@ -42,27 +42,26 @@ function App() {
     }, [dispatch, userData.userId, userData.roleId])
 
     React.useEffect(() => {
-        if (roles && roles.length > 0) {
-            const userPermissionsSet = new Set(
-                roles.map(p => p?.permission)
-            );
+        const combinedPermissionsSet = new Set<string>();
 
-            const nav = navigation.filter(item =>
-                item?.permission && userPermissionsSet.has(item.permission)
-            );
-            setMenuItems([...nav])
+        if (roles && roles.length > 0) {
+            roles.forEach(p => {
+                if (p?.permission) combinedPermissionsSet.add(p.permission);
+            });
         }
+
         if (permissions && permissions.length > 0) {
-            const userPermissionsSet = new Set(
-                permissions
-                    .filter(p => p?.permissionType === 'ALLOW')
-                    .map(p => p?.permission)
-            );
-            const nav = navigation.filter(item =>
-                item?.permission && userPermissionsSet.has(item.permission)
-            );
-            setMenuItems(prev => [...prev, ...nav])
+            permissions
+                .filter(p => p?.permissionType === 'ALLOW')
+                .forEach(p => {
+                    if (p?.permission) combinedPermissionsSet.add(p.permission);
+                });
         }
+
+        const nav = navigation.filter(item =>
+            item?.permission && combinedPermissionsSet.has(item.permission)
+        );
+        setMenuItems(nav)
     }, [roles, permissions])
 
     if (!isLogged) {

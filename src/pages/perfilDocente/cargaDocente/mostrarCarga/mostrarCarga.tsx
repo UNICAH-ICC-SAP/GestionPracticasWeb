@@ -54,7 +54,7 @@ export default function MostrarCarga() {
         if (periodos === null) {
             dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
         }
-    }, [dispatch, periodos])
+    }, [dispatch, periodos]);
 
     useEffect(() => {
         if (periodos && periodos.length > 0 && !periodoSeleccionado) {
