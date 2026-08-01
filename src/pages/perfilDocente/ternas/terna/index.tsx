@@ -3,6 +3,7 @@ import { Container, Button, Modal, ModalHeader, ModalBody, Nav, NavItem, NavLink
 import { AlumnoInfo } from "@api/namespaces/alumno";
 import { Props, type DEF } from "@api/typesProps";
 import { TypeUtilities } from '@utilities/TypeUtilities';
+import { getData, Post } from '@utilities/Utilities';
 import NotFound from "@components/shared/notFound";
 import { Tables } from "@components/commons/tables/tables";
 import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
@@ -21,6 +22,17 @@ type Comentario = {
     autor: string;
     fecha: string;
     texto: string;
+}
+
+type ComentarioApiResponse = {
+    comentarioId?: number;
+    modulo?: string;
+    referenciaId?: number;
+    userId?: string;
+    mensaje?: string;
+    autor?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export default function Docentes() {
@@ -228,11 +240,33 @@ type ProposCustomModal = {
 function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const { showModal, toggleModal, selectedTernaStatus, selectedTernaDocentes, idTerna } = props;
     const dispatch = useDispatch();
+    const userLogged = useSelector(UserSelector.getUser);
     const [newStatus, setNewStatus] = useState(undefined);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
     const [comentarioTexto, setComentarioTexto] = useState("");
     const [comentarios, setComentarios] = useState<Comentario[]>([]);
+
+    useEffect(() => {
+        if (showModal && idTerna) {
+            const utils: TypeUtilities = {
+                url: `/comentario/getByReferencia?modulo=TERNA&referenciaId=${idTerna}`
+            };
+            getData(utils).then((res) => {
+                if (res?.data && Array.isArray(res.data)) {
+                    const dataList = res.data as unknown as ComentarioApiResponse[];
+                    const coms = dataList.map((c: ComentarioApiResponse) => ({
+                        autor: c.autor || `Docente (${c.userId || ''})`,
+                        fecha: c.createdAt || new Date().toISOString(),
+                        texto: c.mensaje || ''
+                    }));
+                    setComentarios(coms);
+                } else {
+                    setComentarios([]);
+                }
+            });
+        }
+    }, [showModal, idTerna]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {
@@ -273,16 +307,31 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         });
     };
 
-    const handleAgregarComentario = (e: React.FormEvent) => {
+    const handleAgregarComentario = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!comentarioTexto.trim()) return;
-        const nuevoComentario = {
-            autor: "Tú (Docente)",
-            fecha: new Date().toISOString(),
-            texto: comentarioTexto
+        if (!comentarioTexto.trim() || !idTerna) return;
+
+        const utils: TypeUtilities = {
+            url: "/comentario/create",
+            data: {
+                modulo: "TERNA",
+                referenciaId: idTerna,
+                userId: userLogged.userId,
+                mensaje: comentarioTexto
+            }
         };
-        setComentarios([...comentarios, nuevoComentario]);
-        setComentarioTexto('');
+
+        const res = await Post(utils);
+        if (res?.status === 200 && res?.data) {
+            const data = res.data as unknown as ComentarioApiResponse;
+            const nuevoComentario = {
+                autor: data.autor || "Tú (Docente)",
+                fecha: data.createdAt || new Date().toISOString(),
+                texto: data.mensaje || comentarioTexto
+            };
+            setComentarios([...comentarios, nuevoComentario]);
+            setComentarioTexto('');
+        }
     };
 
     return <Modal isOpen={showModal} toggle={toggleModal} className="modal-lg">
