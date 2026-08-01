@@ -68,9 +68,9 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
         <CardFooter style={{ height: "4rem" }} className="d-flex justify-content-center align-items-center">
             {document.fileStatus === DocumentStatus.PENDING ? (
                 document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA ? (
-                    <Button color="warning" outline className="fw-semibold" onClick={handleViewMonografia}>
-                        Ver Monografía
-                    </Button>
+                    <ButtonSecondary onClick={handleViewMonografia}>
+                        Ver monografía
+                    </ButtonSecondary>
                 ) : (
                     <ButtonGroup>
                         <Button color="success" href="./" onClick={(e) => {
