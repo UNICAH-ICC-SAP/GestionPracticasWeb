@@ -43,25 +43,24 @@ export default function MostrarCarga() {
         }
     }, [dispatch, periodoSeleccionado, periodos, userData.userId]);
 
-    console.log("CLASES:", clases);
-console.log("SECCIONES:", secciones);
-console.log("PERIODOS:", periodos);
-console.log("USUARIO:", userData);
+    console.log("SECCIONES:", secciones);
 
     return (
         <Container>
             {isLoading ? (
                 <div className="text-center my-5">
-                    <Spinner color="primary">
-                        Loading...
-                    </Spinner>
+                    <Spinner color="primary">Loading...</Spinner>
                 </div>
             ) : isEmpty(clases) ? (
                 <NotFound />
             ) : (
                 <Row>
                     {clases?.map((clase) => {
-                        const seccion = secciones?.find((item) => item.id_clase === clase.id_clase);
+                        const seccion = secciones?.find((item) =>
+  String(item.id_clase) === String(clase.id_clase) &&
+  item.seccion !== null &&
+  item.seccion !== undefined
+);
                         const estaAperturada = !!seccion;
 
                         return (
@@ -76,10 +75,10 @@ console.log("USUARIO:", userData);
                                         {estaAperturada ? (
                                             <>
                                                 <p className="mb-1">
-                                                    <strong>Sección:</strong> {seccion.seccion}
+                                                    <strong>Sección:</strong> {seccion.seccion || "-"}
                                                 </p>
                                                 <p className="mb-1">
-                                                    <strong>Horario:</strong> {seccion.hora_inicio} - {seccion.hora_final}
+                                                    <strong>Horario:</strong> {seccion.hora_inicio || "-"} - {seccion.hora_final || "-"}
                                                 </p>
                                                 <Badge color="success">Aperturada</Badge>
                                             </>
