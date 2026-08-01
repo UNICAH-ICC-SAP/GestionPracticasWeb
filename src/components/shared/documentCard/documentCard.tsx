@@ -51,13 +51,28 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                 {document.title}
             </CardTitle>
             <CardDeck>
-                {document.fileStatus === DocumentStatus.CHANGE_REQUESTED && <Badge style={{ width: '1rem', height: '1rem', display: 'inline-flex', borderRadius: '100%', }} color="warning" title="Cambios Solicitados" />}
-                {document.fileStatus === DocumentStatus.DELIVERED && <Badge style={{ width: '1rem', height: '1rem', display: 'inline-flex', borderRadius: '100%', }} color="success" title="Entregado" />}
-                {document.fileStatus === DocumentStatus.PENDING && <Badge style={{ width: '1rem', height: '1rem', display: 'inline-flex', borderRadius: '100%', }} color="danger" title="Pendiente" />}
+                {document.fileStatus === DocumentStatus.CHANGE_REQUESTED && (
+                    <Badge color="warning" className="d-inline-flex align-items-center gap-1 px-2 py-1" pill>
+                        <span style={{ width: '0.6rem', height: '0.6rem', borderRadius: '50%', backgroundColor: '#fff', display: 'inline-block' }} />
+                        <span style={{ fontSize: '0.7rem' }}>Cambios Solicitados</span>
+                    </Badge>
+                )}
+                {document.fileStatus === DocumentStatus.DELIVERED && (
+                    <Badge color="success" className="d-inline-flex align-items-center gap-1 px-2 py-1" pill>
+                        <span style={{ width: '0.6rem', height: '0.6rem', borderRadius: '50%', backgroundColor: '#fff', display: 'inline-block' }} />
+                        <span style={{ fontSize: '0.7rem' }}>Entregado</span>
+                    </Badge>
+                )}
+                {document.fileStatus === DocumentStatus.PENDING && (
+                    <Badge color="danger" className="d-inline-flex align-items-center gap-1 px-2 py-1" pill>
+                        <span style={{ width: '0.6rem', height: '0.6rem', borderRadius: '50%', backgroundColor: '#fff', display: 'inline-block' }} />
+                        <span style={{ fontSize: '0.7rem' }}>Pendiente</span>
+                    </Badge>
+                )}
             </CardDeck>
         </CardHeader>
         <CardBody>
-            <FontAwesomeIcon className="mt-2" size="6x" icon={document.fileStatus === DocumentStatus.PENDING ? faFolderOpen : faFolderClosed} />
+            <FontAwesomeIcon className="mt-2" size="6x" icon={document.fileStatus === DocumentStatus.PENDING || document.fileStatus === DocumentStatus.CHANGE_REQUESTED ? faFolderOpen : faFolderClosed} />
             <CardSubtitle
                 className="mb-2 text-muted"
                 tag="h6"
@@ -66,7 +81,7 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
             <CardText>{document.description}</CardText>
         </CardBody>
         <CardFooter style={{ height: "4rem" }} className="d-flex justify-content-center align-items-center">
-            {document.fileStatus === DocumentStatus.PENDING ? (
+            {(document.fileStatus === DocumentStatus.PENDING || document.fileStatus === DocumentStatus.CHANGE_REQUESTED) ? (
                 document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA ? (
                     <ButtonSecondary onClick={handleViewMonografia}>
                         Ver monografía
@@ -100,12 +115,7 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                 )
             ) :
                 <ButtonGroup>
-                    {user.roleId === 3 && document.fileStatus === DocumentStatus.CHANGE_REQUESTED ? <ButtonSecondary href="./" onClick={(e) => {
-                        e.preventDefault();
-                        onClickDeliverButton();
-                    }} rel="noopener noreferrer">
-                        Actualizar
-                    </ButtonSecondary> : user.roleId === 1 ? <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
+                    {user.roleId === 1 ? <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
                         Solicitar Cambios
                     </ButtonSecondary> : null}
                     <ButtonPrimary href="./" onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
