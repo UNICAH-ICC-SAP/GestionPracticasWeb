@@ -9,6 +9,12 @@ import { faEdit, faEye, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NotFound from "../../../components/shared/notFound";
 
+type Comentario = {
+    autor: string;
+    fecha: string;
+    texto: string;
+}
+
 type TernaDetail = {
     detalleTernaId?: number;
     ternaId?: number;
@@ -21,11 +27,6 @@ type TernaDetail = {
 export default function Docetes() {
     const dispatch = useDispatch();
     const [modalOpen, setModalOpen] = useState(false);
-    interface Comentario {
-        autor: string;
-        fecha: string;
-        texto: string;
-    }
     const [comentarioTexto, setComentarioTexto] = useState("");
     const [comentarios, setComentarios] = useState<Comentario[]>([]);
     const [selectedDocente, setSelectedDocente] = useState<TernaDetail | null>(null);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import HorarioGrid from "@components/shared/horarioGrid/horarioGrid";
+import HorarioGrid from "@components/shared/CalendarioGrid/CalendarioGrid";
 
 export default function MiHorarioDocente() {
   const [activeTab, setActiveTab] = useState("clase");
@@ -11,7 +11,7 @@ export default function MiHorarioDocente() {
 
   return (
     <Container fluid>
-      <h4 className="mb-3">Horarios Personalizados</h4>
+      <h4 className="mb-3">Calendario</h4>
       <Nav tabs className="mb-4">
         <NavItem>
           <NavLink
@@ -19,7 +19,7 @@ export default function MiHorarioDocente() {
             onClick={() => toggle("clase")}
             style={{ cursor: "pointer" }}
           >
-            Horario de Clase
+            Clase
           </NavLink>
         </NavItem>
         <NavItem>
@@ -28,7 +28,7 @@ export default function MiHorarioDocente() {
             onClick={() => toggle("defensa")}
             style={{ cursor: "pointer" }}
           >
-            Horario para Defensa
+            Defensa
           </NavLink>
         </NavItem>
       </Nav>

@@ -17,6 +17,12 @@ import { StatusTerna, TernaRolDocente } from "@root/abstracts";
 import Documentacion from "./documentacion";
 import Swal from "sweetalert2";
 
+type Comentario = {
+    autor: string;
+    fecha: string;
+    texto: string;
+}
+
 export default function Docentes() {
     const dispatch = useDispatch();
     const [detalles, setDetalles] = useState<Record<number, DocenteInfoType[]>>({});
@@ -225,11 +231,6 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const [newStatus, setNewStatus] = useState(undefined);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
-    interface Comentario {
-        autor: string;
-        fecha: string;
-        texto: string;
-    }
     const [comentarioTexto, setComentarioTexto] = useState("");
     const [comentarios, setComentarios] = useState<Comentario[]>([]);
 

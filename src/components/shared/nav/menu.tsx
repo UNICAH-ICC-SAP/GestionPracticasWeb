@@ -24,6 +24,7 @@ export enum Permissions {
     VIEW_MIS_TERNAS = 'VIEW_MIS_TERNAS',
     VIEW_CARGA_ASIGNADA = 'VIEW_CARGA_ASIGNADA',
     VIEW_MI_HORARIO = 'VIEW_MI_HORARIO',
+    VIEW_CALENDARIO = 'VIEW_CALENDARIO',
 
     VIEW_MI_TERNA = 'VIEW_MI_TERNA',
     VIEW_DOCUMENTACION = 'VIEW_DOCUMENTACION',
@@ -48,7 +49,7 @@ export const navigation = [
 
     { title: 'Carga Asignada', pathTo: '/cargaAsignada', component: <CargaDocente />, permission: Permissions.VIEW_CARGA_ASIGNADA },
 
-    { title: 'Mi Horario Personalizado', pathTo: '/miHorario', component: <MiHorario />, permission: Permissions.VIEW_MI_HORARIO },
+    { title: 'Mi Calendario', pathTo: '/miHorario', component: <MiHorario />, permission: Permissions.VIEW_CALENDARIO },
 
     { title: 'Mi Terna', pathTo: '/terna', component: <TernaAlumno />, permission: Permissions.VIEW_MI_TERNA },
 
