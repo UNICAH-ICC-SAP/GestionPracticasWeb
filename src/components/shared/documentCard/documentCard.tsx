@@ -6,7 +6,7 @@ import { Card, CardBody, CardTitle, CardSubtitle, CardText, CardFooter, ButtonGr
 import { ButtonPrimary, ButtonSecondary, ButtonWarning } from "@components/shared/buttons";
 import { DEF, Props } from '@root/Api/typesProps';
 import type { Type as TypeUser } from "@store/slices/users/_namespace";
-import { DocumentStatus, DocumentUploadStatus } from "@root/abstracts"
+import { DocumentStatus, DocumentUploadStatus, DocumentTypeAlumnos } from "@root/abstracts"
 import type { Document } from "./type"
 import { Fetcher as FetcherFiles, Selector as SelectorFiles, Action as ActionFiles } from "@store/slices/documentManager"
 import { useDispatch, useSelector } from "@store/index";
@@ -55,14 +55,16 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
             </CardSubtitle>
             <CardText>{document.description}</CardText>
         </CardBody>
-        <CardFooter style={{ height: "4rem" }}>
+        <CardFooter style={{ height: "4rem" }} className="d-flex justify-content-center align-items-center">
             {document.fileStatus === DocumentStatus.PENDING ? <ButtonGroup>
-                <Button color="success" href="./" onClick={(e) => {
-                    e.preventDefault();
-                    onClickDeliverButton();
-                }}>
-                    Entregar
-                </Button>
+                {document.fileTypeId !== DocumentTypeAlumnos.MONOGRAFIA && (
+                    <Button color="success" href="./" onClick={(e) => {
+                        e.preventDefault();
+                        onClickDeliverButton();
+                    }}>
+                        Entregar
+                    </Button>
+                )}
                 {[7, 8].includes(document.fileTypeId) && user.roleId !== 3 ?
                     <ButtonSecondary href="./" target="_blank" rel="noopener noreferrer" onClick={(e) => {
                         e.preventDefault();
@@ -78,6 +80,9 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
                     </ButtonSecondary> : [1, 2, 3, 4, 5].includes(document.fileTypeId) ?
                         <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
                             Ver ejemplo
+                        </ButtonSecondary> : document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA ?
+                        <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
+                            Ver monografía
                         </ButtonSecondary> : null
                 }
             </ButtonGroup> :
