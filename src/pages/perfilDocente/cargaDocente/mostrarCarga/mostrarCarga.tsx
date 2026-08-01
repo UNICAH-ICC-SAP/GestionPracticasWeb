@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "@store/index";
 
 import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from "@store/slices/periodo";
 import { Selector as SelectorUser } from "@store/slices/users"
-import { getData } from "@utilities/Utilities";
+import { getData, Post } from "@utilities/Utilities";
 
 import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
@@ -14,6 +14,13 @@ import { PatchData } from "@utilities/Utilities";
 import { days } from "../../../../consts";
 
 import "./mostrarCarga.css"
+
+type Comentario = {
+    comentarioId?: number;
+    autor: string;
+    mensaje: string;
+    createdAt?: string;
+}
 
 type SeccionDetail = {
     nombre_clase: string;
@@ -37,6 +44,9 @@ export default function MostrarCarga() {
     const [guardandoObs, setGuardandoObs] = useState<Record<number, boolean>>({});
     const [obsValues, setObsValues] = useState<Record<number, string>>({});
     const [seccionesData, setSeccionesData] = useState<SeccionDetail[]>([]);
+    const [comentarios, setComentarios] = useState<Record<number, Comentario[]>>({});
+    const [comentarioTexto, setComentarioTexto] = useState<Record<number, string>>({});
+    const [enviandoComentario, setEnviandoComentario] = useState<Record<number, boolean>>({});
     const periodos = useSelector(SelectorPeriodos.getPeriodos);
     const userData = useSelector(SelectorUser.getUser);
 
@@ -82,9 +92,54 @@ export default function MostrarCarga() {
                     }
                 });
                 setSeccionesData(mapped);
+
+                mapped.forEach(s => {
+                    if (s.id_detalle) {
+                        cargarComentarios(s.id_detalle);
+                    }
+                });
             }
         }).finally(() => setCargandoDatos(false));
     }, [periodoSeleccionado, userData?.userId, dispatch]);
+
+    const cargarComentarios = useCallback(async (id_detalle: number) => {
+        try {
+            const response = await getData({
+                url: `/comentarios/findBy?modulo=CARGA_ASIGNADA&referenciaId=${id_detalle}`
+            });
+            if (Array.isArray(response.data)) {
+                setComentarios(prev => ({ ...prev, [id_detalle]: response.data as Comentario[] }));
+            }
+        } catch { /* ignore */ }
+    }, []);
+
+    const handleEnviarComentario = useCallback(async (id_detalle: number) => {
+        const texto = comentarioTexto[id_detalle]?.trim();
+        if (!texto) return;
+
+        setEnviandoComentario(prev => ({ ...prev, [id_detalle]: true }));
+        try {
+            const response = await Post({
+                url: "/comentarios/insert",
+                data: {
+                    modulo: "CARGA_ASIGNADA",
+                    referenciaId: id_detalle,
+                    userId: userData?.userId,
+                    mensaje: texto
+                }
+            });
+            if (response.error.code === 0) {
+                setComentarioTexto(prev => ({ ...prev, [id_detalle]: "" }));
+                cargarComentarios(id_detalle);
+            } else {
+                Swal.fire("Error", "No se pudo enviar el comentario.", "error");
+            }
+        } catch {
+            Swal.fire("Error", "No se pudo enviar el comentario.", "error");
+        } finally {
+            setEnviandoComentario(prev => ({ ...prev, [id_detalle]: false }));
+        }
+    }, [comentarioTexto, userData, cargarComentarios]);
 
     const getDayName = (day: number): string => {
         return days[day] || '';
@@ -184,6 +239,50 @@ export default function MostrarCarga() {
                                             >
                                                 {guardandoObs[clase.id_detalle] ? <Spinner size="sm">Guardando...</Spinner> : "Guardar Observación"}
                                             </Button>
+
+                                            <Label className="mb-1 mt-3">
+                                                <small><strong>Comentarios:</strong></small>
+                                            </Label>
+                                            <div className="mb-2" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                                                {(comentarios[clase.id_detalle] || []).length === 0 ? (
+                                                    <p className="text-muted small text-center mb-0">Sin comentarios</p>
+                                                ) : (
+                                                    (comentarios[clase.id_detalle] || []).map((com) => (
+                                                        <div key={com.comentarioId} className="p-2 mb-1 bg-light rounded border-start border-primary border-3">
+                                                            <div className="d-flex justify-content-between">
+                                                                <strong className="small">{com.autor}</strong>
+                                                                <span className="text-muted" style={{ fontSize: '0.7rem' }}>
+                                                                    {com.createdAt ? new Date(com.createdAt).toLocaleDateString() : ''}
+                                                                </span>
+                                                            </div>
+                                                            <p className="mb-0 small">{com.mensaje}</p>
+                                                        </div>
+                                                    ))
+                                                )}
+                                            </div>
+                                            <div className="d-flex gap-2">
+                                                <Input
+                                                    bsSize="sm"
+                                                    type="text"
+                                                    placeholder="Escriba un comentario..."
+                                                    value={comentarioTexto[clase.id_detalle] || ''}
+                                                    onChange={(e) => setComentarioTexto(prev => ({ ...prev, [clase.id_detalle!]: e.target.value }))}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            handleEnviarComentario(clase.id_detalle!);
+                                                        }
+                                                    }}
+                                                />
+                                                <Button
+                                                    color="primary"
+                                                    size="sm"
+                                                    disabled={enviandoComentario[clase.id_detalle] || !comentarioTexto[clase.id_detalle]?.trim()}
+                                                    onClick={() => handleEnviarComentario(clase.id_detalle!)}
+                                                >
+                                                    {enviandoComentario[clase.id_detalle] ? <Spinner size="sm" /> : "Enviar"}
+                                                </Button>
+                                            </div>
                                         </div>
                                     )}
                                 </CardBody>
