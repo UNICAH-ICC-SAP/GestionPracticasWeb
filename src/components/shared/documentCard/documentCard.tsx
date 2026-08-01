@@ -18,10 +18,11 @@ type DocumentCardProps = {
     document: Document;
     user: TypeUser.User;
     onClickDeliverButton: () => void;
+    onViewMonografia?: () => void;
 }
 
 export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>) {
-    const { document, user, onClickDeliverButton } = prop;
+    const { document, user, onClickDeliverButton, onViewMonografia } = prop;
     const dispatch = useDispatch();
     const [donwload, setDownload] = React.useState(false);
     const downloadFile = useSelector(SelectorFiles.getSignedUrlToDownload);
@@ -34,6 +35,15 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
             downloadFromGCP(downloadFile.downloadUrl, downloadFile.originalName);
         }
     }, [downloadFile]);
+
+    const handleViewMonografia = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (onViewMonografia) {
+            onViewMonografia();
+        } else if (document.exampleDocument) {
+            window.open(document.exampleDocument, "_blank");
+        }
+    };
 
     return (<Card style={{ width: '20rem', marginBottom: '1rem' }}>
         <CardHeader className="d-flex justify-content-around align-items-center w-100" style={{ height: "4rem" }}>
@@ -56,36 +66,39 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
             <CardText>{document.description}</CardText>
         </CardBody>
         <CardFooter style={{ height: "4rem" }} className="d-flex justify-content-center align-items-center">
-            {document.fileStatus === DocumentStatus.PENDING ? <ButtonGroup>
-                {document.fileTypeId !== DocumentTypeAlumnos.MONOGRAFIA && (
-                    <Button color="success" href="./" onClick={(e) => {
-                        e.preventDefault();
-                        onClickDeliverButton();
-                    }}>
-                        Entregar
+            {document.fileStatus === DocumentStatus.PENDING ? (
+                document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA ? (
+                    <Button color="warning" outline className="fw-semibold" onClick={handleViewMonografia}>
+                        Ver Monografía
                     </Button>
-                )}
-                {[7, 8].includes(document.fileTypeId) && user.roleId !== 3 ?
-                    <ButtonSecondary href="./" target="_blank" rel="noopener noreferrer" onClick={(e) => {
-                        e.preventDefault();
-                        const utils: TypeUtilities = {
-                            url: "/files/download-url", data: {
-                                archivoId: document.fileTypeId === 7 ? 1 : 2
-                            }
-                        };
-                        dispatch(FetcherFiles.getDownloadSignedUrl(utils));
-                        setDownload(true);
-                    }}>
-                        Descargar Plantilla
-                    </ButtonSecondary> : [1, 2, 3, 4, 5].includes(document.fileTypeId) ?
-                        <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
-                            Ver ejemplo
-                        </ButtonSecondary> : document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA ?
-                        <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
-                            Ver monografía
-                        </ButtonSecondary> : null
-                }
-            </ButtonGroup> :
+                ) : (
+                    <ButtonGroup>
+                        <Button color="success" href="./" onClick={(e) => {
+                            e.preventDefault();
+                            onClickDeliverButton();
+                        }}>
+                            Entregar
+                        </Button>
+                        {[7, 8].includes(document.fileTypeId) && user.roleId !== 3 ?
+                            <ButtonSecondary href="./" target="_blank" rel="noopener noreferrer" onClick={(e) => {
+                                e.preventDefault();
+                                const utils: TypeUtilities = {
+                                    url: "/files/download-url", data: {
+                                        archivoId: document.fileTypeId === 7 ? 1 : 2
+                                    }
+                                };
+                                dispatch(FetcherFiles.getDownloadSignedUrl(utils));
+                                setDownload(true);
+                            }}>
+                                Descargar Plantilla
+                            </ButtonSecondary> : [1, 2, 3, 4, 5].includes(document.fileTypeId) ?
+                                <ButtonSecondary href={document.exampleDocument} target="_blank" rel="noopener noreferrer">
+                                    Ver ejemplo
+                                </ButtonSecondary> : null
+                        }
+                    </ButtonGroup>
+                )
+            ) :
                 <ButtonGroup>
                     {user.roleId === 3 && document.fileStatus === DocumentStatus.CHANGE_REQUESTED ? <ButtonSecondary href="./" onClick={(e) => {
                         e.preventDefault();
