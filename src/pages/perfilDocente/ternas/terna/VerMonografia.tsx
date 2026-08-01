@@ -43,7 +43,7 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
         dispatch(FetcherTernas.getMonografiaCompleta(utils))
             .unwrap()
             .then(() => setLoading(false))
-            .catch((err: any) => {
+            .catch((err: Error) => {
                 setError(err?.message || 'Error al cargar la monografía');
                 setLoading(false);
             });

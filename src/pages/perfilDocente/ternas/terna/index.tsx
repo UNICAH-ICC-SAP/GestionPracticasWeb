@@ -18,6 +18,12 @@ import Documentacion from "./documentacion";
 import VerMonografia from "./VerMonografia";
 import Swal from "sweetalert2";
 
+type Comentario = {
+    autor: string;
+    fecha: string;
+    texto: string;
+}
+
 export default function Docentes() {
     const dispatch = useDispatch();
     const [detalles, setDetalles] = useState<Record<number, DocenteInfoType[]>>({});
@@ -246,7 +252,7 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
     const [comentarioTexto, setComentarioTexto] = useState("");
-    const [comentarios, setComentarios] = useState<any[]>([]);
+    const [comentarios, setComentarios] = useState<Comentario[]>([]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {
