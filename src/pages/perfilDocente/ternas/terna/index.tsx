@@ -3,6 +3,7 @@ import { Container, Button, Modal, ModalHeader, ModalBody, Nav, NavItem, NavLink
 import { AlumnoInfo } from "@api/namespaces/alumno";
 import { Props, type DEF } from "@api/typesProps";
 import { TypeUtilities } from '@utilities/TypeUtilities';
+import { getData, Post } from '@utilities/Utilities';
 import NotFound from "@components/shared/notFound";
 import { Tables } from "@components/commons/tables/tables";
 import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
@@ -15,13 +16,23 @@ import { Action as ActionFiles } from '@store/slices/documentManager';
 import { isEmpty } from "lodash";
 import { StatusTerna, TernaRolDocente } from "@root/abstracts";
 import Documentacion from "./documentacion";
-import VerMonografia from "./VerMonografia";
 import Swal from "sweetalert2";
 
 type Comentario = {
     autor: string;
     fecha: string;
     texto: string;
+}
+
+type ComentarioApiResponse = {
+    comentarioId?: number;
+    modulo?: string;
+    referenciaId?: number;
+    userId?: string;
+    mensaje?: string;
+    autor?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export default function Docentes() {
@@ -33,8 +44,6 @@ export default function Docentes() {
     const [selectedTernaStatus, setSelectedTernaStatus] = useState<string | null>(null);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
     const [showDocumentacion, setShowDocumentacion] = useState(false);
-    const [showMonografia, setShowMonografia] = useState(false);
-    const [ternaIdMonografia, setTernaIdMonografia] = useState<number | null>(null);
     const [tabSel, setTabSel] = useState(0);
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const userLogged = useSelector(UserSelector.getUser);
@@ -156,13 +165,6 @@ export default function Docentes() {
         },
     ]
 
-    if (showMonografia && ternaIdMonografia !== null) {
-        return <VerMonografia ternaId={ternaIdMonografia} onBack={() => {
-            setShowMonografia(false);
-            setTernaIdMonografia(null);
-        }} />;
-    }
-
     return (showDocumentacion === false ? <Container className='align-self-center w-100'>
         <Nav className="mt-5" justified tabs>
             {tabs && tabs.map((item, index) => {
@@ -203,16 +205,6 @@ export default function Docentes() {
                                             }
                                             setShowDocumentacion(true);
                                         }}>Documentación</Button>
-                                        <Button
-                                            color="warning"
-                                            outline
-                                            onClick={() => {
-                                                setTernaIdMonografia(alumno.ternaId);
-                                                setShowMonografia(true);
-                                            }}
-                                        >
-                                            Ver Monografía
-                                        </Button>
                                         <WhatsappButton telefono={alumno.telefono} />
                                     </ButtonGroup>
                                 ),
@@ -248,11 +240,33 @@ type ProposCustomModal = {
 function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const { showModal, toggleModal, selectedTernaStatus, selectedTernaDocentes, idTerna } = props;
     const dispatch = useDispatch();
+    const userLogged = useSelector(UserSelector.getUser);
     const [newStatus, setNewStatus] = useState(undefined);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
     const [comentarioTexto, setComentarioTexto] = useState("");
     const [comentarios, setComentarios] = useState<Comentario[]>([]);
+
+    useEffect(() => {
+        if (showModal && idTerna) {
+            const utils: TypeUtilities = {
+                url: `/comentario/getByReferencia?modulo=TERNA&referenciaId=${idTerna}`
+            };
+            getData(utils).then((res) => {
+                if (res?.data && Array.isArray(res.data)) {
+                    const dataList = res.data as unknown as ComentarioApiResponse[];
+                    const coms = dataList.map((c: ComentarioApiResponse) => ({
+                        autor: c.autor || `Docente (${c.userId || ''})`,
+                        fecha: c.createdAt || new Date().toISOString(),
+                        texto: c.mensaje || ''
+                    }));
+                    setComentarios(coms);
+                } else {
+                    setComentarios([]);
+                }
+            });
+        }
+    }, [showModal, idTerna]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {
@@ -293,16 +307,31 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         });
     };
 
-    const handleAgregarComentario = (e: React.FormEvent) => {
+    const handleAgregarComentario = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!comentarioTexto.trim()) return;
-        const nuevoComentario = {
-            autor: "Tú (Docente)",
-            fecha: new Date().toISOString(),
-            texto: comentarioTexto
+        if (!comentarioTexto.trim() || !idTerna) return;
+
+        const utils: TypeUtilities = {
+            url: "/comentario/create",
+            data: {
+                modulo: "TERNA",
+                referenciaId: idTerna,
+                userId: userLogged.userId,
+                mensaje: comentarioTexto
+            }
         };
-        setComentarios([...comentarios, nuevoComentario]);
-        setComentarioTexto('');
+
+        const res = await Post(utils);
+        if (res?.status === 200 && res?.data) {
+            const data = res.data as unknown as ComentarioApiResponse;
+            const nuevoComentario = {
+                autor: data.autor || "Tú (Docente)",
+                fecha: data.createdAt || new Date().toISOString(),
+                texto: data.mensaje || comentarioTexto
+            };
+            setComentarios([...comentarios, nuevoComentario]);
+            setComentarioTexto('');
+        }
     };
 
     return <Modal isOpen={showModal} toggle={toggleModal} className="modal-lg">
@@ -319,13 +348,13 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
             )}
 
             <div className="mt-4 pt-3 border-top text-start">
-                <h6 className="text-primary mb-3">Comentarios y Observaciones</h6>
-                <div className="mb-3 p-2 border rounded bg-light" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                <h6 className="fw-bold mb-3" style={{ color: 'var(--main-brand-color, #183979)' }}>Comentarios y Observaciones</h6>
+                <div className="mb-3 p-3 border rounded bg-light" style={{ maxHeight: '180px', overflowY: 'auto' }}>
                     {comentarios.length === 0 ? (
                         <p className="text-muted small italic mb-0 text-center">No hay observaciones registradas todavía.</p>
                     ) : (
                         comentarios.map((com, idx) => (
-                            <div key={idx} className="p-2 mb-2 bg-white rounded border-start border-primary border-3 shadow-sm">
+                            <div key={idx} className="p-3 mb-2 bg-white rounded border-start border-3 shadow-sm" style={{ borderLeftColor: 'var(--main-brand-color, #183979)' }}>
                                 <div className="d-flex justify-content-between mb-1">
                                     <strong className="small text-dark">{com.autor}</strong>
                                     <span className="text-muted" style={{ fontSize: '0.75rem' }}>{new Date(com.fecha).toLocaleDateString()}</span>
@@ -338,42 +367,48 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                 <form onSubmit={handleAgregarComentario} className="d-flex gap-2">
                     <input
                         type="text"
-                        className="form-control form-control-sm"
+                        className="form-control"
                         placeholder="Escriba una observación..."
                         value={comentarioTexto}
                         onChange={(e) => setComentarioTexto(e.target.value)}
                     />
-                    <Button color="primary" size="sm" type="submit" className="px-3">
+                    <ButtonPrimary type="submit" className="px-4 fw-semibold text-nowrap">
                         Comentar
-                    </Button>
+                    </ButtonPrimary>
                 </form>
             </div>
         </ModalBody>
-       {selectedTernaDocentes.length > 0 &&
-            <ModalFooter className="d-flex justify-content-center bg-light">
+        {selectedTernaDocentes.length > 0 && (
+            <ModalFooter className="d-flex justify-content-end align-items-center gap-2 bg-light px-4 py-3 border-top">
                 <Button
                     color="danger"
+                    outline
                     onClick={handleCancelarDefensa}
-                    className="me-2"
+                    className="fw-semibold px-3 text-nowrap"
+                    style={{ width: 'auto' }}
                 >
                     Cancelar Defensa
                 </Button>
 
-                <Dropdown color="primary" isOpen={dropdownOpen} toggle={toggle}>
-                    <DropdownToggle caret>{itemSelected}</DropdownToggle>
+                <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+                    <DropdownToggle color="secondary" caret className="fw-semibold text-nowrap" style={{ width: 'auto' }}>
+                        {itemSelected}
+                    </DropdownToggle>
                     <DropdownMenu>
                         {Object.entries(StatusTerna).map(([idTerna, estado]) => {
-                            return <DropdownItem key={idTerna} onClick={() => handleChangeDropdown(Number(idTerna), estado)}>
-                                {estado}
-                            </DropdownItem>
+                            return (
+                                <DropdownItem key={idTerna} onClick={() => handleChangeDropdown(Number(idTerna), estado)}>
+                                    {estado}
+                                </DropdownItem>
+                            );
                         })}
                     </DropdownMenu>
                 </Dropdown>
 
-                <ButtonPrimary onClick={handleUpdateTerna} className="ms-2">
+                <ButtonPrimary onClick={handleUpdateTerna} className="px-4 fw-semibold text-nowrap" style={{ width: 'auto' }}>
                     Actualizar Terna
                 </ButtonPrimary>
             </ModalFooter>
-        }
-    </Modal>
+        )}
+    </Modal>;
 }
