@@ -15,7 +15,14 @@ import { Action as ActionFiles } from '@store/slices/documentManager';
 import { isEmpty } from "lodash";
 import { StatusTerna, TernaRolDocente } from "@root/abstracts";
 import Documentacion from "./documentacion";
+import VerMonografia from "./VerMonografia";
 import Swal from "sweetalert2";
+
+type Comentario = {
+    autor: string;
+    fecha: string;
+    texto: string;
+}
 
 export default function Docentes() {
     const dispatch = useDispatch();
@@ -26,6 +33,8 @@ export default function Docentes() {
     const [selectedTernaStatus, setSelectedTernaStatus] = useState<string | null>(null);
     const [selectedTernaId, setSelectedTernaId] = useState<number | null>(null);
     const [showDocumentacion, setShowDocumentacion] = useState(false);
+    const [showMonografia, setShowMonografia] = useState(false);
+    const [ternaIdMonografia, setTernaIdMonografia] = useState<number | null>(null);
     const [tabSel, setTabSel] = useState(0);
     const ternasDetalle = useSelector(SelectorTernas.getDetalleTernasDocente);
     const userLogged = useSelector(UserSelector.getUser);
@@ -123,6 +132,7 @@ export default function Docentes() {
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
             terna.rol === 'coordina' &&
+            (terna.rol === TernaRolDocente.COORDINA || terna.rol === 'Coordinador') &&
             terna.docenteId === userLogged.userId
         )
     );
@@ -130,7 +140,7 @@ export default function Docentes() {
     const detalleMiembro = alumnos.filter((alumno) =>
         ternasDetalle.some((terna) =>
             terna.ternaId === alumno.ternaId &&
-            !terna.rol &&
+            (terna.rol !== TernaRolDocente.COORDINA && terna.rol !== 'Coordinador') &&
             terna.docenteId === userLogged.userId
         )
     );
@@ -145,6 +155,14 @@ export default function Docentes() {
             headers: ['Terna ID', 'Nombre del alumno', 'Facultad', 'Email', 'Telefono', 'Acciones']
         },
     ]
+
+    if (showMonografia && ternaIdMonografia !== null) {
+        return <VerMonografia ternaId={ternaIdMonografia} onBack={() => {
+            setShowMonografia(false);
+            setTernaIdMonografia(null);
+        }} />;
+    }
+
     return (showDocumentacion === false ? <Container className='align-self-center w-100'>
         <Nav className="mt-5" justified tabs>
             {tabs && tabs.map((item, index) => {
@@ -185,6 +203,16 @@ export default function Docentes() {
                                             }
                                             setShowDocumentacion(true);
                                         }}>Documentación</Button>
+                                        <Button
+                                            color="warning"
+                                            outline
+                                            onClick={() => {
+                                                setTernaIdMonografia(alumno.ternaId);
+                                                setShowMonografia(true);
+                                            }}
+                                        >
+                                            Ver Monografía
+                                        </Button>
                                         <WhatsappButton telefono={alumno.telefono} />
                                     </ButtonGroup>
                                 ),
@@ -223,6 +251,8 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const [newStatus, setNewStatus] = useState(undefined);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
+    const [comentarioTexto, setComentarioTexto] = useState("");
+    const [comentarios, setComentarios] = useState<Comentario[]>([]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {
@@ -240,9 +270,44 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
         dispatch(FetcherTernas.updateTernaState(utils));
         setItemSelected("Seleccione el estado");
     }
-    return <Modal isOpen={showModal} toggle={toggleModal} className="modal-size">
+
+    const handleCancelarDefensa = () => {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción cancelará la defensa y no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cancelar defensa'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const utils: TypeUtilities = {
+                    url: "/ternas/cancelarTerna",
+                    data: { idTerna }
+                };
+                dispatch(FetcherTernas.updateTernaState(utils));
+                Swal.fire("Cancelado", "La defensa ha sido cancelada.", "success");
+                toggleModal();
+            }
+        });
+    };
+
+    const handleAgregarComentario = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!comentarioTexto.trim()) return;
+        const nuevoComentario = {
+            autor: "Tú (Docente)",
+            fecha: new Date().toISOString(),
+            texto: comentarioTexto
+        };
+        setComentarios([...comentarios, nuevoComentario]);
+        setComentarioTexto('');
+    };
+
+    return <Modal isOpen={showModal} toggle={toggleModal} className="modal-lg">
         <ModalHeader toggle={toggleModal}>
-            {`Docentes en la terna - Estado: ${selectedTernaStatus}`}
+            {`Detalle de Defensa Programada - Estado: ${selectedTernaStatus}`}
         </ModalHeader>
         <ModalBody className="modal-font-size">
             {selectedTernaDocentes.length > 0 ? (
@@ -252,9 +317,48 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
             ) : (
                 <NotFound />
             )}
+
+            <div className="mt-4 pt-3 border-top text-start">
+                <h6 className="text-primary mb-3">Comentarios y Observaciones</h6>
+                <div className="mb-3 p-2 border rounded bg-light" style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                    {comentarios.length === 0 ? (
+                        <p className="text-muted small italic mb-0 text-center">No hay observaciones registradas todavía.</p>
+                    ) : (
+                        comentarios.map((com, idx) => (
+                            <div key={idx} className="p-2 mb-2 bg-white rounded border-start border-primary border-3 shadow-sm">
+                                <div className="d-flex justify-content-between mb-1">
+                                    <strong className="small text-dark">{com.autor}</strong>
+                                    <span className="text-muted" style={{ fontSize: '0.75rem' }}>{new Date(com.fecha).toLocaleDateString()}</span>
+                                </div>
+                                <p className="mb-0 small text-secondary">{com.texto}</p>
+                            </div>
+                        ))
+                    )}
+                </div>
+                <form onSubmit={handleAgregarComentario} className="d-flex gap-2">
+                    <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Escriba una observación..."
+                        value={comentarioTexto}
+                        onChange={(e) => setComentarioTexto(e.target.value)}
+                    />
+                    <Button color="primary" size="sm" type="submit" className="px-3">
+                        Comentar
+                    </Button>
+                </form>
+            </div>
         </ModalBody>
-        {selectedTernaDocentes.length > 0 &&
-            <ModalFooter className="d-flex justify-content-center">
+       {selectedTernaDocentes.length > 0 &&
+            <ModalFooter className="d-flex justify-content-center bg-light">
+                <Button
+                    color="danger"
+                    onClick={handleCancelarDefensa}
+                    className="me-2"
+                >
+                    Cancelar Defensa
+                </Button>
+
                 <Dropdown color="primary" isOpen={dropdownOpen} toggle={toggle}>
                     <DropdownToggle caret>{itemSelected}</DropdownToggle>
                     <DropdownMenu>
@@ -265,7 +369,8 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
                         })}
                     </DropdownMenu>
                 </Dropdown>
-                <ButtonPrimary onClick={handleUpdateTerna}>
+
+                <ButtonPrimary onClick={handleUpdateTerna} className="ms-2">
                     Actualizar Terna
                 </ButtonPrimary>
             </ModalFooter>
