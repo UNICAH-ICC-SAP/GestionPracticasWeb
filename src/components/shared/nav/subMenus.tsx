@@ -3,7 +3,7 @@ import CrearTernas from "@pages/admin/crearTernas";
 import CreacionDocente from "@pages/admin/docentePage/crearDocente/creacionDocente";
 import type { NavigationItem } from "./types";
 import ModificarDocentes from "@pages/admin/docentes/ModificarDocentes";
-import HorarioPersonalizado from "@pages/admin/docentePage/horarioPersonalizado/horarioPersonalizado";
+import HorarioPersonalizado from "@pages/admin/docentePage/horarioPersonalizado/CalendarioPersonalizado";
 import Carreras from "@pages/admin/pensums/mostrarPensums/carreras";
 import Laboratorios from "@pages/admin/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "@pages/admin/pensums/mostrarPensums/coprogramaticas";
@@ -87,7 +87,7 @@ export const docenteMenu: Array<NavigationItem> = [
   },
   {
     paneId: "HorarioPersonalizado",
-    title: "Ver Horario Personalizado",
+    title: "Ver Calendario",
     pathTo: "/docentes/horarioPersonalizado",
     component: <HorarioPersonalizado />,
   },
