@@ -30,7 +30,7 @@ export default function Documentacion(props: Props<PropsDocumentacion, typeof DE
                     <Button color="secondary" onClick={onClick}>Regresar a Ternas</Button>
                 </div>
             </div>
-            <Documentos />
+            <Documentos onViewMonografia={() => setShowMonografia(true)} />
             <div className="mt-4 pt-3 border-top d-flex gap-2">
                 <Button color="secondary" onClick={onClick}>Regresar a Ternas</Button>
             </div>
