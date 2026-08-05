@@ -15,19 +15,19 @@ export default CreateReducer(INIT, ({ addCase }) => {
   }));
   addCase(Fetcher.insertSeccion.fulfilled, (state, { payload }) => ({
     ...state,
-    secciones: JSON.parse(JSON.stringify(payload.secciones)),
+    secciones: Array.isArray(payload.secciones) ? JSON.parse(JSON.stringify(payload.secciones)) : state.secciones,
     error: JSON.parse(JSON.stringify(payload.error)),
     update: payload.update
   }));
   addCase(Fetcher.updateSeccion.fulfilled, (state, { payload }) => ({
     ...state,
-    secciones: JSON.parse(JSON.stringify(payload.secciones)),
+    secciones: Array.isArray(payload.secciones) ? JSON.parse(JSON.stringify(payload.secciones)) : state.secciones,
     error: JSON.parse(JSON.stringify(payload.error)),
     update: payload.update
   }));
   addCase(Fetcher.deleteSection.fulfilled, (state, { payload }) => ({
     ...state,
-    secciones: JSON.parse(JSON.stringify(payload.secciones)),
+    secciones: Array.isArray(payload.secciones) ? JSON.parse(JSON.stringify(payload.secciones)) : state.secciones,
     error: JSON.parse(JSON.stringify(payload.error)),
     update: payload.update
   }));
