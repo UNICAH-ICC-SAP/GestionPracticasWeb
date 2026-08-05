@@ -98,13 +98,6 @@ export default function HorarioGrid({ modoAdmin = false, tipo = "clase" }: Horar
   }, [dispatch, docentes, modoAdmin]);
 
   useEffect(() => {
-    if (modoAdmin && docentes && docentes.length > 0 && !docenteSeleccionado) {
-      setDocenteSeleccionado(docentes[0].docenteId);
-      setBusqueda(docentes[0].nombre);
-    }
-  }, [docentes, docenteSeleccionado, modoAdmin]);
-
-  useEffect(() => {
     if (!docenteId) return;
 
     setIsLoading(true);
