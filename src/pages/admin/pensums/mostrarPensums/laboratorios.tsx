@@ -282,14 +282,36 @@ export default function Laboratorios() {
                 break;
         }
 
-        if (result?.payload?.error?.message) {
+        const payload = result?.payload as Record<string, unknown> | undefined;
+        const errorPayload = payload?.error as { message?: string } | undefined;
+
+        if (errorPayload?.message) {
             dispatch(ActionSecciones.setIsUpdate(false));
             Swal.fire({
                 icon: "error",
                 title: "Error de Colisión",
-                text: result.payload.error.message,
+                text: errorPayload.message,
             });
         } else {
+            const seccionesPayload = payload?.secciones as Record<string, unknown> | undefined;
+            if (seccionesPayload?.warning) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Advertencia",
+                    text: seccionesPayload.warning as string,
+                });
+            } else {
+                const mensajeExito = modal.type === MODALS_TYPES.CREATE_SECCION
+                    ? "Se ha agregado el docente correctamente."
+                    : modal.type === MODALS_TYPES.EDIT_SECCION
+                        ? "Se ha modificado correctamente."
+                        : "Se ha borrado correctamente.";
+                Swal.fire({
+                    icon: "success",
+                    title: "Guardado",
+                    text: mensajeExito,
+                });
+            }
             handleCloseModal();
         }
     };

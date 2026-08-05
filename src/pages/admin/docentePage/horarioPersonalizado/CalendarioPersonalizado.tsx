@@ -11,7 +11,7 @@ export default function VerHorarioDocente() {
 
   return (
     <Container fluid>
-      <h4 className="mb-3">Calendario del Docente</h4>
+      <h4 className="mb-3">Calendario</h4>
       <Nav tabs className="mb-4">
         <NavItem>
           <NavLink
