@@ -132,31 +132,17 @@ export default function Step2() {
         dispatch(ActionTernas.setResumen(true));
     }
     const handleDeleteDocente = (docenteId: string) => {
-        const currentDocentes = docentesInfo.filter(item => {
-            if (item.docenteId !== docenteId) {
-                return item;
-            }
-        })
-        const currentDetalleTernas = detalleTernas.filter(item => {
-            if (item.docenteId !== docenteId) {
-                return item;
-            }
-        })
-        const docente = currentDetalleTernas.filter(detalle => detalle.docenteId === docenteId)
-        if (docente.length === 0) {
-            setHasChange({ ...hasChange, [docente[0].rol]: false });
-            setHasCoor(!(docente[0].rol === 'coordina'));
-        }
-        if (!currentDetalleTernas) {
-            dispatch(ActionTernas.setNoDroppedData([]));
-            setEnableButton(false);
-        } else {
-            dispatch(ActionTernas.setNoDroppedData(currentDetalleTernas))
-            setEnableButton(false)
-        }
-        if (!currentDocentes) setDocentesInfo([]);
-        else setDocentesInfo(currentDocentes);
+        const docenteEliminado = detalleTernas.find(item => item.docenteId === docenteId);
+        const currentDocentes = docentesInfo.filter(item => item.docenteId !== docenteId);
+        const currentDetalleTernas = detalleTernas.filter(item => item.docenteId !== docenteId);
 
+        if (docenteEliminado) {
+            setHasChange(prev => ({ ...prev, [docenteEliminado.rol]: false }));
+        }
+
+        dispatch(ActionTernas.setNoDroppedData(currentDetalleTernas));
+        setEnableButton(false);
+        setDocentesInfo(currentDocentes);
     }
     const renderActions = (docenteId: string) => {
         return <ButtonGroup>

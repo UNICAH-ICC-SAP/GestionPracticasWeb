@@ -1,4 +1,3 @@
-import Reportes from "@pages/admin/reportes";
 import React from "react";
 import CrearTernas from "@pages/admin/crearTernas";
 import CreacionDocente from "@pages/admin/docentePage/crearDocente/creacionDocente";
@@ -29,12 +28,6 @@ export const adminMenu: Array<NavigationItem> = [
     title: "Ver Ternas",
     pathTo: "/ternas/modificarTernas",
     component: <VerTernas />,
-  },
-   {//para mostrar la funcion ques e me pidio que agregara "Reportes"//
-    paneId: "reportes",
-    title: "Reportes",
-    pathTo: "/reportes",
-    component: <Reportes />,
   },
   {
     paneId: "ModificarAlumnos",

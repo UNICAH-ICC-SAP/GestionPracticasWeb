@@ -1,36 +1,47 @@
-import React, { useState } from "react";
-import { Button, Card, CardBody, CardTitle, Col, Container, Input, Label, Row } from "reactstrap";
-import { axios, config } from "../../../utilities/axiosConfig";
-
-type Reporte = {
-  nombre: string;
-  descripcion: string;
-  total: number;
-};
+import React, { useEffect, useState } from "react";
+import { Button, Card, CardBody, CardTitle, Col, Container, Input, Label, Row, Spinner } from "reactstrap";
+import { getBlobFile } from "../../../utilities/Utilities";
+import { useDispatch, useSelector } from "@store/index";
+import { Fetcher as FetcherFacultad, Selector as SelectorFacultad } from "@store/slices/facultades";
 
 export default function Reportes() {
-  const [tipoReporte, setTipoReporte] = useState("");
-  const [datos, setDatos] = useState<Reporte[]>([]);
+  const dispatch = useDispatch();
+  const [tipoReporte, setTipoReporte] = useState("docentes");
+  const [facultadId, setFacultadId] = useState("");
+  const [filtroAperturada, setFiltroAperturada] = useState("todas");
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState("");
+  const facultades = useSelector(SelectorFacultad.getFacultades);
+
+  useEffect(() => {
+    dispatch(FetcherFacultad.getFacultades({ url: "/facultad/getFacultades" }));
+  }, [dispatch]);
 
   const generarReporte = async () => {
-    try {
-      const res = await axios.get("/reportes/resumen", config);
-      const resumen = res.data;
+    setError("");
+    setCargando(true);
 
-      if (tipoReporte === "docentes") {
-        setDatos([{ nombre: "Docentes", descripcion: "Total de docentes registrados", total: resumen.docentes }]);
-      }
+    const url = tipoReporte === "clases"
+      ? `/reportes/clases?facultadId=${facultadId}&aperturada=${filtroAperturada}`
+      : `/reportes/${tipoReporte}`;
 
-      if (tipoReporte === "clases") {
-        setDatos([{ nombre: "Clases", descripcion: "Total de clases registradas", total: resumen.clases }]);
-      }
+    const blob = await getBlobFile({ url });
 
-      if (tipoReporte === "ternas") {
-        setDatos([{ nombre: "Ternas", descripcion: "Total de ternas registradas", total: resumen.ternas }]);
-      }
-    } catch (error) {
-      console.error("Error al generar reporte:", error);
+    if (!blob) {
+      setError("No se pudo generar el reporte. Intenta de nuevo.");
+      setCargando(false);
+      return;
     }
+
+    const objectUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = objectUrl;
+    a.download = `reporte-${tipoReporte}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(objectUrl);
+    setCargando(false);
   };
 
   return (
@@ -51,41 +62,56 @@ export default function Reportes() {
                 value={tipoReporte}
                 onChange={(e) => setTipoReporte(e.target.value)}
               >
-                <option value="">Seleccione</option>
                 <option value="docentes">Docentes</option>
-                <option value="clases">Clases</option>
                 <option value="ternas">Ternas</option>
+                <option value="clases">Clases</option>
               </Input>
             </Col>
 
-            <Col md={3}>
-              <Button color="primary" block onClick={generarReporte}>
-                Generar
+            {tipoReporte === "clases" && (
+              <>
+                <Col md={6} className="mt-3 mt-md-0">
+                  <Label>Facultad</Label>
+                  <Input
+                    type="select"
+                    value={facultadId}
+                    onChange={(e) => setFacultadId(e.target.value)}
+                  >
+                    <option value="">Todas las facultades</option>
+                    {facultades.map(facultad => (
+                      <option key={facultad.facultadId} value={facultad.facultadId}>
+                        {facultad.nombreFacultad}
+                      </option>
+                    ))}
+                  </Input>
+                </Col>
+                <Col md={6} className="mt-3">
+                  <Label>Apertura</Label>
+                  <Input
+                    type="select"
+                    value={filtroAperturada}
+                    onChange={(e) => setFiltroAperturada(e.target.value)}
+                  >
+                    <option value="todas">Todas</option>
+                    <option value="si">Aperturadas</option>
+                    <option value="no">No aperturadas</option>
+                  </Input>
+                </Col>
+              </>
+            )}
+
+            <Col md={3} className="mt-3">
+              <Button color="primary" block onClick={generarReporte} disabled={cargando}>
+                {cargando ? <Spinner size="sm" /> : "Generar"}
               </Button>
             </Col>
           </Row>
+
+          {error && (
+            <div className="text-center text-danger mt-3">{error}</div>
+          )}
         </CardBody>
       </Card>
-
-      {datos.length > 0 ? (
-        <Row>
-          {datos.map((item, index) => (
-            <Col md={4} key={index}>
-              <Card>
-                <CardBody className="text-center">
-                  <CardTitle tag="h5">{item.nombre}</CardTitle>
-                  <p>{item.descripcion}</p>
-                  <h1>{item.total}</h1>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      ) : (
-        <div className="text-center mt-4">
-  <h4>No se encontró información</h4>
-</div>
-      )}
     </Container>
   );
 }
