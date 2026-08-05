@@ -65,6 +65,7 @@ const INITIAL_MODAL_STATE: TypeModals.ModalState = {
 export default function Coprogramaticas() {
     const dispatch = useDispatch();
     const [filtroClase, setFiltroClase] = useState<string>('');
+    const [filtroAperturada, setFiltroAperturada] = useState<'todas' | 'aperturadas' | 'no-aperturadas'>('todas');
     const [clasesFiltradas, setClasesFiltradas] = useState<ClasesPorBloque>({});
     const [clasesPorBloque, setClasesPorBloque] = useState<ClasesPorBloque>({});
     const [modal, setModal] = useState<TypeModals.ModalState>(INITIAL_MODAL_STATE);
@@ -127,13 +128,40 @@ export default function Coprogramaticas() {
         };
 
         setClasesPorBloque(todasLasClases);
-        setClasesFiltradas(todasLasClases);
     }, [clases, carreras]);
 
 
     const getDayName = (day: number): string => {
         return days[day] || '';
     };
+
+    const estaAperturada = (idClase: string): boolean => {
+        const carrera = carreras?.find(c => c.id_clase === idClase);
+        if (!carrera) return false;
+        return secciones?.some(seccion => seccion.id_ccb === carrera.id_ccb) ?? false;
+    };
+
+    useEffect(() => {
+        const bloquesFiltrados = Object.entries(clasesPorBloque).reduce<ClasesPorBloque>((acc, [bloque, clasesBloque]) => {
+            const filtradas = clasesBloque.filter(clase => {
+                const coincideTexto = !filtroClase ||
+                    clase.nombre_clase.toLowerCase().includes(filtroClase) ||
+                    clase.id_clase.toLowerCase().includes(filtroClase);
+                const aperturada = estaAperturada(clase.id_clase);
+                const coincideAperturada = filtroAperturada === 'todas' ||
+                    (filtroAperturada === 'aperturadas' && aperturada) ||
+                    (filtroAperturada === 'no-aperturadas' && !aperturada);
+                return coincideTexto && coincideAperturada;
+            });
+
+            if (filtradas.length) {
+                acc[parseInt(bloque)] = filtradas;
+            }
+            return acc;
+        }, {});
+
+        setClasesFiltradas(bloquesFiltrados);
+    }, [clasesPorBloque, filtroClase, filtroAperturada, carreras, secciones]);
 
     const handleOpenModal = (type: TypeModals.ModalType, bloque?: number, clase?: TypePensums.ClaseInfo) => {
         const tipoClase = getTipoClase(facultadSeleccionada);
@@ -270,27 +298,11 @@ export default function Coprogramaticas() {
     };
 
     const handleFiltroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const filtro = e.target.value.toLowerCase();
-        setFiltroClase(filtro);
+        setFiltroClase(e.target.value.toLowerCase());
+    };
 
-        if (!filtro) {
-            setClasesFiltradas(clasesPorBloque);
-            return;
-        }
-
-        const bloquesFiltrados = Object.entries(clasesPorBloque).reduce<ClasesPorBloque>((acc, [bloque, clases]) => {
-            const clasesFiltradas = clases.filter(clase =>
-                clase.nombre_clase.toLowerCase().includes(filtro) ||
-                clase.id_clase.toLowerCase().includes(filtro)
-            );
-
-            if (clasesFiltradas.length) {
-                acc[parseInt(bloque)] = clasesFiltradas;
-            }
-            return acc;
-        }, {});
-
-        setClasesFiltradas(bloquesFiltrados);
+    const handleFiltroAperturadaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFiltroAperturada(e.target.value as 'todas' | 'aperturadas' | 'no-aperturadas');
     };
 
     const handleFacultadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -309,7 +321,7 @@ export default function Coprogramaticas() {
             </h4>
             <Form>
                 <Row>
-                    <Col md={6}>
+                    <Col md={3}>
                         <FormGroup>
                             <Label for="facultadId">Facultad</Label>
                             <Input
@@ -327,7 +339,7 @@ export default function Coprogramaticas() {
                             </Input>
                         </FormGroup>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                         <FormGroup>
                             <Label for="periodoId">Periodo</Label>
                             <Input
@@ -345,7 +357,7 @@ export default function Coprogramaticas() {
                             </Input>
                         </FormGroup>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                         <FormGroup>
                             <Label for="filtroClaseId">Buscar Clase</Label>
                             <Input
@@ -359,7 +371,23 @@ export default function Coprogramaticas() {
                             </Input>
                         </FormGroup>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
+                        <FormGroup>
+                            <Label for="filtroAperturadaId">Apertura</Label>
+                            <Input
+                                id="filtroAperturadaId"
+                                name="filtroAperturada"
+                                type="select"
+                                value={filtroAperturada}
+                                onChange={handleFiltroAperturadaChange}
+                            >
+                                <option value="todas">Todas</option>
+                                <option value="aperturadas">Aperturadas</option>
+                                <option value="no-aperturadas">No aperturadas</option>
+                            </Input>
+                        </FormGroup>
+                    </Col>
+                    <Col md={3} className="mt-3">
                         <Button
                             color={"primary"}
                             onClick={() => handleOpenModal(MODALS_TYPES.CREATE as TypeModals.ModalType)}
@@ -369,6 +397,17 @@ export default function Coprogramaticas() {
                     </Col>
                 </Row>
             </Form>
+
+            <div className="mb-3 d-flex align-items-center gap-3 small">
+                <span className="d-inline-flex align-items-center">
+                    <span className="d-inline-block me-2" style={{ width: 14, height: 14, backgroundColor: "#0b3d91", borderRadius: 3 }} />
+                    Aperturada este periodo
+                </span>
+                <span className="d-inline-flex align-items-center">
+                    <span className="d-inline-block me-2" style={{ width: 14, height: 14, backgroundColor: "#adb5bd", borderRadius: 3 }} />
+                    No aperturada
+                </span>
+            </div>
 
             {isLoading ? (
                 <div className="text-center my-5">
@@ -386,7 +425,7 @@ export default function Coprogramaticas() {
                             <Row>
                                 {clases.map((clase) => (
                                     <Col key={clase.id_clase} md={3} className={"mb-3"}>
-                                        <Card>
+                                        <Card style={{ borderLeft: `5px solid ${estaAperturada(clase.id_clase) ? "#0b3d91" : "#adb5bd"}` }}>
                                             <CardHeader>
                                                 <h6 className={"text-muted mb-0"}> {clase.id_clase} </h6>
                                                 <h5 className={"mb-0"}>{clase.nombre_clase}</h5>

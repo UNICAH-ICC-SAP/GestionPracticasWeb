@@ -67,6 +67,18 @@ async function getSingleData(props: TypeUtilities) {
     });
 };
 
+// Descarga archivos binarios (PDF, etc.) usando la misma instancia autenticada `api`.
+// Devuelve el Blob si todo sale bien, o null si falla (revisa la consola para el detalle).
+async function getBlobFile(props: TypeUtilities): Promise<Blob | null> {
+    try {
+        const response = await api.get(props.url, { responseType: 'blob' });
+        return response.data;
+    } catch (error) {
+        console.error('Error al descargar archivo:', error);
+        return null;
+    }
+}
+
 async function Post(props: TypeUtilities) {
     const res = freshResponse();
     const { data } = props;
@@ -313,5 +325,6 @@ export {
     checkUser,
     getToken,
     LogOut,
-    signUp
+    signUp,
+    getBlobFile
 };
