@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - develop
 
   pull_request:
     branches:
@@ -12,6 +13,8 @@ on:
 
 permissions:
   contents: read
+  code-quality: write
+  pull-requests: read
 
 jobs:
   test:
@@ -31,40 +34,23 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        shell: bash
 
       - name: Run tests with coverage
-        run: npx jest --coverage --passWithNoTests
-        shell: bash
+        run: npx jest --coverage
+
+      - name: Verify coverage report
+        run: test -f coverage/cobertura-coverage.xml
 
       - name: Upload coverage artifact
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report-typescript
           path: coverage/cobertura-coverage.xml
 
-  upload-coverage-typescript:
-    needs: test
-
-    if: ${{ !cancelled() && needs.test.result == 'success' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      code-quality: write
-      pull-requests: read
-
-    steps:
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-report-typescript
-
       - name: Upload code coverage
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/upload-code-coverage@v1
         with:
-          file: cobertura-coverage.xml
+          file: coverage/cobertura-coverage.xml
           language: TypeScript
           label: code-coverage-agent
