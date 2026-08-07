@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.29](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.27...v0.0.29) (2026-08-07)
+
+
+### Features
+
+* set up Jest code coverage with cobertura reporting and CI workflow ([f00adaa](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/f00adaad3152f2d9480cb0d21f9d4f7d839c7bea))
+
+
+### Bug Fixes
+
+* pin actions/download-artifact to v4.1.3 to fix arbitrary file write vulnerability ([1513228](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/1513228d65cdf5e8699b11b3c449a7eb31e967b4))
+
+### [0.0.28](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.27...v0.0.28) (2026-08-07)
+
+
+### Features
+
+* set up Jest code coverage with cobertura reporting and CI workflow ([f00adaa](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/f00adaad3152f2d9480cb0d21f9d4f7d839c7bea))
+
+
+### Bug Fixes
+
+* pin actions/download-artifact to v4.1.3 to fix arbitrary file write vulnerability ([1513228](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/commit/1513228d65cdf5e8699b11b3c449a7eb31e967b4))
+
 ### [0.0.27](https://github.com/UNICAH-ICC-SAP/GestionPracticasWeb/compare/v0.0.26...v0.0.27) (2026-05-11)
 
 
