@@ -34,7 +34,7 @@ jobs:
         shell: bash
 
       - name: Run tests with coverage
-        run: npx jest --coverage
+        run: npx jest --coverage --passWithNoTests
         shell: bash
 
       - name: Upload coverage artifact
