@@ -1,0 +1,97 @@
+.horario-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.horario-grid th,
+.horario-grid td {
+  border: 1px solid #dee2e6;
+  padding: 8px 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.horario-grid th {
+  background-color: #0d6efd;
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.horario-grid th.franja-header {
+  background-color: #0a58ca;
+  width: 100px;
+}
+
+.horario-grid td.franja-cell {
+  background-color: #f8f9fa;
+  font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.horario-grid td.disponible {
+  background-color: #198754;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.horario-grid td.disponible:hover {
+  background-color: #157347;
+}
+
+.horario-grid td.no-disponible {
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.horario-grid td.no-disponible:hover {
+  background-color: #e9ecef;
+}
+
+.horario-container {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.horario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.horario-legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+.legend-color.disponible {
+  background-color: #198754;
+}
+
+.legend-color.no-disponible {
+  background-color: #f8f9fa;
+}

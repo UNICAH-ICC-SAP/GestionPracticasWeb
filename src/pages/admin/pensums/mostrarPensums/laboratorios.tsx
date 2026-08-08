@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
+import Swal from "sweetalert2";
 
 import { days, MODALS_TYPES } from "@root/consts"
 
@@ -222,9 +223,11 @@ export default function Laboratorios() {
         e.preventDefault();
         dispatch(ActionSecciones.setIsUpdate(true));
 
+        let result: { payload?: { error?: { message?: string } } } | undefined;
+
         switch (modal.type) {
             case MODALS_TYPES.CREATE_SECCION:
-                dispatch(FetcherSecciones.insertSeccion({
+                result = await dispatch(FetcherSecciones.insertSeccion({
                     url: '/secciones/insertSection',
                     data: {
                         ...sectionForm,
@@ -234,7 +237,7 @@ export default function Laboratorios() {
                 }));
                 break;
             case MODALS_TYPES.EDIT_SECCION:
-                dispatch(FetcherSecciones.updateSeccion({
+                result = await dispatch(FetcherSecciones.updateSeccion({
                     url: "/secciones/updateSection",
                     data: {
                         ...sectionForm,
@@ -244,12 +247,44 @@ export default function Laboratorios() {
                 }));
                 break;
             case MODALS_TYPES.DELETE_SECCION:
-                dispatch(FetcherSecciones.deleteSection({
+                result = await dispatch(FetcherSecciones.deleteSection({
                     url: `/secciones/deleteSection?id_clase=${modal.currentClase?.id_clase}&seccion=${sectionForm.seccion}`,
                 }));
                 break;
         }
-        handleCloseModal();
+
+        const payload = result?.payload as Record<string, unknown> | undefined;
+        const errorPayload = payload?.error as { message?: string } | undefined;
+
+        if (errorPayload?.message) {
+            dispatch(ActionSecciones.setIsUpdate(false));
+            Swal.fire({
+                icon: "error",
+                title: "Error de Colisión",
+                text: errorPayload.message,
+            });
+        } else {
+            const seccionesPayload = payload?.secciones as Record<string, unknown> | undefined;
+            if (seccionesPayload?.warning) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Advertencia",
+                    text: seccionesPayload.warning as string,
+                });
+            } else {
+                const mensajeExito = modal.type === MODALS_TYPES.CREATE_SECCION
+                    ? "Se ha agregado el docente correctamente."
+                    : modal.type === MODALS_TYPES.EDIT_SECCION
+                        ? "Se ha modificado correctamente."
+                        : "Se ha borrado correctamente.";
+                Swal.fire({
+                    icon: "success",
+                    title: "Guardado",
+                    text: mensajeExito,
+                });
+            }
+            handleCloseModal();
+        }
     };
 
     const handleFiltroChange = (e: React.ChangeEvent<HTMLInputElement>) => {

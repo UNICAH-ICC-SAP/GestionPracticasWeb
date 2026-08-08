@@ -2,8 +2,8 @@ import React from "react";
 import CrearTernas from "@pages/admin/crearTernas";
 import CreacionDocente from "@pages/admin/docentePage/crearDocente/creacionDocente";
 import type { NavigationItem } from "./types";
-import MostrarDocentes from "@pages/admin/docentes/MostrarDocentes";
 import ModificarDocentes from "@pages/admin/docentes/ModificarDocentes";
+import HorarioPersonalizado from "@pages/admin/docentePage/horarioPersonalizado/CalendarioPersonalizado";
 import Carreras from "@pages/admin/pensums/mostrarPensums/carreras";
 import Laboratorios from "@pages/admin/pensums/mostrarPensums/laboratorios";
 import Coprogramaticas from "@pages/admin/pensums/mostrarPensums/coprogramaticas";
@@ -86,10 +86,10 @@ export const docenteMenu: Array<NavigationItem> = [
     component: <ModificarDocentes />,
   },
   {
-    paneId: "MostrarDocente",
-    title: "Mostrar Docentes",
-    pathTo: "/docentes/viewAllDocente",
-    component: <MostrarDocentes />,
+    paneId: "HorarioPersonalizado",
+    title: "Ver Calendario",
+    pathTo: "/docentes/horarioPersonalizado",
+    component: <HorarioPersonalizado />,
   },
 ];
 
