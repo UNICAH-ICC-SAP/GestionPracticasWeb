@@ -14,6 +14,7 @@ import { Fetcher as FetcherPeriodo, Selector as SelectorPeriodos } from '@store/
 import { Container, Card, Row, Col, Button, CardHeader, ButtonGroup, FormGroup, Label, Input, Form, ModalBody, ModalFooter, Modal, ModalHeader, Spinner, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPlus, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
+import Autocomplete from "@components/shared/inputs/Autocomplete";
 import NotFound from "@components/shared/notFound";
 import { isEmpty } from "lodash";
 
@@ -543,21 +544,19 @@ export default function Coprogramaticas() {
                             <>
                                 <FormGroup>
                                     <Label for="docenteId">Docente</Label>
-                                    <Input
+                                    <Autocomplete
                                         id="docenteId"
-                                        name="docenteId"
-                                        type="select"
                                         value={sectionForm.docenteId}
-                                        onChange={handleSectionInputChange}
+                                        onChange={(val) => setSectionForm(prev => ({ ...prev, docenteId: val }))}
+                                        placeholder="Escriba el nombre del docente..."
                                         required
-                                    >
-                                        <option value="">Seleccione un docente</option>
-                                        {docentes?.map(docente => (
-                                            <option key={docente.docenteId} value={docente.docenteId}>
-                                                {docente.nombre}
-                                            </option>
-                                        ))}
-                                    </Input>
+                                        options={
+                                            docentes?.map(docente => ({
+                                                value: docente.docenteId || '',
+                                                label: `${docente.nombre} - ${docente.docenteId}`
+                                            })) || []
+                                        }
+                                    />
                                 </FormGroup>
                                 <FormGroup>
                                     <Label for="seccion">Sección</Label>
