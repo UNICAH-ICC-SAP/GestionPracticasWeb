@@ -1,3 +1,4 @@
+import Reportes from "@pages/admin/reportes/reportes";
 import React from 'react';
 import Docentes from '@pages/admin/index';
 import DocenteMenu from '@pages/admin/docentePage/docenteIndex';
@@ -9,6 +10,7 @@ import Documentacion from '@pages/perfilAlumnos/documentacion';
 import DocentePerfil from "@pages/perfilDocente/ternas"
 import ConfigEmail from "@pages/admin/configEmail"
 import CargaDocente from '@pages/perfilDocente/cargaDocente';
+import MiHorario from '@pages/perfilDocente/horarioPersonalizado/horarioPersonalizado';
 
 export enum Permissions {
     VIEW_HOME = 'VIEW_HOME',
@@ -19,9 +21,12 @@ export enum Permissions {
     VIEW_CARGAS = 'VIEW_CARGAS',
 
     CONFIG_EMAIL_TEMPLATE = 'CONFIG_EMAIL_TEMPLATE',
+    VIEW_REPORTES = 'VIEW_REPORTES',
 
     VIEW_MIS_TERNAS = 'VIEW_MIS_TERNAS',
     VIEW_CARGA_ASIGNADA = 'VIEW_CARGA_ASIGNADA',
+    VIEW_MI_HORARIO = 'VIEW_MI_HORARIO',
+    VIEW_CALENDARIO = 'VIEW_CALENDARIO',
 
     VIEW_MI_TERNA = 'VIEW_MI_TERNA',
     VIEW_DOCUMENTACION = 'VIEW_DOCUMENTACION',
@@ -31,8 +36,15 @@ export enum Permissions {
 
 export const navigation = [
     { title: 'Home', pathTo: '/', component: <Home />, permission: Permissions.VIEW_HOME },
+   //añadiendo reportes//
+    {
+    title: 'Reportes',
+    pathTo: '/reportes',
+    component: <Reportes />,
+    permission: Permissions.VIEW_REPORTES
+},
 
-    { title: 'Ternas', pathTo: '/ternas', component: <Docentes />, permission: Permissions.VIEW_TERNAS },
+{ title: 'Ternas', pathTo: '/ternas', component: <Docentes />, permission: Permissions.VIEW_TERNAS },
 
     { title: 'Docentes', pathTo: '/docentes', component: <DocenteMenu />, permission: Permissions.VIEW_DOCENTES },
 
@@ -45,6 +57,8 @@ export const navigation = [
     { title: 'Mis Ternas', pathTo: '/ternas', component: <DocentePerfil />, permission: Permissions.VIEW_MIS_TERNAS },
 
     { title: 'Carga Asignada', pathTo: '/cargaAsignada', component: <CargaDocente />, permission: Permissions.VIEW_CARGA_ASIGNADA },
+
+    { title: 'Mi Calendario', pathTo: '/miHorario', component: <MiHorario />, permission: Permissions.VIEW_CALENDARIO },
 
     { title: 'Mi Terna', pathTo: '/terna', component: <TernaAlumno />, permission: Permissions.VIEW_MI_TERNA },
 

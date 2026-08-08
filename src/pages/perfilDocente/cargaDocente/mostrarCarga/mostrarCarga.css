@@ -9,6 +9,17 @@
     color: white !important;
 }
 
-.custom-card-header>h5 {
+.custom-card-header > h5 {
     font-size: 1.2rem;
+}
+
+.clase-aperturada {
+    background-color: #d4edda;
+    border: 1px solid #28a745;
+}
+
+.clase-no-aperturada {
+    background-color: #e9ecef;
+    border: 1px solid #6c757d;
+    color: #6c757d;
 }
