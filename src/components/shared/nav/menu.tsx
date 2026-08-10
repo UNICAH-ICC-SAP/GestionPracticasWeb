@@ -1,3 +1,4 @@
+import Reportes from "@pages/admin/reportes/reportes";
 import React from 'react';
 import Docentes from '@pages/admin/index';
 import DocenteMenu from '@pages/admin/docentePage/docenteIndex';
@@ -19,6 +20,7 @@ export enum Permissions {
     VIEW_CARGAS = 'VIEW_CARGAS',
 
     CONFIG_EMAIL_TEMPLATE = 'CONFIG_EMAIL_TEMPLATE',
+    VIEW_REPORTES = 'VIEW_REPORTES',
 
     VIEW_MIS_TERNAS = 'VIEW_MIS_TERNAS',
     VIEW_CARGA_ASIGNADA = 'VIEW_CARGA_ASIGNADA',
@@ -31,8 +33,15 @@ export enum Permissions {
 
 export const navigation = [
     { title: 'Home', pathTo: '/', component: <Home />, permission: Permissions.VIEW_HOME },
+   //añadiendo reportes//
+    {
+    title: 'Reportes',
+    pathTo: '/reportes',
+    component: <Reportes />,
+    permission: Permissions.VIEW_REPORTES
+},
 
-    { title: 'Ternas', pathTo: '/ternas', component: <Docentes />, permission: Permissions.VIEW_TERNAS },
+{ title: 'Ternas', pathTo: '/ternas', component: <Docentes />, permission: Permissions.VIEW_TERNAS },
 
     { title: 'Docentes', pathTo: '/docentes', component: <DocenteMenu />, permission: Permissions.VIEW_DOCENTES },
 

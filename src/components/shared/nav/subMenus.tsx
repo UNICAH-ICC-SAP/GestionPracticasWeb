@@ -16,6 +16,7 @@ import CrearPlantilla from "@pages/admin/configEmail/crearPlantilla/CrearPlantil
 import AccionesPlantillas from "@pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
 
 export const adminMenu: Array<NavigationItem> = [
+
   {
     paneId: "CrearTernas",
     title: "Crear Ternas",
