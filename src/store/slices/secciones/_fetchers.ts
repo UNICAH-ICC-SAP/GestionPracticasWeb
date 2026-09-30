@@ -1,7 +1,7 @@
 import { Type as TypeError } from "../../../Api/namespaces/modalError";
 import { CreateFetchers } from "../../../storeConfig";
 import { NAME } from "./_namespace";
-import { Delete, getData, Post, Put } from "../../../utilities/Utilities";
+import { Delete, getData, Post, Put, PatchData } from "../../../utilities/Utilities";
 import { TypeUtilities } from "../../../utilities/TypeUtilities";
 import { isError } from "../../../Api/utilsError";
 
@@ -65,6 +65,18 @@ export default CreateFetchers(NAME, {
       secciones: response?.data,
       error: response?.error,
       update: false,
+    };
+  },
+
+  async updateObservacion(params: TypeUtilities) {
+    const response = await PatchData(params);
+    if (isError<TypeError.ModalError>(response?.error)) {
+      return {
+        error: response?.error,
+      };
+    }
+    return {
+      error: response?.error,
     };
   }
 });
