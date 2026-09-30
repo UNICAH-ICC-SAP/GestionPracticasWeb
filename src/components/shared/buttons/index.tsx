@@ -55,6 +55,7 @@ export const ButtonTransparent = styled(Button)`
 `
 
 export function WhatsappButton({ telefono }: { telefono: string }) {
-    const newPhone = telefono.includes('504') ? telefono : `504${telefono}`;
+    const tel = telefono || '';
+    const newPhone = tel.includes('504') ? tel : `504${tel}`;
     return <a className="btn btn-success w-50" style={{ color: 'white' }} href={`https://wa.me/${newPhone.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '').replaceAll('-', '')}`} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faWhatsapp} /> </a>
 }

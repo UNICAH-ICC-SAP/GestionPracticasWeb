@@ -4,6 +4,20 @@ import { Type as TypeModal } from "../../../Api/namespaces/modalError";
 export const NAME = "Seccion";
 
 export declare namespace Type {
+  export type ClaseData = {
+    id_clase: string;
+    nombre_clase: string;
+    creditos: number;
+    TipoClase: number;
+  };
+
+  export type CcbData = {
+    id_ccb: number;
+    facultadId: string;
+    id_bloque: number;
+    clase?: ClaseData;
+  };
+
   export type SeccionInfo = {
     id_clase: string;
     id_detalle: number;
@@ -16,6 +30,8 @@ export declare namespace Type {
     dia_final: number;
     hora_final: string;
     horario_especial?: boolean;
+    observacion?: string;
+    ccb?: CcbData;
   };
 }
 

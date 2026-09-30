@@ -17,6 +17,7 @@ import { NAME as NAME_PERIODO, Reducer as ReducerPeriodo } from "./slices/period
 import { NAME as NAME_PLANTILLAS, Reducer as ReducerPlantillas } from "./slices/plantillas";
 import { NAME as NAME_ACCION_PLANTILLAS, Reducer as ReducerAccionPlantillas } from "./slices/accionesPlantilla";
 import { NAME as NAME_DOCUMENT_MANAGER, Reducer as ReducerDocuments } from "./slices/documentManager";
+import { NAME as NAME_HORARIO, Reducer as ReducerHorario } from "./slices/horario";
 // import { NAME as NAME_FACULTAD, Reducer as ReducerFacultad } from "./slices/facultades";
 
 export default CombineReducers({
@@ -38,4 +39,5 @@ export default CombineReducers({
     [NAME_PLANTILLAS]: ReducerPlantillas,
     [NAME_ACCION_PLANTILLAS]: ReducerAccionPlantillas,
     [NAME_DOCUMENT_MANAGER]: ReducerDocuments,
+    [NAME_HORARIO]: ReducerHorario,
 });
