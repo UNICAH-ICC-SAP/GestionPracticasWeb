@@ -17,12 +17,41 @@ export declare namespace Type {
         docenteId: string;
         rol: string;
     }
-
     export type UserCreation = {
         userId: string;
         pass: string;
         roleId: number;
     }
+    export type MonografiaDocente = {
+        docenteId: string;
+        nombre: string;
+        email: string;
+        telefono: string;
+        rol: string;
+    }
+    export type MonografiaArchivo = {
+        archivoId: number;
+        originalName: string;
+        fileUrl: string;
+        status: string;
+        fileStatus: string;
+        mimeType: string;
+        sizeBytes: number;
+    }
+    export type MonografiaCompleta = {
+        ternaId: number;
+        estado: string;
+        idEstadoTerna: number;
+        alumno: {
+            alumnoId: string;
+            nombre: string;
+            email: string;
+            telefono: string;
+            facultadId: string;
+        };
+        docentes: MonografiaDocente[];
+        monografia: MonografiaArchivo | null;
+    } | null;
 }
 
 export declare namespace StoreUser {
@@ -39,6 +68,7 @@ export declare namespace StoreUser {
         step2: boolean;
         resumen: boolean;
         updateStatus: boolean;
+        monografiaCompleta: Type.MonografiaCompleta;
     };
 }
 
@@ -98,4 +128,5 @@ export const INIT: StoreUser.State = {
     ternaCreatedState: false,
     ternaDetailCreateState: false,
     updateStatus: false,
+    monografiaCompleta: null,
 };
