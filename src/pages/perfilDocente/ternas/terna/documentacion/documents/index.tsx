@@ -10,7 +10,11 @@ import UploadCard from "@components/shared/documentCard/uploadDocumentCard";
 import { TypeUtilities } from "@utilities/TypeUtilities";
 import { DocumentStatus } from "@root/abstracts";
 
-export default function Documentos() {
+type Props = {
+    onViewMonografia?: () => void;
+};
+
+export default function Documentos({ onViewMonografia }: Props) {
     const dispatch = useDispatch();
     const [showCards, setShowCards] = React.useState(true);
     const [selectedDoc, setSelectedDoc] = React.useState<Document | null>()
@@ -69,6 +73,7 @@ export default function Documentos() {
                         setShowCards(false);
                         setSelectedDoc(doc);
                     }}
+                    onViewMonografia={onViewMonografia}
                 />
             ))}
             {selectedDoc && <UploadCard document={selectedDoc} user={user} userInfo={userInfo} onClickBack={() => {

@@ -86,4 +86,9 @@ export default CreateReducer(INIT, ({ addCase }) => {
         ...state,
         updateStatus: payload,
     }));
+    addCase(Fetcher.getMonografiaCompleta.fulfilled, (state, { payload }) => ({
+        ...state,
+        monografiaCompleta: payload.monografiaCompleta ? JSON.parse(JSON.stringify(payload.monografiaCompleta)) : null,
+        error: JSON.parse(JSON.stringify(payload.error)),
+    }));
 });
