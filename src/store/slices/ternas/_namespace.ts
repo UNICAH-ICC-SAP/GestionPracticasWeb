@@ -19,7 +19,6 @@ export declare namespace Type {
     }
     export type UserCreation = {
         userId: string;
-        pass: string;
         roleId: number;
     }
     export type MonografiaDocente = {
@@ -114,7 +113,6 @@ export const INIT: StoreUser.State = {
     detallesTernasInfo: [],
     userToCreate: {
         userId: '',
-        pass: '',
         roleId: 3
     },
     ternasInfo: [],

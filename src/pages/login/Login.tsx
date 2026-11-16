@@ -25,10 +25,12 @@ import { ButtonPrimary } from "../../components/shared/buttons";
 import {
   Fetcher as FetcherLogin,
   Selector as SelectorLogin,
+  Action as ActionLogin,
 } from "../../store/slices/users";
 import { useDispatch, useSelector } from "../../store";
 import { TypeUtilities } from "../../utilities/TypeUtilities";
 import Swal from "sweetalert2";
+import { Post, Put, LogOut } from "@utilities/Utilities";
 
 type FormLogin = {
   userId: string;
@@ -39,15 +41,22 @@ type FormPasswordReset = {
   newPass: string;
 };
 
-function Login() {
+type LoginProps = {
+  initialInvitationToken?: string;
+  onActivationComplete?: () => void;
+};
+
+function Login({ initialInvitationToken = '', onActivationComplete }: LoginProps) {
   const dispatch = useDispatch();
+  const [invitationToken, setInvitationToken] = React.useState(initialInvitationToken);
+  const [isSaving, setIsSaving] = React.useState(false);
   const [formLogin, setFormLogin] = React.useState<FormLogin>({
     userId: "",
     pass: "",
   });
   const [showWelcomeModal, setShowWelcomeModal] = React.useState(false);
   const [showPasswordResetModal, setShowPasswordResetModal] =
-    React.useState(false);
+    React.useState(Boolean(invitationToken));
   const [formPasswordReset, setFormPasswordReset] =
     React.useState<FormPasswordReset>({ newPass: "" });
 
@@ -81,21 +90,32 @@ function Login() {
     dispatch(FetcherLogin.login(utilities));
   };
 
-  const handlePasswordResetSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePasswordResetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const utilities: TypeUtilities = {
-      url: `/user/resetPassword?userId=${formLogin.userId}`,
-      data: { newPassword: formPasswordReset.newPass },
-    };
-
-    dispatch(FetcherLogin.updateData(utilities));
+    if (isSaving) return;
+    setIsSaving(true);
+    const response = invitationToken
+      ? await Post({
+        url: '/user/activate',
+        data: { invitationToken, newPassword: formPasswordReset.newPass },
+      })
+      : await Put({
+        url: '/user/resetPassword',
+        data: { currentPassword: formLogin.pass, newPassword: formPasswordReset.newPass },
+      });
+    setIsSaving(false);
+    if (response.error.code) {
+      await Swal.fire({ title: 'No se pudo actualizar la contraseña', text: response.error.message, icon: 'error' });
+      return;
+    }
+    await LogOut();
+    dispatch(ActionLogin.cleanStore());
+    setInvitationToken('');
+    onActivationComplete?.();
+    setFormLogin({ userId: '', pass: '' });
+    setFormPasswordReset({ newPass: '' });
     setShowPasswordResetModal(false);
-    Swal.fire({
-      title: "¡Éxito!",
-      text: "Contraseña actualizada con éxito.",
-      icon: "success",
-    });
+    await Swal.fire({ title: 'Contraseña guardada', text: 'Ya puedes iniciar sesión con tu nueva contraseña.', icon: 'success' });
   };
 
   const handleWelcomeModalNext = () => {
@@ -104,10 +124,10 @@ function Login() {
   };
 
   React.useEffect(() => {
-    if (passwordRequired) {
+    if (passwordRequired && !invitationToken) {
       setShowWelcomeModal(true);
     }
-  }, [passwordRequired]);
+  }, [passwordRequired, invitationToken]);
 
   return (
     <Container tag='div' className="d-flex flex-column align-items-center" fluid='md'>
@@ -178,10 +198,21 @@ function Login() {
         <ModalHeader
           toggle={() => setShowPasswordResetModal(!showPasswordResetModal)}
         >
-          Restablecer contraseña
+          {invitationToken ? 'Activar cuenta' : 'Restablecer contraseña'}
         </ModalHeader>
         <ModalBody>
           <Form onSubmit={handlePasswordResetSubmit}>
+            {!invitationToken && (
+              <Input
+                name="pass"
+                type="password"
+                placeholder="Contraseña actual"
+                autoComplete="current-password"
+                value={formLogin.pass}
+                onChange={handleChange}
+                required
+              />
+            )}
             <InputGroup className="w-100">
               <InputGroupText htmlFor="newPass">
                 <FontAwesomeIcon icon={faKey} />
@@ -193,6 +224,8 @@ function Login() {
                 type={isResetPasswordVisible ? "text" : "password"}
                 value={formPasswordReset.newPass}
                 onChange={handlePasswordResetChange}
+                minLength={12}
+                autoComplete="new-password"
                 required
               />
               <InputGroupText
@@ -207,7 +240,7 @@ function Login() {
               </InputGroupText>
             </InputGroup>
             <ModalFooter>
-              <Button color="primary" type="submit">
+              <Button color="primary" type="submit" disabled={isSaving}>
                 Actualizar contraseña
               </Button>
               <Button

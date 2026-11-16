@@ -73,7 +73,7 @@ export default CreateFetchers(NAME, {
 
     async updateStatus(params: TypeUtilities) {
         const response = await PatchData(params);
-        if (!response) {
+        if (!response || isError<TypeError.ModalError>(response.error)) {
             return {
                 updated: false,
                 error: response?.error,

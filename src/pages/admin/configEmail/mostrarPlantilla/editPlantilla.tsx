@@ -35,10 +35,10 @@ export default function EditForm(props: Props<PropsForm, typeof DEF>) {
             />
         </div>
         <div className="mb-3">
-            <Label for="pass" className="text-left">Pass</Label>
+            <Label for="correo_password" className="text-left">Contraseña del correo</Label>
             <Input
-                id="pass"
-                type={changePass ? "text" : "password"}
+                id="correo_password"
+                type="password"
                 disabled={!changePass}
                 value={state.correo_password}
                 onChange={onChange}

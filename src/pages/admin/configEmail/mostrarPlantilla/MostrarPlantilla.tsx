@@ -52,9 +52,9 @@ export default function MostrarPlantilla() {
             const plantillaMapped = plantillas.map(plantilla => ({
                 idPlantilla: plantilla.Id_correo,
                 correo_origen: plantilla.correo_origen,
-                correo_password: plantilla.correo_password,
+                correo_password: '',
                 asunto: plantilla.asunto,
-                preview: <div className="plantilla-preview" dangerouslySetInnerHTML={{ __html: plantilla.cuerpo }}></div>,
+                preview: <iframe title="Vista previa de la plantilla" sandbox="" srcDoc={plantilla.cuerpo} className="plantilla-preview" />,
                 cuerpo: plantilla.cuerpo,
                 estado: plantilla.estado ? "Activa" : "Inactiva",
             }));
@@ -70,7 +70,7 @@ export default function MostrarPlantilla() {
     }
 
     function obfuscateText(text: string) {
-        const obfuscated = "".padStart(text.length, "*");
+        const obfuscated = text ? "********" : "Configurada en el servidor";
         return obfuscated;
     }
 
@@ -79,7 +79,12 @@ export default function MostrarPlantilla() {
         if (selectedPlantilla) {
             const params = {
                 url: `/correo/actualizarPlantilla/${selectedPlantilla.idPlantilla}`,
-                data: selectedPlantilla,
+                data: {
+                    correo_origen: selectedPlantilla.correo_origen,
+                    asunto: selectedPlantilla.asunto,
+                    cuerpo: selectedPlantilla.cuerpo,
+                    ...(changePass && selectedPlantilla.correo_password ? { correo_password: selectedPlantilla.correo_password } : {}),
+                },
             };
 
             dispatch(FetcherPlantillas.updatealumno(params))

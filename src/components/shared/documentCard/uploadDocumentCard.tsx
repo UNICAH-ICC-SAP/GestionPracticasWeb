@@ -4,163 +4,77 @@ import { faFolderOpen, faFolderClosed } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, CardBody, CardTitle, Badge, CardSubtitle, CardText, CardFooter, ButtonGroup, Input, Spinner } from "reactstrap";
 import { ButtonPrimary, ButtonSecondary } from "../buttons";
-import { Fetcher as FetcherFiles, Selector as SelectorFiles } from "@store/slices/documentManager"
+import { Fetcher as FetcherFiles, Selector as SelectorFiles } from "@store/slices/documentManager";
 import type { Type as TypeUser } from "@store/slices/users/_namespace";
 import type { Type as TypeAlumno } from "@store/slices/alumnos/_namespace";
-import type { Document } from "./type"
+import type { Document } from "./type";
 import { DEF, Props } from '@root/Api/typesProps';
-import { DocumentStatus, DocumentUploadStatus } from "@root/abstracts"
-import { TypeUtilities } from "@utilities/TypeUtilities";
+import { DocumentStatus, DocumentUploadStatus } from "@root/abstracts";
+import { Post, PatchData, uploadToGCP } from "@utilities/Utilities";
 import Swal from "sweetalert2";
 
 type DocumentCardProps = {
     document: Document;
     user: TypeUser.User;
     userInfo: TypeUser.UserInfo | TypeAlumno.AlumnoInfo;
-    onClickBack: () => void,
-}
+    onClickBack: () => void;
+};
 
 export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
     const { document, onClickBack, user, userInfo } = prop;
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const [file, setFile] = React.useState<File | null>(null);
     const [loadingFile, setUploadingFile] = React.useState(false);
-    const signedUrl = useSelector(SelectorFiles.getSignedUrlToUpload);
-    const uploaded = useSelector(SelectorFiles.getIsSavedDocument);
+    const uploadingRef = React.useRef(false);
     const isRequestedChangesByDocente = useSelector(SelectorFiles.getIsRequestedChangesByDocente);
     const alumno = useSelector(SelectorFiles.getSelectedAlumno);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setFile(e.target.files[0]);
-        }
+        setFile(e.target.files?.[0] || null);
     };
 
-    React.useEffect(() => {
-        if (signedUrl !== null) {
-            const utils: TypeUtilities = { url: signedUrl.uploadUrl, data: file };
-            dispatch(FetcherFiles.uploadDocument(utils));
-        }
-    }, [signedUrl]);
-
-    React.useEffect(() => {
-        if (uploaded) {
-            if (isRequestedChangesByDocente && document.fileStatus == DocumentStatus.DELIVERED) {
-                const utils: TypeUtilities = {
-                    url: `/files/updateFileStatus`, data: {
-                        id: signedUrl.archivoId,
-                        status: DocumentUploadStatus.UPLOADED,
-                        fileStatus: DocumentStatus.CHANGE_REQUESTED,
-                    }
-                };
-                dispatch(FetcherFiles.updateStatus(utils))
-            } else if (document.fileStatus === DocumentStatus.CHANGE_REQUESTED) {
-                const utils: TypeUtilities = {
-                    url: `/files/updateFileStatus`, data: {
-                        id: signedUrl.archivoId,
-                        status: DocumentUploadStatus.UPLOADED,
-                        fileStatus: DocumentStatus.DELIVERED,
-                    }
-                };
-                dispatch(FetcherFiles.updateStatus(utils))
-            } else {
-                if (user.roleId === 2) {
-                    const utils: TypeUtilities = {
-                        url: `/files/updateFileStatus`, data: {
-                            id: signedUrl.archivoId,
-                            status: DocumentUploadStatus.UPLOADED,
-                            fileStatus: DocumentStatus.DELIVERED,
-                        }
-                    };
-                    dispatch(FetcherFiles.updateStatus(utils))
-                } else {
-                    const utils: TypeUtilities = {
-                        url: `/files/updateFileStatus`, data: {
-                            id: signedUrl.archivoId,
-                            status: DocumentUploadStatus.UPLOADED,
-                            fileStatus: DocumentStatus.DELIVERED,
-                        }
-                    };
-                    dispatch(FetcherFiles.updateStatus(utils))
-                }
-            }
-            Swal.fire({
-                title: "¡Éxito!",
-                text: "Archivo subido con exito",
-                icon: "success",
-            });
-            onClickBack();
-        }
-    }, [uploaded]);
-
     const handleUpload = async () => {
-        if (!file) return;
-        if (isRequestedChangesByDocente && document.fileStatus == DocumentStatus.DELIVERED) {
-            const utils: TypeUtilities = {
-                url: "/files/update-signed-urls", data: {
-                    userId: alumno.alumnoId,
-                    userName: alumno.alumnoNombre,
-                    file: {
-                        file: file.name,
-                        size: file.size,
-                        contentType: file.type
-                    },
-                    fileTypeId: document.fileTypeId,
-                    customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`,
-                    archivoId: document.archivoId,
-                }
-            };
-            dispatch(FetcherFiles.createUpdateSignedUrl(utils));
-        } else if (document.fileStatus === DocumentStatus.CHANGE_REQUESTED) {
-            const utils: TypeUtilities = {
-                url: "/files/update-signed-urls", data: {
-                    userId: user.userId,
-                    userName: userInfo.nombre,
-                    file: {
-                        file: file.name,
-                        size: file.size,
-                        contentType: file.type
-                    },
-                    fileTypeId: document.fileTypeId,
-                    customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`,
-                    archivoId: document.archivoId,
-                }
-            };
-            dispatch(FetcherFiles.createUpdateSignedUrl(utils));
-        } else {
-            if (user.roleId === 2) {
-                const utils: TypeUtilities = {
-                    url: "/files/signed-urls", data: {
-                        userId: alumno.alumnoId,
-                        userName: alumno.alumnoNombre,
-                        file: {
-                            file: file.name,
-                            size: file.size,
-                            contentType: file.type
-                        },
-                        fileTypeId: document.fileTypeId,
-                        customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`
-                    }
-                };
-                dispatch(FetcherFiles.createSignedUrl(utils));
-            } else {
-                const utils: TypeUtilities = {
-                    url: "/files/signed-urls", data: {
-                        userId: user.userId,
-                        userName: userInfo.nombre,
-                        file: {
-                            file: file.name,
-                            size: file.size,
-                            contentType: file.type
-                        },
-                        fileTypeId: document.fileTypeId,
-                        customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`
-                    }
-                };
-                dispatch(FetcherFiles.createSignedUrl(utils));
-            }
+        if (!file || uploadingRef.current) return;
+        if (file.type !== 'application/pdf' || file.size <= 0 || file.size > 50 * 1024 * 1024) {
+            await Swal.fire({ icon: 'error', title: 'Archivo no válido', text: 'Selecciona un PDF de hasta 50 MB.' });
+            return;
         }
+        uploadingRef.current = true;
         setUploadingFile(true);
+        try {
+            const userId = user.roleId === 2 ? alumno.alumnoId : user.userId;
+            const response = await Post({
+                url: document.archivoId ? '/files/update-signed-urls' : '/files/signed-urls',
+                data: {
+                    userId,
+                    userName: user.roleId === 2 ? alumno.alumnoNombre : userInfo.nombre,
+                    file: { fileName: file.name, size: file.size, contentType: file.type },
+                    fileTypeId: document.fileTypeId,
+                    customFileName: `${document.title.toLowerCase().replaceAll(' ', '_')}.pdf`,
+                    ...(document.archivoId ? { archivoId: document.archivoId } : {}),
+                },
+            });
+            if (response.error.code) throw new Error(response.error.message);
+            const signed = response.singleData as { file: { archivoId: number; uploadUrl: string } };
+            if (!await uploadToGCP(signed.file.uploadUrl, file)) throw new Error('No se pudo subir el archivo.');
+            const confirmation = await PatchData({
+                url: '/files/updateFileStatus',
+                data: {
+                    id: signed.file.archivoId,
+                    status: DocumentUploadStatus.UPLOADED,
+                    fileStatus: isRequestedChangesByDocente ? DocumentStatus.CHANGE_REQUESTED : DocumentStatus.DELIVERED,
+                },
+            });
+            if (confirmation.error.code) throw new Error(confirmation.error.message);
+            dispatch(FetcherFiles.getDocuments({ url: '/files/list', data: { userId } }));
+            await Swal.fire({ title: 'Archivo guardado', text: 'El archivo se subió y fue verificado correctamente.', icon: 'success' });
+            onClickBack();
+        } catch (error) {
+            await Swal.fire({ icon: 'error', title: 'No se pudo guardar el archivo', text: error instanceof Error ? error.message : 'Intenta nuevamente.' });
+        } finally {
+            uploadingRef.current = false;
+            setUploadingFile(false);
+        }
     };
 
     return (<Card className="w-50" style={{ width: '20rem', marginBottom: '1rem' }}>
@@ -182,10 +96,10 @@ export default function UploadCard(prop: Props<DocumentCardProps, typeof DEF>) {
             <CardFooter>
                 <Input className="mt-md-4 mb-md-2 mb-5" type="file" accept=".pdf" onChange={handleFileChange} />
                 <ButtonGroup>
-                    <ButtonPrimary onClick={() => {
+                    <ButtonPrimary disabled={loadingFile || !file} onClick={() => {
                         handleUpload();
                     }}>Upload</ButtonPrimary>
-                    <ButtonSecondary onClick={() => {
+                    <ButtonSecondary disabled={loadingFile} onClick={() => {
                         onClickBack();
                     }}>Regresar</ButtonSecondary>
                 </ButtonGroup>

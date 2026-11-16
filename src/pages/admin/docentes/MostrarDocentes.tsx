@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Container } from "reactstrap";
+import { Container, Button } from "reactstrap";
+import { renewInvitation } from "@utilities/invitations";
 import { useDispatch, useSelector } from "@store/index";
 import { Fetcher as FetcherDocentes, Selector as SelectorDocentes } from '@store/slices/docentes';
 import { Tables } from "../../../components/commons/tables/tables";
@@ -46,8 +47,11 @@ export default function MostrarDocentes() {
         <Container>
             {detalle.length > 0 ? (
                 <Tables
-                    data={detalle}
-                    headers={['Docente ID', 'Nombre', 'Email', 'Teléfono', 'Facultad']}
+                    data={detalle.map(docente => ({
+                        ...docente,
+                        acciones: <Button color="warning" onClick={() => renewInvitation(docente.docenteId)}>Renovar acceso</Button>,
+                    }))}
+                    headers={['Docente ID', 'Nombre', 'Email', 'Teléfono', 'Facultad', 'Acciones']}
                     firstColumnIndex={0}
                     paginated={true}
                 />

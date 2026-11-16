@@ -106,7 +106,7 @@ export default function CrearPlantilla() {
                 <ReactQuill className="editor-custom" modules={modules} theme="snow" value={state.cuerpo} onChange={(value) => changeText({ name: "cuerpo", value })} placeholder="Ingrese el contenido de su correo aquí..." />
             </InputGroup>
             <InputGroup className="w-100 mt-4 mb-4">
-                <div className="plantilla-preview mt-4" dangerouslySetInnerHTML={{ __html: state.cuerpo }}></div>
+                <iframe title="Vista previa de la plantilla" sandbox="" srcDoc={state.cuerpo} className="plantilla-preview mt-4" />
             </InputGroup>
             <InputGroup className="w-50 mt-4">
                 <ButtonSecondary onClick={handleSavePlantilla} disabled={false}>Guardar Datos</ButtonSecondary>

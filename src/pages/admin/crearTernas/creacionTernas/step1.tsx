@@ -90,7 +90,7 @@ export default function Step1() {
     const facultades = useSelector(SelectorFacultades.getFacultades)
     const handleButtonNext = () => {
         dispatch(ActionTernas.setDataAlumno(state));
-        dispatch(ActionTernas.setUserCreate({ userId: userState.userId, pass: 'Unicah2024', roleId: 3 }));
+        dispatch(ActionTernas.setUserCreate({ userId: userState.userId, roleId: 3 }));
         dispatch(ActionTernas.setStep2(true));
     }
     function almostOne() {

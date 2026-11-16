@@ -17,5 +17,5 @@ Selector.getUserInfo = CreateSelector(Selector, (state) => state.userInfo)
 /**Selector: fetching is loading */
 Selector.fetching = CreateSelector(Selector, (state) => state.loading);
 Selector.getPasswordResetRequired = CreateSelector(Selector, (state) => state.user.passwordResetRequired);
-Selector.getRoles = CreateSelector(Selector, (state) => state.user.rolePermissions);
-Selector.getPermissions = CreateSelector(Selector, (state) => state.user.userPermissions);
+Selector.getRoles = CreateSelector(Selector, (state) => state.user.rolePermissions || []);
+Selector.getPermissions = CreateSelector(Selector, (state) => state.user.userPermissions || []);

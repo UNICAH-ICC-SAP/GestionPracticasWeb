@@ -4,9 +4,11 @@ import { Type as DocentesType } from '@store/slices/docentes/_namespace';
 import { ButtonSecondary } from "@components/shared/buttons";
 import MaskedInput from "@components/shared/inputs";
 import { Fetcher as FetcherFacultades, Selector as SelectorFacultades } from "@store/slices/facultades";
-import { Fetcher as FetcherDocentes, Selector as SelectorDocente } from "@store/slices/docentes";
+import { Fetcher as FetcherDocentes } from "@store/slices/docentes";
 import { useDispatch, useSelector } from "@store/index";
 import { TypeUtilities } from "@utilities/TypeUtilities";
+import { Post } from "@utilities/Utilities";
+import { showInvitation } from "@utilities/invitations";
 import { maskDNI, maskPhone } from "@components/shared/inputs/utils/index";
 import '../../../admin/crearTernas/_ternas.css'
 import Swal from 'sweetalert2';
@@ -25,7 +27,7 @@ enum PlaceHolder {
 }
 
 export default function CrearDocente() {
-    const docenteuserCreated = useSelector(SelectorDocente.getDocenteUserCreated);
+
     const [isValidItem, setIsValidItem] = React.useState<ValidItems>({ email: false });
     const [state, setState] = React.useState<DocentesType.DocenteInfo>({
         docenteId: '',
@@ -86,54 +88,29 @@ export default function CrearDocente() {
 
     const facultades = useSelector(SelectorFacultades.getFacultades);
 
+    const [isSaving, setIsSaving] = React.useState(false);
+    const savingRef = React.useRef(false);
+
     const handleSaveDocente = async () => {
-        if (state) {
-            const paramsDocente = {
-                url: '/docente/insert',
-                data: state,
-            };
-            const paramsUser = {
-                url: '/user/signUp',
-                data: {
-                    userId: state.docenteId,
-                    pass: 'Unicah2024',
-                    roleId: 2,
-                },
-            };
-            const utils = {
-                url: '/docente/getDocentes'
-            };
-
-            try {
-                dispatch(FetcherDocentes.insertUserDocente(paramsUser)).then(() => {
-                    if (docenteuserCreated) {
-                        dispatch(FetcherDocentes.insertDocente(paramsDocente));
-                        Swal.fire({
-                            title: "¡Éxito!",
-                            text: "Docente guardado exitosamente, se acaba de enviar un correo con las credenciales de acceso",
-                            icon: "success",
-                        });
-                    }
-                }).catch((error) => {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: `Hubo un error al guardar el docente o usuario.\n Error: ${error}`,
-                    });
-                });
-
-                dispatch(FetcherDocentes.getDocentes(utils));
-                clearForm();
-            } catch (error) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: `Hubo un error al guardar el docente o usuario.\n Error: ${error}`,
-
-                });
-
-
+        if (savingRef.current || !validateForm()) return;
+        savingRef.current = true;
+        setIsSaving(true);
+        try {
+            const response = await Post({
+                url: '/user/register',
+                data: { accountType: 'docente', profile: state },
+            });
+            if (response.error.code) {
+                await Swal.fire({ icon: 'error', title: 'No se pudo crear el docente', text: response.error.message });
+                return;
             }
+            const result = response.singleData as { invitationToken: string };
+            await showInvitation(result.invitationToken);
+            dispatch(FetcherDocentes.getDocentes({ url: '/docente/getDocentes' }));
+            clearForm();
+        } finally {
+            savingRef.current = false;
+            setIsSaving(false);
         }
     };
 
@@ -182,7 +159,7 @@ export default function CrearDocente() {
                 </InputGroupText>
                 <MaskedInput maxLength={15} value={state.telefono} inputMaskChange={inputFunction} name="telefono" mask="phone" id="telefono" placeholder={maskPhone(PlaceHolder.phone)} />
             </InputGroup>
-            <ButtonSecondary className="w-50" onClick={handleSaveDocente} disabled={!validateForm()}>Guardar Datos</ButtonSecondary>
+            <ButtonSecondary className="w-50" onClick={handleSaveDocente} disabled={isSaving || !validateForm()}>Guardar Datos</ButtonSecondary>
         </div>
     );
 

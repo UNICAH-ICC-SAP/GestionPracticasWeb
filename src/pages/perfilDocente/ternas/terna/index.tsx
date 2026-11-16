@@ -16,6 +16,7 @@ import { isEmpty } from "lodash";
 import { StatusTerna, TernaRolDocente } from "@root/abstracts";
 import Documentacion from "./documentacion";
 import Swal from "sweetalert2";
+import { Comentario } from "@pages/admin/docentes";
 
 export default function Docentes() {
     const dispatch = useDispatch();
@@ -226,7 +227,7 @@ function CustomModal(props: Props<ProposCustomModal, typeof DEF>) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [itemSelected, setItemSelected] = useState("Seleccione el estado");
     const [comentarioTexto, setComentarioTexto] = useState("");
-    const [comentarios, setComentarios] = useState<any[]>([]);
+    const [comentarios, setComentarios] = useState<Comentario[]>([]);
 
     const toggle = () => setDropdownOpen((prevState) => !prevState);
     const handleChangeDropdown = (idStatus: number, estado: string) => {

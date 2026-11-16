@@ -10,7 +10,7 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.login.fulfilled, (state, { payload }) => ({
         ...state,
-        user: { ...state.user, ...payload.user },
+        user: { ...INIT.user, ...payload.user },
         error: JSON.parse(JSON.stringify(payload.error)),
         logged: payload.logged,
     }));
@@ -24,7 +24,7 @@ export default CreateReducer(INIT, ({ addCase }) => {
     }));
     addCase(Fetcher.checkUserLogged.fulfilled, (state, { payload }) => ({
         ...state,
-        user: JSON.parse(JSON.stringify(payload.user)),
+        user: { ...INIT.user, ...payload.user },
         error: JSON.parse(JSON.stringify(payload.error)),
         logged: JSON.parse(JSON.stringify(payload.logged))
     }));

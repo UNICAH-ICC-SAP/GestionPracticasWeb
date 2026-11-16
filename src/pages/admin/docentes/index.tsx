@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Container, Modal, ModalHeader, ModalBody } from "reactstrap";import { TypeUtilities } from '../../../utilities/TypeUtilities';
+import { Button, ButtonGroup, Container, Modal, ModalHeader, ModalBody } from "reactstrap"; import { TypeUtilities } from '../../../utilities/TypeUtilities';
 import { Fetcher as FetcherTernas, Selector as SelectorTernas } from '@store/slices/ternas'
 import { Selector as SelectorDocentes } from '@store/slices/docentes'
 import { useDispatch, useSelector } from "@store/index";
@@ -18,11 +18,17 @@ type TernaDetail = {
     actionButton?: JSX.Element
 }
 
+export type Comentario = {
+    autor: string;
+    fecha: string;
+    texto: string;
+}
+
 export default function Docetes() {
     const dispatch = useDispatch();
     const [modalOpen, setModalOpen] = useState(false);
     const [comentarioTexto, setComentarioTexto] = useState("");
-    const [comentarios, setComentarios] = useState<any[]>([]);
+    const [comentarios, setComentarios] = useState<Comentario[]>([]);
     const [selectedDocente, setSelectedDocente] = useState<TernaDetail | null>(null);
     const [detalle, setDetalle] = useState<Array<TernaDetail>>([])
     const utils: TypeUtilities = {
@@ -62,7 +68,7 @@ export default function Docetes() {
     return <Container>
         {detalle.length > 0 && <Tables data={detalle} headers={['Docente Id', 'Nombre Docente', 'Rol']} firstColumnIndex={0} paginated={false} />}
         {detalle.length === 0 && <NotFound />}
-        
+
         <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="lg">
             <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
                 Comentarios y Observaciones - {selectedDocente?.docenteNombre}
@@ -76,7 +82,7 @@ export default function Docetes() {
                             <div key={idx} className="p-2 mb-2 bg-white rounded border-start border-primary border-3 shadow-sm">
                                 <div className="d-flex justify-content-between mb-1">
                                     <strong className="small text-dark">{com.autor}</strong>
-                                    <span className="text-muted" style={{fontSize: '0.75rem'}}>{new Date(com.fecha).toLocaleDateString()}</span>
+                                    <span className="text-muted" style={{ fontSize: '0.75rem' }}>{new Date(com.fecha).toLocaleDateString()}</span>
                                 </div>
                                 <p className="mb-0 small text-secondary">{com.texto}</p>
                             </div>
@@ -89,10 +95,10 @@ export default function Docetes() {
                     setComentarios([...comentarios, { autor: "Tú (Docente)", fecha: new Date().toISOString(), texto: comentarioTexto }]);
                     setComentarioTexto('');
                 }} className="d-flex gap-2">
-                    <input 
-                        type="text" 
-                        className="form-control form-control-sm" 
-                        placeholder="Escriba una observación..." 
+                    <input
+                        type="text"
+                        className="form-control form-control-sm"
+                        placeholder="Escriba una observación..."
                         value={comentarioTexto}
                         onChange={(e) => setComentarioTexto(e.target.value)}
                     />

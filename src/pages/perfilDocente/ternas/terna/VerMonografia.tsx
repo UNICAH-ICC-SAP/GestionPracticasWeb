@@ -46,7 +46,7 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
         dispatch(FetcherTernas.getMonografiaCompleta(utils))
             .unwrap()
             .then(() => setLoading(false))
-            .catch((err: any) => {
+            .catch((err) => {
                 setError(err?.message || 'Error al cargar la monografía');
                 setLoading(false);
             });
@@ -101,10 +101,10 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
                 <CardBody className="py-3 px-4 d-flex align-items-center justify-content-between">
                     <div className="d-flex align-items-center gap-2">
                         <span className="fw-semibold text-secondary">Estado de la Terna:</span>
-                        <span 
-                            className="badge rounded-pill fw-semibold px-3 py-2" 
-                            style={{ 
-                                backgroundColor: estadoInfo.bg, 
+                        <span
+                            className="badge rounded-pill fw-semibold px-3 py-2"
+                            style={{
+                                backgroundColor: estadoInfo.bg,
                                 color: estadoInfo.color,
                                 fontSize: '0.875rem',
                                 border: `1px solid ${estadoInfo.color}33`
@@ -120,8 +120,8 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
             <Row className="g-4 mb-4">
                 <Col md={6}>
                     <Card className="h-100 shadow-sm border-0" style={{ borderRadius: '10px', overflow: 'hidden' }}>
-                        <CardHeader 
-                            className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2" 
+                        <CardHeader
+                            className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2"
                             style={{ backgroundColor: 'var(--main-brand-color, #183979)', borderBottom: 'none' }}
                         >
                             <FontAwesomeIcon icon={faUser} />
@@ -158,8 +158,8 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
 
                 <Col md={6}>
                     <Card className="h-100 shadow-sm border-0" style={{ borderRadius: '10px', overflow: 'hidden' }}>
-                        <CardHeader 
-                            className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2" 
+                        <CardHeader
+                            className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2"
                             style={{ backgroundColor: 'var(--main-brand-color, #183979)', borderBottom: 'none' }}
                         >
                             <FontAwesomeIcon icon={faUserCheck} />
@@ -205,8 +205,8 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
             {/* Miembros de la Terna */}
             {miembros.length > 0 && (
                 <Card className="shadow-sm border-0 mb-4" style={{ borderRadius: '10px', overflow: 'hidden' }}>
-                    <CardHeader 
-                        className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2" 
+                    <CardHeader
+                        className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2"
                         style={{ backgroundColor: 'var(--main-brand-color, #183979)', borderBottom: 'none' }}
                     >
                         <FontAwesomeIcon icon={faUsers} />
@@ -243,8 +243,8 @@ export default function VerMonografia({ ternaId, onBack }: Props) {
 
             {/* Archivo de Monografía */}
             <Card className="shadow-sm border-0 mb-4" style={{ borderRadius: '10px', overflow: 'hidden' }}>
-                <CardHeader 
-                    className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2" 
+                <CardHeader
+                    className="text-white fw-bold py-3 px-4 d-flex align-items-center gap-2"
                     style={{ backgroundColor: 'var(--main-brand-color, #183979)', borderBottom: 'none' }}
                 >
                     <FontAwesomeIcon icon={faFileAlt} />

@@ -10,6 +10,11 @@ import { navigation } from '@components/shared/nav/menu';
 import { NavigationItem } from '@components/shared/nav/types';
 
 function App() {
+    const [invitationToken, setInvitationToken] = React.useState(() =>
+        new URLSearchParams(window.location.hash.slice(1)).get('invitation') || '');
+    useEffect(() => {
+        if (invitationToken) window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }, [invitationToken]);
     const userData = useSelector(UserSelector.getUser);
     const isLogged = useSelector(UserSelector.IsLogged);
     const roles = useSelector(UserSelector.getRoles);
@@ -19,6 +24,7 @@ function App() {
     const [menuItem, setMenuItems] = React.useState<NavigationItem[]>([]);
 
     useEffect(() => {
+        if (!isLogged || isPassChangeRequired) return;
         if (userData.roleId) {
             const uriConst = (userData.roleId === 3) ? 'alumno' : 'docente';
             const utils: TypeUtilities = {
@@ -39,36 +45,21 @@ function App() {
             };
             dispatch(FetcherUser.getUserPermissionByUser(userUtilities));
         }
-    }, [dispatch, userData.userId, userData.roleId])
+    }, [dispatch, userData.userId, userData.roleId, isLogged, isPassChangeRequired])
 
     React.useEffect(() => {
-        if (roles && roles.length > 0) {
-            const userPermissionsSet = new Set(
-                roles.map(p => p?.permission)
-            );
+        const allowed = new Set(roles.map(permission => permission.permission));
+        permissions.forEach(permission => {
+            if (permission.permissionType === 'DENY') allowed.delete(permission.permission);
+            if (permission.permissionType === 'ALLOW') allowed.add(permission.permission);
+        });
+        setMenuItems(navigation.filter(item => item.permission && allowed.has(item.permission)));
+    }, [roles, permissions]);
 
-            const nav = navigation.filter(item =>
-                item?.permission && userPermissionsSet.has(item.permission)
-            );
-            setMenuItems([...nav])
-        }
-        if (permissions && permissions.length > 0) {
-            const userPermissionsSet = new Set(
-                permissions
-                    .filter(p => p?.permissionType === 'ALLOW')
-                    .map(p => p?.permission)
-            );
-            const nav = navigation.filter(item =>
-                item?.permission && userPermissionsSet.has(item.permission)
-            );
-            setMenuItems(prev => [...prev, ...nav])
-        }
-    }, [roles, permissions])
-
-    if (!isLogged) {
+    if (!isLogged || invitationToken) {
         return <React.Fragment>
             <Navigation />
-            <Login />
+            <Login initialInvitationToken={invitationToken} onActivationComplete={() => setInvitationToken('')} />
         </React.Fragment>
     }
 

@@ -11,6 +11,7 @@ import DocenteInfo, { DocenteInfoType } from "@components/shared/docenteInfo";
 import NotFound from "@components/shared/notFound";
 import { StatusTerna } from "@root/abstracts";
 import { AlumnoInfo } from "@api/namespaces/alumno";
+import { renewInvitation } from "@utilities/invitations";
 
 export default function VerTernas() {
     const dispatch = useDispatch();
@@ -116,6 +117,7 @@ export default function VerTernas() {
                                     Detalles
                                 </Button>
                                 <WhatsappButton telefono={alumno.telefono} />
+                                <Button color="warning" onClick={() => renewInvitation(alumno.alumnoId)}>Renovar acceso</Button>
                             </ButtonGroup>
                         ),
                     }))}
