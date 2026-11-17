@@ -95,7 +95,6 @@ export default function Carreras() {
             dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=1" }));
             dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }));
             dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
-            dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
             dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
             dispatch(FetcherFacultad.getFacultades({ url: "/facultad/getFacultades" }))
         }
@@ -106,6 +105,8 @@ export default function Carreras() {
     }, [facultadSeleccionada, isUpdatePensum]);
 
     useEffect(() => {
+        if (!periodoSeleccionado) return;
+
         dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
     }, [periodoSeleccionado, isUpdateSecciones]);
 

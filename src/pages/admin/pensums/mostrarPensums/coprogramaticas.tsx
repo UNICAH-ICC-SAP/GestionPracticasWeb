@@ -100,7 +100,6 @@ export default function Coprogramaticas() {
             dispatch(FetcherPensum.getClases({ url: `/pensum/getPensum?TipoClase=${tipoClase}` }));
             dispatch(FetcherPensum.getCarreras({ url: `/pensum/getPensumBy?facultadId=${facultadSeleccionada}` }));
             dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
-            dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
             dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
             dispatch(FetcherFacultad.getFacultades({ url: "/facultad/getFacultades" }))
         }
@@ -112,6 +111,8 @@ export default function Coprogramaticas() {
     }, [facultadSeleccionada, isUpdatePensum]);
 
     useEffect(() => {
+        if (!periodoSeleccionado) return;
+
         dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
     }, [periodoSeleccionado, isUpdateSecciones]);
 

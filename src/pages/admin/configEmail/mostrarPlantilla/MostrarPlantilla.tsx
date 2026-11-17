@@ -48,7 +48,7 @@ export default function MostrarPlantilla() {
     const plantillas = useSelector(SelectorPlantillas.getPlantillas);
 
     useEffect(() => {
-        if (Array.isArray(plantillas) && plantillas.length > 0) {
+        if (Array.isArray(plantillas)) {
             const plantillaMapped = plantillas.map(plantilla => ({
                 idPlantilla: plantilla.Id_correo,
                 correo_origen: plantilla.correo_origen,
@@ -67,11 +67,6 @@ export default function MostrarPlantilla() {
         setSelectedPlantilla(plantilla);
         setEditMode(true);
         setChangePass(false);
-    }
-
-    function obfuscateText(text: string) {
-        const obfuscated = text ? "********" : "Configurada en el servidor";
-        return obfuscated;
     }
 
     const handleUpdatePlantilla = () => {
@@ -168,7 +163,7 @@ export default function MostrarPlantilla() {
                         asunto: plantilla.asunto,
                         cuerpo: plantilla.preview,
                         estado: plantilla.estado ? "Activa" : "Inactiva",
-                        correo_password: obfuscateText(plantilla.correo_password),
+                        correo_password: "Configurada en el servidor",
                         actions: renderActions(plantilla)
                     }))}
                     headers={['Id Correo', 'Correo Origen', 'Pass', 'Asunto', 'Cuerpo', 'Estado', 'Acciones']}

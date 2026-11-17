@@ -94,7 +94,6 @@ export default function Laboratorios() {
             dispatch(ActionPensum.setIsLoading(true));
             dispatch(FetcherPensum.getClases({ url: "/pensum/getPensum?TipoClase=3" }));
             dispatch(FetcherDocentes.getDocentes({ url: "/docente/getDocentes" }));
-            dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
             dispatch(FetcherPeriodo.getPeriodos({ url: "/periodo/get" }));
         }
     }, [dispatch, clases, carreras, periodos]);
@@ -104,6 +103,8 @@ export default function Laboratorios() {
     }, [facultadSeleccionada, isUpdatePensum]);
 
     useEffect(() => {
+        if (!periodoSeleccionado) return;
+
         dispatch(FetcherSecciones.getSecciones({ url: `/secciones/getSections?id_periodo=${periodoSeleccionado}` }));
     }, [periodoSeleccionado, isUpdateSecciones]);
 
