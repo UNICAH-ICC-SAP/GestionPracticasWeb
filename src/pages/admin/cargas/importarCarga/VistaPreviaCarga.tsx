@@ -14,7 +14,7 @@ export default function VistaPreviaCarga({ filas, seleccionadas, disabled, onSel
         <Table responsive bordered size="sm">
             <thead><tr>
                 <th>Importar</th><th>Docente</th><th>Asignatura</th><th>Sección</th>
-                <th>Fechas</th><th>Horario</th><th>Campus</th><th>Validación</th>
+                <th>Fechas</th><th>Horario</th><th>Campus</th><th>Carreras y bloques de destino</th><th>Validación</th>
             </tr></thead>
             <tbody>{filas.map(fila => <tr key={fila.fila}>
                 <td><Input type="checkbox" aria-label={`Importar fila ${fila.fila}`}
@@ -26,6 +26,7 @@ export default function VistaPreviaCarga({ filas, seleccionadas, disabled, onSel
                 <td>{fila.fecha_inicio}<br />{fila.fecha_final}</td>
                 <td>{fila.dias}<br />{fila.hora_inicio} – {fila.hora_final}</td>
                 <td>{fila.campus}</td>
+                <td>{fila.destinos?.map(destino => <div key={destino}>{destino}</div>)}</td>
                 <td>
                     {!fila.errores.length && <span className="text-success">Válida</span>}
                     {fila.errores.map(message => <div className="text-danger" key={message}>{message}</div>)}

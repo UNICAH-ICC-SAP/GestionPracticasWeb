@@ -90,7 +90,7 @@ export default function ImportarCarga() {
 
     return <section className="pb-4">
         <h2>Importar carga académica</h2>
-        <p>Selecciona el período y la carrera de destino. Revisa los datos antes de confirmar; no se crean docentes ni asignaturas automáticamente.</p>
+        <p>Selecciona el período y una carrera o todas las carreras. Revisa los destinos antes de confirmar; no se crean docentes ni asignaturas automáticamente.</p>
         <FormGroup>
             <Label for="periodo-importar">Período existente</Label>
             <Input id="periodo-importar" type="select" value={periodo} disabled={busy}
@@ -104,8 +104,10 @@ export default function ImportarCarga() {
             <Input id="carrera-importar" type="select" value={facultad} disabled={busy}
                 onChange={event => { reset(); setFacultad(event.target.value); }}>
                 <option value="">Selecciona una carrera</option>
+                <option value="*">Todas las carreras</option>
                 {(facultades || []).map(item => <option key={item.facultadId} value={item.facultadId}>{item.nombreFacultad}</option>)}
             </Input>
+            {facultad === '*' && <small className="text-muted">Cada asignatura se asociará a todos los bloques donde existe en el catálogo, incluidas las asignaturas compartidas entre carreras.</small>}
         </FormGroup>
         <ArchivoCarga disabled={busy} onChange={value => { reset(); setFile(value); }} />
         <ButtonGroup className="mb-3">

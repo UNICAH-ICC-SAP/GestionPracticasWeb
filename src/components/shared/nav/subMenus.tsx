@@ -14,6 +14,7 @@ import CargasDocente from "@pages/admin/cargas/mostrarCargas/cargasDocentes";
 import MostrarPlantilla from "@pages/admin/configEmail/mostrarPlantilla/MostrarPlantilla";
 import CrearPlantilla from "@pages/admin/configEmail/crearPlantilla/CrearPlantilla";
 import AccionesPlantillas from "@pages/admin/configEmail/accionesPlantillas/acccionesPlantilla";
+import ImportarCarga from "@pages/admin/cargas/importarCarga/ImportarCarga";
 
 export const adminMenu: Array<NavigationItem> = [
   {
@@ -56,8 +57,6 @@ export const configEmail: Array<NavigationItem> = [
     component: <AccionesPlantillas />
   }
 ]
-
-import ImportarCarga from "@pages/admin/cargas/importarCarga/ImportarCarga";
 
 export const cargasMenu: Array<NavigationItem> = [
   {

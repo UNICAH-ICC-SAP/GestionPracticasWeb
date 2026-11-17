@@ -18,6 +18,7 @@ export type FilaCarga = {
     fila: number;
     errores: string[];
     advertencias: string[];
+    destinos?: string[];
 };
 
 export type State = {
