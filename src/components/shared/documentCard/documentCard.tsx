@@ -82,7 +82,7 @@ export default function DocumentCard(prop: Props<DocumentCardProps, typeof DEF>)
         </CardBody>
         <CardFooter style={{ height: "4rem" }} className="d-flex justify-content-center align-items-center">
             {(document.fileStatus === DocumentStatus.PENDING || document.fileStatus === DocumentStatus.CHANGE_REQUESTED) ? (
-                document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA ? (
+                document.fileTypeId === DocumentTypeAlumnos.MONOGRAFIA && user.roleId !== 3 ? (
                     <ButtonSecondary onClick={handleViewMonografia}>
                         Ver monografía
                     </ButtonSecondary>

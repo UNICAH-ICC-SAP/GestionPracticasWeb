@@ -38,7 +38,7 @@ export default function CargasMenu() {
       <TabContent className="justify-items-center mt-5" activeTab={activePane}>
         {cargasMenu.map((item, index) => (
           <TabPane key={item.paneId! + (index + 1) + "Pane"} tabId={item.paneId}>
-            <Container>{item.component}</Container>
+            <Container>{activePane === item.paneId && item.component}</Container>
           </TabPane>
         ))}
       </TabContent>

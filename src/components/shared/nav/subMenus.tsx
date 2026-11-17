@@ -57,6 +57,8 @@ export const configEmail: Array<NavigationItem> = [
   }
 ]
 
+import ImportarCarga from "@pages/admin/cargas/importarCarga/ImportarCarga";
+
 export const cargasMenu: Array<NavigationItem> = [
   {
     paneId: "NuevaCarga",
@@ -69,6 +71,12 @@ export const cargasMenu: Array<NavigationItem> = [
     title: "Ver Clases por Docente",
     pathTo: "/cargas/verCargasDocente",
     component: <CargasDocente />,
+  },
+  {
+    paneId: "ImportarCarga",
+    title: "Importar PDF o Excel",
+    pathTo: "/cargas/importar",
+    component: <ImportarCarga />,
   },
 ];
 
